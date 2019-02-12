@@ -1,0 +1,125 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true) {
+<!--s'occuper de dateEnd avec le plugin datetimepicker-->
+  @create.hcpetition(-1)
+
+  <div class="listgroupe">
+    <div class="container">
+      <div class="row" style="margin:3px;">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+          <div class="alert alert-info alert-dismissible atmess" id="atalert" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <span id="atmess">@message</span>
+          </div>
+      <ul class="nav nav-tabs">
+        <li role="presentation" id="li0" class="active" style="cursor:pointer;"><a style="color:black" onclick="modebtn(0)">@Messages("views.petition_latest")</a></li>
+        <li role="presentation" id="li1" style="cursor:pointer;"><a style="color:black" onclick="modebtn(1);">@Messages("views.petition_yours")</a></li>
+        <li role="presentation" id="li2" style="cursor:pointer;"><a style="color:black" onclick="modebtn(2);">@Messages("views.petition_created")</a></li>
+      </ul>
+      <div class="nbtn" style="text-align:center;">
+      <button data-toggle="modal" data-target="#nv_petition" class="btn btn-primary">@Messages("views.petition_new")</button>
+      <a href="#" tabindex="0" style="font-size: 1.8em;vertical-align: middle;" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="@Messages("views.help.petitions")" data-title="@Messages("views.head.lapetition")" class="text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+        </div>
+          </div>
+      </div>
+  <div class="output-petitions"></div>
+  </div>
+  </div>
+<script id="petition-template" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="row" style="margin:3px;">
+          <div class="col-xs-12 col-md-10 col-md-offset-1 debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+          <a class="author_name np" href="/petition/{{id}}">{{{name}}}</a>
+          <span class="pull-right np"><span class="debat_time adroite" data-livestamp="{{mT}}"></span></span>
+          <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+          <br/>
+          <div class="lpdesigntriger"style="word-wrap:break-word;">{{{definition}}}</div>
+          <br/>
+          <a data-toggle="modal" data-target="#mbinc" data-pid="{{id}}" data-type="5" style='cursor:pointer;'>
+            <span id="spnbmbr-{{id}}">{{numberJoined}}</span> @Messages("views.group_member")</a>
+          <span class="adroite">
+          <!--<button class="btn btn-xs joinbtn" id="jbtn{{id}}" data-id="{{id}}"></button>-->
+        </span>
+        <div class="mt5">
+          <a onclick="comment5disp(5,{{id}},true,1);" style="cursor:pointer">@Messages("views.seecomments") (<span class="nbCom5{{id}}"></span>)</a> ·
+          <a onclick="addcommentbtn('5{{id}}')" class="cp">@Messages("views.commentadd")</a>
+        </div>
+        <div id="tcom5{{id}}"></div>
+          </div>
+        </div>
+    {{/each}}
+  </script>
+<script>
+if($.trim($('#atmess').text())==""){
+  $('.atmess').hide();
+}
+var curdisp = -1;
+var curloading = true;
+var mode = 0;
+var refresh= 1;
+var plimit=20;
+var axLoading5 = false;
+function modebtn(pop){
+  if(pop==0){refresh=1;mode=0;displayPetition();$('#li0').addClass('active');$('#li1, #li2').removeClass('active');}
+  else if(pop==1){refresh=1;mode=1;displayPetition();$('#li1').addClass('active');$('#li0, #li2').removeClass('active');}
+  else{refresh=1;mode=2;displayPetition();$('#li2').addClass('active');$('#li1, #li0').removeClass('active');}
+}
+function displayPetition(){
+  if(refresh==1){$('.output-petitions').empty();curdisp = -1;refresh=0;}
+  if (mode==1) {var purl = '/petition/json/lastxPetitionsJoined/'+curdisp+'/'+plimit;}
+  else if (mode==2) {var purl= '/petition/json/lastxPetitionsCreated/'+curdisp+'/'+plimit;}
+  else {var purl= '/petition/json/lastxPetitions/-1/'+curdisp+'/'+plimit}
+  curloading =true;
+  $('.output-petitions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+  if(axLoading5){return;}
+  axLoading5 = true;
+  $.ajax({
+        url: purl,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data.length == 0 && mode == 1){
+            console.log(323);
+            $('.output-petitions').html('<p class="acenter">@Messages("views.yunosignpetition") @Messages("views.petition_low")!</p>');
+          }
+          if(data.length == 0 && mode == 2){
+            $('.output-petitions').html('<p class="acenter">@Messages("views.yunocreatedebate") @Messages("views.petition_low")!</p>');
+          }
+          axLoading5 = false;
+          debugit(data);
+          $('.loagif').hide();
+          data.forEach(function(entry){
+            //entry.definition = outputRestrict(entry.definition);
+            if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment(entry.timeEnd).format('LLL');}
+          });
+          var item = {'response' : data};
+          var source   = $('#petition-template').html();
+          var template = Handlebars.compile(source);
+          $('.output-petitions').append(template(item));
+          lpdesigntriger();
+          data.forEach(function(entry){
+            comment5disp(5,entry.id,true,2);
+          });
+          if(data.length == plimit){curloading =false;}
+          else{curloading =true;
+          }
+          //$('#outputcomment .post-container').linkify({target: "_blank"});
+        }});
+}
+displayPetition();
+Handlebars.registerHelper("mT", function() {
+var lavalue = parseInt(Handlebars.escapeExpression(this.modificationTimestamp));
+if(!isNaN((lavalue/1000))){
+  return (lavalue/1000);
+}});
+$(window).on('scroll', function(){
+  if ($('.debat').length > 0) {
+    if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.debat:last()').children('.pmT').val();
+        displayPetition();
+    }
+  }
+});
+</script>
+}

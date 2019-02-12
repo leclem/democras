@@ -1,0 +1,504 @@
+
+views.curLang=en
+views.summernoteLang=en-US
+views.curDateFormat=MM-DD-YYYY hh:mm a
+connection.user_doesnt_exist=This user doesn''t exist
+connection.successful=You have successfully log in
+connection.unsuccessful=Wrong password
+connection.pleaseconnect=Please connect to access this page
+disconnection.successful=You have successfully log out
+password_link_invalid=Your link to get your password back is invalid or expired
+
+page_not_found=This page doesn''t exist.
+page_not_found_link=Click here to go to the home page.
+clicHereToReturnIndex=Click here to return to the home page.
+
+subscription.successful=Your sign up was successful
+subscription.username_already_exists=This username is already given
+
+views.subtitle=The democratic social network
+views.search=Search
+views.notifications=Notifications
+views.user=Member
+views.enter=Enter
+views.signin=Log in
+views.signinfb=Log in with Facebook
+views.signupfb=Sign up with facebook
+views.signinfberror=An error has occurred during your Facebook login, we need the authorizations asked in order to authenticate you
+views.tour=Tour
+views.help=Help
+views.soon=Soon
+views.settings=Settings
+views.messages=Messages
+views.home=Home
+views.groups=Groups
+views.concepts=Ideas
+views.debates=Debates
+views.actions=Actions
+views.rejoin=Join
+views.petitions=Petitions
+views.disconnect=Log out
+views.connect=Log in
+views.stayconnect=Stay connected
+views.about=About
+views.or=or
+views.next=Next
+views.contactus=Contact us
+views.edit=Edit
+views.done=Done
+views.back=Back
+views.close=Close
+views.send=Send
+views.create=Create
+views.by=by
+views.bygroup=by the group
+views.me=Me
+views.follow=Follow
+views.munfollow=Followed
+views.noload=There is nothing else to show!
+views.nonotif=You don''t have any notifications
+views.seeNotif=See all the notifications
+views.loadmore=Load more results
+views.share=Share
+views.act=Act
+views.manage=Manage
+views.sharetc=Give your opinion on Democras
+views.sharesc=Vote on Democras and give ideas to improve the world.
+views.empfname=Please enter your first name
+views.empname=Please enter your last name
+views.empville=Please enter your city
+views.emppres=Give a small presentation about yourself
+views.wait=Waiting
+views.accept=Accept
+views.reject=Reject
+views.member=Member
+views.members=Members
+views.activ=Last activities
+views.loading=Loading...
+views.remainingc=remaining characters.
+views.name=Name
+views.description=Description
+views.location=Location
+views.address=Address
+views.position=Position
+views.tourbegin=Begin the tour
+views.tourpresentation=Welcome on Democras. We will show you most of the functionalities with a small tour.
+views.nosubscribe.error=Error, the informations are incorrect.
+views.nosubscribe.mail=This Email address already exists.
+views.nosubscribe.user=This username already exists
+views.new_pic=New profile picture
+views.spokenLanguages=Known languages
+views.youhavetofollow=Your newsfeed is empty, follow a member or a <a href='/debate'>debate</a> to see their activities here
+views.areyousure=Are you sure?
+views.changepassword=Change your password
+views.forgotPass=Forgot password?
+views.successForget=We sent you an email with a link to create a new password.
+views.forgotPassMess=Please indicate your username, we will send you an email with a link to change your password.
+views.forgetPageMess=Please indicate your new password, it must have more than 4 characters.
+views.forgetConfirmPassError=The passwords don''t match or don''t have more than 4 characters.
+views.readmore=Read more
+views.getNewsletter=Receive mails for notifications
+views.nbTotFollowers=Number of followers
+views.nbTotlikeshis=Total number of likes of his Ideas and opinions
+views.nbTotlikes=Total number of likes of your Ideas and opinions
+views.nbTotranking=Your rank among the other Democras members
+views.nbTotFollowersandlikes=Number of followers and number of likes of your Ideas and Opinions as well as your rank among the other Democras members
+views.nbTotFollowersandlikesHis=Number of followers and number of likes of his Ideas and Opinions as well as his rank among the other Democras members
+views.returnDebate=Return to the debate
+views.sendwfb=Send as a private message on Facebook
+views.actpet=Actions
+views.zoomMap=Please zoom in to see all the results!
+views.likedMembers=Popular Members
+views.likedMembersExpl=Ranking of members that received the most green thumbs on their opinions and ideas
+views.likerMembersYourRanking=Your are ranked
+views.followers=Followers
+views.following=Following
+views.followingYou=is now following you.
+views.isfollowing=is now following
+views.whysubscribe=<b>Why do I need to sign up?</b> <br>Democras is a e-democracy platform depending of citizen participation
+views.nofollow=There is no member yet!
+views.optional=optional
+views.mandatory=mandatory
+views.chooseprofilepicture=Choose your profile picture
+views.press=Press
+views.founded=Founded
+views.founded2=Fall 2014
+views.launched=Online
+views.launched2=31 March 2016
+views.findthem=Where are we?
+views.findthem2=Paris
+views.findthem3=London
+views.latestInterview=Latest Interview
+views.logos=Logos
+views.downloadPic=Download the press pack
+views.morePress=More informations <a href="/about">here</a>.
+views.joinourxmembers=Join our {0} members !
+views.inviteYourFriends=Invite your friends to join Democras!
+views.index.inviteYourFriends=Find you friends or invite them to join Democras:
+views.index.inviteFriendsBtn=Find your friends
+views.confirmInvite=You have successfully invited your friends, come back to this page if you want to invite more of them :)
+views.invite=Invite
+views.inviteText=Democras offers to citizens a new way to organize public life. In order to be as representative as possible, it needs to be user by the largest number of people. <br>We thus propose you to invite your friends to join our network, in order to debate, mobilize, or act with them, and by doing so to contribute to the emergence of the first social network of participative democracy.
+views.inviteSkip=Skip this step
+
+views.forms.name=Your last name
+views.forms.firstname=Your first name
+views.forms.username=Username
+views.forms.password=Password
+views.forms.newpassword=New password
+views.forms.confirmpassword=Confirm the password
+views.forms.subscription=Sign up
+views.forms.mail=Email
+views.forms.description=Your presentation
+views.forms.ville=Your current city
+views.forms.hometown=The city you are from
+views.forms.miss=You are missing this field.
+views.forms.news=News
+
+views.convers.new=New message
+views.convers.access=Access
+views.convers.fullscreen=Full screen
+views.convers.startedconvers=The conversation started.
+views.convers.ystartedconvers=You started the conversation
+views.convers.doesnt_exists=This conversation doesn't exist
+views.inbox=Inbox
+views.convers.start=You can start creating a message.
+views.convers.receivers=Recipients
+views.convers.toomany=Please close a conversation box first!
+views.convers.nomatch=There is no match for the recipient!
+
+views.comments=Comments
+views.posts=Posts
+views.comment=Comment
+views.send=Send
+views.commentadd=Add a comment
+views.expressyourself=Write your post
+views.commentload=Load the next comments
+views.seecomments=See the comments
+
+views.login.fb=Sign up with Facebook
+views.login.mail=Sign up with your email
+views.login.other=Sign up without Facebook
+
+views.head.ladescription=An Idea is a concept, a message you want to share.
+views.head.lagdescription=A group is more than just a group, it is an association of people gathered behind a common vision.
+views.head.legroup=The Group
+views.head.ledebat=The Debate
+views.head.ledebatdescription=The debate is a space to discuss and improve an idea or a vision.
+views.head.laction=The Action
+views.head.actiondescription=An action is an event to help spread an idea or a vision to the eyes of the world in a certain area.
+views.head.lapetition=The Petition
+views.head.petitiondescription=A petition is a powerful tool to where a people sign to spread an idea or a vision.
+
+views.head.leconcept=Ideas
+views.head.leconceptcontre=You voted against this Idea
+views.head.leconceptpour=You voted for this Idea
+views.head.leconceptnon=You didn''t vote
+
+views.concept_low=idea
+views.forms.conceptnamehow=How will you call your Idea?
+views.forms.conceptname=Name of the Idea:
+views.forms.conceptdefinition=Describe it
+views.concept_created=You successfully create the Idea {0}
+views.concept_already_exists=An Idea with the same name already exists
+views.concept_doesnt_exists=This Idea doesn't exist or has been deleted.
+views.concept_deleted=You successfully deleted this Idea
+views.concep_yours=Ideas judged
+views.concep_latest=Last Ideas
+views.concep_name=Name
+views.concep_def=Description
+views.concep_mf=Positive(s) Vote(s)
+views.concep_ma=Negative(s) Vote(s)
+views.concep_connectToVote=You have to be connected to vote
+views.concep_mt=Total number of votes
+views.concep_yourst=When you judge a Idea it will be here.
+views.concep_invit=Invite a member to vote.
+views.concep_idc=ID Creator
+views.concep_pop=You have to give a title and a description.
+views.concep_created=Ideas created
+views.concep_deleted=You successfully deleted this Idea
+
+views.group_low=group
+views.group_nm=Number of members
+views.concept_new=New Idea
+views.grp_new=New Group
+views.grp_mbr=Members of the groupe
+views.group_yours=My groups
+views.group_latest=Last groups
+views.group_created=The group {0} has benn created.
+views.group_already_exists=A group with the same name already exists.
+views.group_doesnt_exists=This group doesn't exist or has been deleted.
+views.group.jointhisgroup=Join this group.
+views.group.jointhisgroupifconnected=You have to be connected to join this group
+views.group.cancelgroupappliation=Cancel this join request.
+views.group.leavethisgroup=Quit this group.
+views.group.notleavinghisgroupbecauseonlyadmin=You are the only admin, you cannot quit this group.
+views.group_privategroup=Private group
+views.group_publicgroup=Public group
+views.group_rank1=Member
+views.group_rank2=Leader
+views.group_rank1000=Admin
+views.group_member=Member(s)
+views.group_changest=Change the status
+views.group_appmbr=Accept new members.
+views.group_wait=Waiting for approbation
+views.group_isadmin=Groups managed
+views.group_deleted=You successfully deleted this Group
+
+views.debate_low=debates
+views.debate_yours=My debates
+views.debate_latest=The last debates
+views.debate_new=New debate
+views.debate_def=Definition
+views.debate_typeofdebate=Type of debate
+views.debate_yesorno=Yes or No
+views.debate_findasolution=Opinion
+views.debate_opinion=Opinions
+views.debate_already=Opinion already given
+views.debate.connecttogiveopinion=You have to be connected to give your opinion
+views.debate.connecttogiveopinionimg=<img style="text-align:center" src="/assets/images/giveopinionfr.png">
+views.debate.connecttogiveyesornoopinionimg=<img style="text-align:center" src="/assets/images/giveyesornoopinionfr.png">
+views.debate_nbopinion=Number of opinions
+views.debate_nbvote=Number of votes
+views.debate_question=Question
+views.debate_type=Type of debate
+views.debate_already_exists=A debate with the same name already exists.
+views.debate_notallowed=You are not authorized to participate to this debate.
+views.debate_debate=Debate
+views.debate_doesnt_exists=This group doesn't exist or has been deleted.
+views.debate_avis=What do you think ?
+views.debate_error=We had a problem with your message
+views.debate_what=On what question do you want the people to debate ?
+views.debate_pop=You have to click on the type of debate you want to create and write a question.
+views.debateyn_pop=You have to write an opinion and precise his kind.
+views.debateo_pop=You have to write an opinion.
+views.debate_addcomment=Add an opinion.
+views.debate_created=Debates created
+views.debate_follow=Debates followed
+views.debate_participated=Debates participated
+views.debate_allyours=All my debates
+views.debate_deleted=You successfully deleted this Debate
+
+views.action_low=action
+views.action_new=New Action
+views.action_doesnt_exists=This action doesn''t exist
+views.action.jointhisaction=I take part to this Action
+views.action.connectTojointhisaction=You have to be connected to join this action
+views.action.leavethisaction=I leave this Action
+views.action.actioncreated=You have created the Action {0}
+views.action.alreadyexists=There is already an action with this name
+views.action.maps=Please use the Google maps plugin
+views.action.addEnd=Add an end date
+views.action.remEnd=Remove the end date
+views.action.reqmaps=Please use the Google maps plugin.
+views.action.startT=Start
+views.action.endT=End
+views.action.nm=Participant(s)
+views.action_yours=Actions joined
+views.action_latest=Last actions
+views.action_takeloc=Validate this location
+views.action_created=Actions created
+views.action.description=Describe this action
+views.action_creator_group=Action launched by the group
+views.action_creator_user=Action launched by
+views.action_deleted=You successfully deleted this Action
+views.action_searchonmap=Search for a place
+
+views.petition_low=petition
+views.petition_new=New Petition
+views.petition.name=Name of the petition
+views.petition.description=Description of the petition
+views.forms.petitionname=Cause of the Pétition
+views.forms.petitiondefinition=Please argue
+views.petition_doesnt_exists=This petition doesn''t exist
+views.petition.jointhispetition=Sign this Pétition
+views.action.connectTojointhispetition=Sign this Pétition
+views.petition.leavethispetition=Leave this petition
+views.petition_yours=Pétitions signed
+views.petition_latest=Last petitions
+views.petition_created=Pétitions created.
+views.petition_creator_group=Petition launched by the group
+views.petition_creator_user=Petition launched by
+views.petition_deleted=You successfully deleted this Petition
+
+views.unogroup=The user hasn't join this group yet.
+views.unodebate=The user hasn't participate to a debate.
+views.yunogroup=You haven''t join a
+views.yunodebate=You a haven''t followed a
+views.yunopartdebate=You haven''t participate to a
+views.yunopartaction=You are not participating in any
+views.yunocreateaction=You haven''t created an action.
+views.yunocreatedebate=You haven''t created any
+views.yunojugeconcept=You haven''t judged any
+views.yunosignpetition=You haven''t signed any
+views.yunosectgroup1=You don''t have any
+views.yunosectgroup2=in this section.
+views.nosearch=We couldn''t find anything for your search
+views.noDebGoup=There are no debates in this group.
+views.noPetGoup=There are no petitions in this group.
+views.noActGoup=There are no actions in this group.
+
+views.forms.gender=Gender
+views.forms.birthday=Birthday
+views.forms.city=City
+views.forms.hometown=Hometown
+views.forms.presentation=Presentation
+views.forms.country=Country
+views.forms.lang=Language
+views.forms.langwebsite=Website language
+views.forms.link=Url
+views.forms.h=Man
+views.forms.f=Woman
+views.forms.noshow=Won''t show up
+views.forms.groupname=How will you name this group?
+views.forms.groupdefinition=Describe it
+views.forms.debatequestion=On what question do you want the people to debate?
+views.forms.debatedefinition=What are your instructions?
+views.forms.argueyourposition=Explain your position
+views.forms.yes=Yes
+views.forms.no=No
+views.forms.actionname=Name of this action
+views.forms.actiondefinition=Describe this action
+views.forms.actionnamelocation=Location of this action
+views.forms.required=This is required.
+views.forms.terms=You must agree to the terms and conditions.
+views.forms.notvalid=This is not a valid entry.
+views.forms.notvalidmail=This email is not valid.
+views.forms.hasURL=Do you have a website?
+views.forms.genpb=A problem appeared. Verify that the content is valid or contact us!
+
+views.activ_CommentConcept=commented on the Idea:
+views.activ_CommentAction=commented on the action:
+views.activ_CommentPetition=commented on the petition:
+views.activ_CommentYesornoopinion=commented on the opinion:
+views.activ_CommentYesornoopinion2=commented on an
+views.activ_CommentYesornoopinion3=opinion
+views.activ_CommentGroup=commented on the group:
+
+views.activ_ProfileCreation=created an account.
+views.activ_ProfileModification=modified his/her profile.
+views.activ_ProfileFirstNameModification=modified his/her first name.
+views.activ_ProfileNameModification=modified his/her last name.
+views.activ_ProfileVilleModification=modified his/her city.
+views.activ_ProfileMailModification=modified his/her Email.
+views.activ_ProfilPresentationModification=modified his/her presentation.
+
+views.activ_GroupCreation=has created the group:
+views.activ_GroupJoin=has joined the group:
+views.activ_GroupLeave=left the group:
+views.activ_GroupAccept=has accepted
+views.activ_GroupAccept2=in the Group:
+views.activ_GroupAcceptAlt=has been accepted in the Groupe:
+
+views.activ_ChangeRankMember=
+views.activ_ChangeRankLeader=
+views.activ_ChangeRankAdmin=
+
+views.activ_ConceptCreation=created the Idea:
+views.activ_ConceptDescriptionModification=modified the Idea:
+
+views.activ_VoteForConcept=voted for the Idea:
+views.activ_VoteAgainstConcept=voted against the Idea:
+views.activ_CancelVoteConcept=removed his vote on the Idea:
+views.activ_ModifVoteForToAgainstConcept=modified his vote to vote against the Idea:
+views.activ_ModifVoteAgainstToForConcept=modified his vote to vote for the Idea:
+
+views.activ_DebateCreation=created the debate:
+views.activ_DebateCreationForGroup=created for the group:
+views.activ_DebateCreationForGroup2=the debate:
+views.activ_VoteForYesOrNoOpinion=voted for the opinion:
+views.activ_VoteAgainstYesOrNoOpinion=voted against the opinion:
+views.activ_ModifVoteForToAgainstYesOrNoOpinion=modified his vote to vote against the opinion:
+views.activ_ModifVoteAgainstToForYesOrNoOpinion=modified his vote to vote for the opinion:
+views.activ_PostYesOrNoOpinionOnOpinion=answered to an opinion on the debate:
+views.activ_DebateOpinionParticipation=gave his opinion on the debate:
+
+views.activ_ActionCreation=created the action:
+views.activ_ActionCreationForGroup=created for the group the action:
+views.activ_ActionJoin=is taking part to the action:
+
+views.activ_PetitionCreation=created the petition:
+views.activ_PetitionCreationForGroup=created for the group the petition:
+views.activ_PetitionJoin=signed the petition:
+
+views.tour.opinion=Be aware that you can give your opinion only one time!
+
+views.sponsor=Sponsor
+views.policy=Privacy policy
+views.policy.cookie=Cookies. We use "cookies" (a small text file sent in your computer each time you visit a website that is exclusively associated with your Democras account or with your browser) or similar technologies to recognize your machine. When we use cookies, we can use "session" cookies (that last until you close your browser) or "persistant" ones (that stay until they are deleted by either yourself or your browser). For example, we can use cookies to store your language preferences or other Democras parameters, so that you don't have to configure them each time you connect to Democras. Some cookies are associated with your Democras account and contain private informations (like the e-mail address you gave us), and some other no.
+views.policy.dataq=How do we use the collected data ?
+views.policy.dataa=We use the collected data in order to make our product available for you and to improve it, and to protect Democras and our users. For example, we can identify with what frequency two different versions of a product are used, in order to allow us to understand which is the best one (A/B testing).
+views.policy.pers=Democras guarantee the User access, correction and deletion of all his personal data. Password, chose by the user, is personal and confidential. The user agrees to keep his password secret and must not disclose it in any maner. The usage of his username and password over the internet is at the user's own risk. The user should take all appropriate measures to protect his personnal data.
+
+views.cgu=Terms
+views.cgu.group=If you open a Group for a company, organization or any other entity, then the term "you" addresses you as a person as well as this entity, and you represent and warrant that you are allowed to give all authorisations and licences mentioned in the present conditions, to engage this entity for the present conditions and to accept the present conditions for the entity.
+views.cgu.1=Any connection to the website is conditional on compliance with the present conditions. You only can use our service if you accept to be bound with Democras by a contract, and to comply with the present conditions of use and to any applicable law. When you Democras account is created, you should provide exact and complete information. The use or access to the website is forbidden to any person under 13 years old.
+views.cgu.access=Democras reserves the right to withdraw access to the service at any time, in an unilateral way and without any notification, to any user that does not respect the present conditions.
+
+views.democras_presentation=Democras is a web portal trying to revolutionize the democratic engagement. You can get opinions using a debate or display ideas then gather behind this idea with a group. The last step is to act for this idea with the help of a petition or an action.
+
+views.democras_descriptionmeta=Democras is a web portal trying to revolutionize the democratic engagement. With debates, groupements, and mass actions, it allows every citizen to speak, regroup, and act.
+
+views.whatisdemocras=What is Democras
+views.alreadymember=Already a member ?
+views.agreecgu=By creating an account, you confirm that you accept the <a onclick="return !window.open(this.href, ''Terms'', ''width=640,height=640'')" href="/terms" style="color:white;font-weight:bold;">conditions of use</a> and the <a onclick="return !window.open(this.href, ''Terms'', ''width=640,height=640'')" href="/terms#row_policy" style="color:white;font-weight:bold;">privacy policy</a> of Democras.
+views.help.username=Type an username without special characters
+views.help.password=For safety reasons, please choose a password different from the other websites
+views.help.begin=Welcome on the Democras help page. You will find here all the answers to your questions.
+
+views.help.concepts=<p>Ideas are <b>abstract concepts</b> that men have in order to represent reality. They are the tools that will allow to <b>judge if situations are desirable or not</b>. For example, the Idea of <i>Human rights</i>, which states that men are born and remain free and equal in rights, allow to judge that caste priviledges were not desirable anymore. <br></p> p>Nevertheless, for a Idea to be useful, it has to be <b>recognized as legitimate and valid</b> by the largest number of people. For example, the <i>inalienable right of caribous to vote for departmental elections</i> Idea is possible, but is not recognized by anyone. </p><ul><li>In order to create an Idea, click on <b>New Idea</b>. A window will open asking you to name and describe it.</li><li>You can choose to recognize an Idea by voting for it, or to desagree by voting against.</li></ul></p>
+
+views.help.debates=<p>Debates allow to <b>confront ideas</b> on a particular topic by exchanging opinions. It is the best way to collectively find an answer to a problem. There are two kinds of debates.</p><p><i>Opinion</i> Debates allow each user to give his opinion, and thus <b>argue freely</b> to defend his point of vue. This opinions will then be judged, with thumbs up and down, or by explicitely giving a positive or negative opinion.</p><p>The <i>Yes or No</i> Debates allow the user to clearly indicate if he agrees or not with a statement by indicating if he <b>for or against</b> it before to give his opinion</p>
+
+views.help.groups=<p>Groups allow to the users sharing the same goals to regroup themselves. There are two kinds of Groups : <b>public</b> Groups, where everybody can enter, and <b>private</b> Groups, where each application has to be validated by a Leader or an Administrator of the Group. Group Débates, Petitions and Actions, reserved to the members of the Group if it is private can be created. Each member of the group has a <b>rank</b>, of which there are presently three </p><ul><li>Member : can see and participate to the Group Débates, Petitions and Actions</li><li>Leader : has all the members privileges, and can create Group Débates, Petitions and Actions, change the description and review applications for private Groups</li><li>Administrator : has all the leaders privileges, can change member ranks and the Group name</li></ul></div></p>
+
+views.help.actions=<p>Actions allow to meet and act in the real world. They shall be done when a sufficient number of people agreed on what to do. It is possible to create an Action by giving a place, time, and proposition or to join an existing one. </p>
+
+views.help.petitions=<p>Petitions allow to collectively claim an opinion or a judgment. They are composed of a text, that Democras users are invited to approve. When a sufficient number of people is reached, they can be send to decision makers, or publiquely displayed.</p>
+
+views.help.spokenLanguages=Democras asks you to indicate all the languages you speak, in order to give you access to all Democras elements using a language you understand. By doing so, exchange between linguistic communities will be facilitated by people speaking several languages.
+
+views.contact.text=<p>In order to contact us, use our e-mail address : <a href="mailto:clement.moutet@hec.edu">clement.moutet@hec.edu</a> or <a href="mailto:pierre@democras.com">pierre@democras.com</a></p>
+
+views.error=Error
+views.error_connect=A connexion problem has been detected, please retry.
+
+views.about.idea=The project began at the end of 2014, from the observation that there was no platform of direct democracy that allow citizens to express and organize themselves. In order to ensure its impartiality and independence, it has been chosen <b>not to associate with any partisan organisation</b> to ensure <b>total freedom of opinion</b>, with respect of course of the limits of the law. <br> We are convinced that, with all opinions being fallible, the only entity that can judge if an opinion or movement is beneficial or not is the people itself, and not an organization, personality, charter or any other regulator.
+views.about.why=Why Democras?
+views.about.whoarewe=The founders
+views.about.contributed=Also contributed to the project
+views.about.clement=Since he was young, Clément has been interested by the information technologies and their impact on society. With his diploma in management at HEC Paris and in Computer Science at the EPFL, and noticing very quickly that a lot of people is very active on internet without being listened, he decided to combine his competencies in management and in the information technologies to give power back to the people creating a web platform that would give them back means of expression and mobilization.
+views.about.pap=Pierre-Armand has always liked to create, and create in the broadest sense, to give movement to the things. He thinks that a problem is appearing in most of democratic countries because only the elected people can take decisions on public life. Convinced that free exchange of ideas can improve democracy, he decided to be a co-founder of Democras, because he doesn''t see another solution for the next generations. Indeed, the internet is for him the basis of tomorrow's citizen communication.
+views.about.careertitle=Careers
+views.about.career=We are currently looking for <b>community managers</b> in order to help us to take care of our online presence. If you are interested, please contact us at <a href="mailto:contact@democras.com">contact@democras.com</a>
+views.about.donatetitle=Support us !
+views.about.donate=Democras is an ambitious project, and in order to preserve our independence we chose not to receive any subvention or financing. We thus absolutely need your help in order to pay the website needs. If you believe in this platform and would like to contribute, you can <b>make a donation</b>, that will allow us to pay for the servers, our promotion, and our development.
+views.about.thanks=Thank you so much
+views.about.thanksfordonation=We warmly thank you for you donation. Your contribution won't be forgotten, and help us to establish an online direct democracy.
+
+mail.titlepasswordforget=Democras password reset
+mail.passwordforget.hello=Hello {0},
+mail.passwordforget.youaskedanewpassword=You asked for a new password
+mail.passwordforget.clickonthisbutton=Click on the button below to change your password (valid for 24 hours):
+mail.titlesubscription=Your subscription on Democras
+mail.subscription.welcomeondemocras=Welcome on Democras, {0}.
+mail.subscription.text=You can now participate to the public debate and act concretely by connecting yourself on the main page and look for subjects that matter to you.<br/> You can make a real difference!
+mail.commentOnObject.title=You received a notification on Democras
+mail.commentOnObject.someonecommented=Someone commented on
+mail.commentOnYesOrNoOpinion.title=Someone commented an Opinion
+mail.commentOnGroup.title=Someone posted on a Group
+mail.commentOnPetition.title=Someone commented a Petition
+mail.commentOnAction.title=Someone commented an Action
+mail.commentOnConcept.title=Someone commented an Idea
+mail.yesornoopinionOnOpinion.title=Someone judged your Opinion on Democras
+mail.yesornoopinionOnOpinion.message=Someone wrote something about your Opinion
+mail.postopinion.message=wrote an opinion on the Debate
+mail.followMember.title=followed you on Democras !
+mail.followMember.message=You have been followed by
+mail.main.haveaproblem=A problem? Do not hesitate to contact us at contact@democras.com. Do not want to hear from us? Unsubscribe from the newsletters in your profile.
+mail.titleInviteFriends=invited you to join <b>Democras</b>.
+mail.titleInviteFriendsMail=invited you to join Democras.
+mail.inviteFriends.text=Democras is a <b>social network of participative democracy</b>.<br><b>Politically neutral</b>, it allows each citizen, no matter his opinions or status, to participate to the public debate, to create or join political movements, or to organize concrete actions in the real world.
+mail.inviteFriends.goOnDemocras=Go to Democras
+mail.inviteFriends.DoNotReceiveMoreMails=If you don’t want to hear more from us,
+mail.clichere=click here

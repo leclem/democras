@@ -1,0 +1,490 @@
+
+@(message: String, memberInfo: models.MemberInfo)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, memberInfo.username, Some("member")) {
+  @message
+  <!-- manque scroll displayMbr in group finir le mtype de displayMbr -->
+  <style>
+  .firstname{
+    font-size:16px;
+    font-weight:bold;
+  }
+  .pseudo{
+    font-size:15px;
+    font-weight:
+  }
+  .other{
+    padding-bottom:10px;
+  }
+  .wrap_profile{
+    z-index:0;
+    border-radius:4px;
+    position: relative;
+    margin-top: -85px;
+    text-align:center;
+    padding-top:90px;
+    padding-bottom:15px;
+    background:rgba(120,50,255,0.1);
+  }
+  .div_profile_pic{
+    z-index:1;
+    height:170px;
+    width:170px;
+    border-radius:100%;
+    position:relative;
+    margin:auto;
+  }
+  .div_profile_pic img{
+    z-index:1;
+    height:170px;
+    width:170px;
+    border-radius:100%;
+    border: 5px solid white;
+  }
+  @@media only screen and (min-width:750px){
+    .gauche{
+      border-right:1px solid black;
+    }
+  }
+  .change_pp{
+    margin-top: -85px;
+    text-align:center;
+  }
+  .crpreview{
+    height: 170px!important;
+    width: 170px!important;
+    border: solid 2px black;
+    border-radius: 100%;
+    background-color: #f7f7f7;
+    overflow: hidden;
+    width: 100%;
+    margin: auto;
+  }
+  .img-preview {
+    background-color: #f7f7f7;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+  }
+  .cropper-example-2{
+    width: 300px;
+    height: 300px;
+  }
+  </style>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+  <link  href="https://cdn.rawgit.com/fengyuanchen/cropper/v0.11.0/dist/cropper.min.css" rel="stylesheet">
+  <script src="https://cdn.rawgit.com/fengyuanchen/cropper/v0.11.0/dist/cropper.min.js"></script>
+  <script src="@routes.Assets.at("javascripts/toblob.min.js")"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/bootstrap.filestyle/1.1.0/js/bootstrap-filestyle.min.js"></script>
+  <div class="modal fade" id="upload_img" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header pheadermdl">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h2 class="acenter">@Messages("views.new_pic")</h2>
+        </div>
+        <div class="modal-body">
+            <input type="file" class="filestyle" id="file-chooser" accept="image/*"/><br>
+          <div id="results"></div>
+          <div id="cropper-example-2">
+            <img src="https://idmcr.s3-us-west-2.amazonaws.com/@(memberInfo.username).jpg" id="targetpic" style="width:300px;height:300px">
+          </div><br/><div class="btn" style="text-align:center;display: block;">
+            <button class="btn btn-primary" onclick="$image.cropper('rotate',90);"><span class="fa fa-rotate-right"></span></button>
+            <button class="btn btn-primary" onclick="$image.cropper('rotate',-90);"><span class="fa fa-rotate-left"></span></button>
+            <button class="btn btn-primary" onclick="$image.cropper('reset');"><span class="fa fa-refresh"></span></button>
+          </div><br>
+          <div class="crpreview">
+          </div><br/>
+          <button type="button" name="button" class="btn btn-primary acenter" onclick="getImgSz()" style="display:block;margin:auto" id="doneEditImg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';">@Messages("views.done")</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <br/>
+    <div class="div_profile_pic">
+      <!-- <img src="@routes.Assets.at("images/user.jpg")" id="upimg"/> -->
+      <img src="https://idmcr.s3-us-west-2.amazonaws.com/@(memberInfo.username).jpg" id="upimg" class="cp" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+    </div>
+    <div class="wrap_profile">
+      <div class="row">
+        <div class="col-xs-12 stats">
+        <b><span class="curStat3"></span></b> <a href="#" style="font-size: 1.3em;vertical-align: middle;" data-placement="bottom" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Html(Messages("views.nbTotranking"))" class="textinfo text-info"><span class="glyphicon glyphicon-info-sign"></span></a><br>
+
+          <span class="octicon octicon-organization" title="@Messages("views.nbTotFollowers")"></span> <span class="curStat1"></span> <span class="glyphicon glyphicon-thumbs-up" title="@Messages("views.nbTotlikes")"></span> <span class="curStat2"></span><a href="#" style="font-size: 1.3em;vertical-align: middle;" data-placement="bottom" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Html(Messages("views.nbTotFollowersandlikes"))" class="textinfo text-info"><span class="glyphicon glyphicon-info-sign"></span></a><br/>
+        </div>
+        <div class="col-xs-12 firstname">
+        <span class="var" id="eufname">@Html(memberInfo.firstname) </span>
+        <span class="var" id="euname">  @Html(memberInfo.name) </span>
+      </div></div>
+      <div class="row"><div class="col-xs-12">
+        <span class="var" id="euville"> @Html(memberInfo.ville)</span>
+      </div></div>
+      <div class="row"><div class="col-xs-12 other">
+        <span class="var linkit" id="eupres"> @Html(memberInfo.presentation) </span>
+      </div></div>
+      <div class="memberLang">
+        @Messages("views.spokenLanguages"):
+        <button class="btn btn-success btn-xs btnLangFr btnSImp" onclick="addLang(event,'fr')">Français</button>
+        <button class="btn btn-success btn-xs btnLangEs btnSImp" onclick="addLang(event,'es')">Español</button>
+        <button class="btn btn-success btn-xs btnLangEn btnSImp" onclick="addLang(event,'en')">English</button>
+        <a href="#" style="font-size: 1.3em;vertical-align: middle;" data-placement="bottom" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Html(Messages("views.help.spokenLanguages"))" class="textinfo text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+      </div>
+      <div>@Messages("views.forms.langwebsite"):
+        <button class="btn btn-xs" onclick="curLang('en');$(this).prop('disabled',true)">
+        <img src="@routes.Assets.at("images/en.jpg")" style="width:16px;cursor:pointer;" /></button>
+        <button class="btn btn-xs" onclick="curLang('es');$(this).prop('disabled',true)">
+          <img src="@routes.Assets.at("images/es.jpg")" style="width:16px;cursor:pointer;" /></button>
+        <button class="btn btn-xs" onclick="curLang('fr');$(this).prop('disabled',true)">
+          <img src="@routes.Assets.at("images/fr.jpg")" style="width:16px;cursor:pointer;" />
+        </button>
+      </div>
+      <div>
+        @Messages("views.getNewsletter"): <input type="checkbox" onchange="changeNewsletter()" id="getNews"/>
+      </div>
+      <button class="btn btn-primary btn-lg mt5" onclick="editbnt()" id="edbtn">@Messages("views.edit")</button>
+      <br/><br/><button class="btn btn-primary" data-pid="0" data-toggle="modal" data-target="#followersModal">@Messages("views.followers")</button>
+      <button class="btn btn-primary" data-pid="1" data-toggle="modal" data-target="#followersModal">@Messages("views.following")</button>
+    </div>
+    <div>
+      <div class="row">
+
+      <div class="output-memberLeft">
+      <div class="col-xs-12 col-sm-4 gauche">
+        <h3 class="acenter">@Messages("views.debates")</h3>
+        <div class="output-5debats"></div>
+        <h3 class="acenter">@Messages("views.groups")</h3>
+        <div class="output-groups"></div>
+      </div></div>
+      <div class="col-xs-12 col-sm-8 center"><h3 class="acenter">@Messages("views.activ")</h3>
+        <div class="output-member"></div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+</div>
+
+@handlebars.h5debats()
+  @handlebars.h5group()
+      @handlebars.hactivities()
+
+      <script type="text/javascript">
+      //stats
+      $.ajax({url: '/member/json/stats/@memberInfo.id', type: 'get', success: function(data){
+        console.log(data);
+        $('.curStat1').text(data.numberFollowers);//numberLikes
+        $('.curStat2').text(data.numberLikes);
+		$('.curStat3').html(getGetOrdinal(data.ranking));
+		//$('.curStat4').text(data.totalNumberMembers);
+      }});
+      //Newsletter
+      $('#getNews').prop('disabled', true);
+      $.ajax({
+            url: '/member/params/sendmail',
+            type: 'get',
+            dataType: 'JSON',
+            success: function(data) {
+              console.warn(data);
+              if(data==1){
+                $('#getNews').prop('checked', true);
+              }
+              $('#getNews').prop('disabled', false);
+            }});
+      function changeNewsletter(){
+        $('#getNews').prop('disabled',true);
+        var isCheck = 0;
+        if($('#getNews').is(':checked')){
+          isCheck = 1;
+        }
+        $.ajax({
+              url: '/member/params/sendmail',
+              type: 'post',
+              dataType: 'JSON',
+              data: {value:isCheck},
+              success: function(data) {
+                if(data==1){
+                  $('#getNews').prop('disabled', false);
+                }
+              }});
+      }
+      //languages
+      $.ajax({
+            url: '/member/json/languages',
+            type: 'get',
+            dataType: 'JSON',
+            success: function(data, status) {
+              if(data.languages.indexOf("fr") != -1){
+                $('.btnLangFr').addClass('active').removeClass('btnSImp');
+              }
+              if(data.languages.indexOf("en") != -1){
+                $('.btnLangEn').addClass('active').removeClass('btnSImp');;
+              }
+              if(data.languages.indexOf("es") != -1){
+                $('.btnLangEs').addClass('active').removeClass('btnSImp');;
+              }
+            }});
+     function addLang(event, plang){
+       $(event.target).prop('disabled',true);
+       if($(event.target).hasClass('active')){
+         var purl ="/member/removeLanguage";
+       }else {
+        var purl ="/member/addLanguage";
+       }
+       $.ajax({
+             url: purl,
+             type: 'post',
+             data: {language:plang},
+             success: function(data, status) {
+               $(event.target).toggleClass('active btnSImp').prop('disabled',false);
+             }});
+     }
+     function readURL(input) {
+             if (input.files && input.files[0]) {
+                 var reader = new FileReader();
+                 reader.onload = function (e) {
+                     $image.cropper('replace', e.target.result);
+                 }
+                 reader.readAsDataURL(input.files[0]);
+             }
+         }
+
+         $("#file-chooser").change(function(){
+             readURL(this);
+         });
+
+
+      var $image = $('#cropper-example-2 > img'),
+          cropBoxData,
+          canvasData;
+      $('#upimg').on('click',function(){$('#upload_img').modal('show');})
+
+        $('#upload_img').on('shown.bs.modal', function () {
+          $image.cropper({
+            minCropBoxWidth:300,
+            aspectRatio: 1,
+            preview: '.crpreview',
+            autoCropArea: 0.8,
+            built: function () {
+              // Strict mode: set crop box data first
+              $image.cropper('setCropBoxData', cropBoxData);
+              $image.cropper('setCanvasData', canvasData);
+            }
+          });
+      });
+      $('#upload_img').on('hidden.bs.modal', function () {
+        try{
+          cropBoxData = $image.cropper('getCropBoxData');
+          canvasData = $image.cropper('getCanvasData');
+          $image.cropper('destroy');
+        }catch(e){
+          debugit('catch');
+        }
+      });
+        function getImgSz(){
+          var formData = new FormData();
+          $image.cropper('getCroppedCanvas', {width: 170,height: 170}).toBlob(function(blob){
+            formData.append('picture', blob);
+            if (blob) {
+              $('#doneEditImg').prop('disabled',true);
+              results.innerHTML = '';
+              $.ajax('/member/edit/profilepicture',{method:'post',data:formData,processData: false,contentType: false,success:function(data){
+                if(data==1){$('#doneEditImg').prop('disabled',false);$('#tour1, .chImg').toggle();$('.xspicfl').attr('src', $('img').attr('src') + '?' + Math.random());$('#upimg').attr('src', $('img').attr('src') + '?' + Math.random());$('#upload_img').modal('hide');}
+              }});
+            } else {
+              results.innerHTML = 'Nothing to upload.';
+            }
+          },"image/jpeg");
+        }
+        var gSessionId=@session.get("userID");
+      </script>
+      @handlebars.hdispactivities()
+      @handlebars.hfollow(memberInfo)
+<script>
+$('.textinfo').popover();
+var curdisp = -1;
+var curloading = true;
+var plimit= 25;
+var hashExe;
+function displayMember(){
+  curloading =true;
+  $('.output-member').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loac loagif40"/>');
+  hashExe = {didVote:[],colordisplay:[],voteopYN:[],dejavote:[],voteYN:[],didVoteOp:[],checkStatus:[],isFollowingDebate:[]};
+  $.ajax({
+        url: '/member/json/activity/@memberInfo.id/'+curdisp+'/'+plimit,
+        type: 'get',
+        //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+        dataType: 'JSON',
+        success: function(data, status) {
+          $(".loac").hide();
+          hdispactivities(data);
+          exeFunc(hashExe);
+          curloading =false;
+          if(data.length==0){curloading=true;}
+        }});
+}
+
+function disp5debate(){
+  $('.output-5debats').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40 lg"/>');
+  $.ajax({url:"/member/json/objectsFollowed/3/-1/5",type:"get",success:function(data){
+          if(data.length == 0){
+            $('.output-5debats').html('<p class="acenter">@Messages("views.yunodebate") <a href="/debate">@Messages("views.debate_low") !</a></p>');
+          }
+          else{
+            var item = {'response' : data};
+            var source   = $('#debats-5template0').html();
+            var template = Handlebars.compile(source);
+            $('.lg').hide();
+            data.forEach(function(entry){
+              isFollowingDebate(entry.id);
+            });
+            $('.output-5debats').append(template(item));
+            followDebat();
+          }
+
+  }});
+}
+disp5debate();
+
+var curdisp2 = -1;
+var curloading2 = true;
+function displayGroups(){
+  $('.output-groups').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif2 loagif40"/>');
+  $.ajax({
+        url: '/member/json/groupsIn/@memberInfo.id/-1/5',
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data.length == 0){
+            $('.output-groups').html('<p class="acenter">@Messages("views.yunogroup") <a href="/group">@Messages("views.group_low") !</a></p>');
+          }
+          else{
+            data.forEach(function(entry){
+              entry.modificationTimestamp = (entry.modificationTimestamp)/1000;
+            });
+            var item = {'response' : data};
+            var source   = $('#group-template').html();
+            var template = Handlebars.compile(source);
+            $('.output-groups').html(template(item));
+          //$('#outputcomment .post-container').linkify({target: "_blank"});*/
+        }
+        }
+      });
+}
+displayGroups();
+
+  $(window).on('scroll', function(){
+    if ($('.activt').length > 0) {
+      if($('.activt:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+          curdisp= $('.activt:last()').children('.activmt').val();
+          displayMember();
+        }
+    }
+    });
+
+
+displayMember();
+
+var mode = 0;
+function editbnt(){
+  if(mode == 0){
+    $('#edbtn').text('@Messages("views.done")');
+    $('#eufname').css('cursor','pointer');
+    $('#eufname').editable({
+        ajaxOptions: {
+          type: 'post',
+        },
+        type: 'text',
+        placement: 'bottom',
+        url: '/member/edit/firstname',
+        name: 'key',
+        emptytext: '@Messages("views.empfname")',
+        pk: 'key',
+        validate: function(value) {
+          if($.trim(value) == '') {
+              return 'This field is required';
+          }
+        },
+        success: function(data, config){
+          debugit(data);
+          debugit(config);
+        }
+    });
+    $('#euname').css('cursor','pointer');
+    $('#euname').editable({
+        ajaxOptions: {
+          type: 'post',
+        },
+        type: 'text',
+        placement: 'bottom',
+        url: '/member/edit/name',
+        name: 'key',
+        emptytext: '@Messages("views.empname")',
+        pk: 'key',
+        validate: function(value) {
+          if($.trim(value) == '') {
+              return 'This field is required';
+          }
+        },
+        success: function(data, config){
+          debugit(data);
+          debugit(config);
+        }
+    });
+    $('#euville').css('cursor','pointer');
+    $('#euville').editable({
+        ajaxOptions: {
+          type: 'post',
+        },
+        type: 'text',
+        placement: 'bottom',
+        url: '/member/edit/ville',
+        name: 'key',
+        emptytext: '@Messages("views.empville")',
+        pk: 'key',
+        validate: function(value) {
+          if($.trim(value) == '') {
+              return 'This field is required';
+          }
+        },
+        success: function(data, config){
+          debugit(config);
+        }
+    });
+    $('#eupres').css('cursor','pointer');
+    $('#eupres').editable({
+        ajaxOptions: {
+          type: 'post',
+        },
+        type: 'textarea',
+        mode: 'inline',
+        placement: 'bottom',
+        url: '/member/edit/presentation',
+        name: 'key',
+        emptytext: '@Messages("views.emppres")',
+        pk: 'key',
+        validate: function(value) {
+          if($.trim(value) == '') {
+              return 'This field is required';
+          }
+        },
+        success: function(data, config){
+          debugit(data);
+          debugit(config);
+        }
+    });
+    mode =1;
+  }
+  else {
+    $('#edbtn').text('@Messages("views.edit")');
+    $('#eupres, #euville, #euname, #eufname').editable('destroy');
+    mode =0;
+  }
+}
+</script>
+
+}

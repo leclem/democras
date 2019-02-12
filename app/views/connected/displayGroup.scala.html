@@ -1,0 +1,998 @@
+
+@(message: String, group: Group, connected: Boolean = true)(implicit session: play.api.mvc.Session, messages: Messages)
+
+@defining(if(connected){messages}else{play.api.i18n.Messages.Implicits.applicationMessages(Lang(group.language), play.api.Play.current)}) { implicit messages =>
+
+@main(messages, connected, group.name) {
+  <!-- ne pas oublier les linkify-->
+  <style>
+path.slice{
+	stroke-width:2px;
+}
+polyline{
+	opacity: .3;
+	stroke: black;
+	stroke-width: 2px;
+	fill: none;
+}
+svg text.percent{
+	fill:white;
+	text-anchor:middle;
+	font-size:12px;
+}
+#myId{
+  height:100px;
+  width:100px;
+  background-color:red;
+  border: 1px black solid;
+}
+</style>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+
+  @message
+  @if(connected && Groups.canThisUserCreateGroupPetitions(session.get("userID").get.toLong, group.id)){
+    @create.hcpetition(group.id)
+  }
+
+  @if(connected && Groups.canThisUserCreateGroupPrivateDebates(session.get("userID").get.toLong, group.id)){
+    @create.hcdebate(group.id)
+  }
+
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10 col-md-offset-1 pheader linkit" style="padding-top:0;">
+        <div class="dgtop">
+          <br/>
+          @if(group.privacy == 0){
+            <span class="label label-primary" style="font-size:100%;margin-top:4px;">@Messages("views.group_publicgroup")</span>
+          }else{
+            <span class="label label-primary" style="font-size:100%;margin-top:4px;">@Messages("views.group_privategroup")</span>
+          }
+
+          @if(connected) {@if(Groups.userStatusInGroup(group.id, Integer.parseInt(session.get("userID").get)) == 0) {
+              <button  onclick='isjoin(event)' class="btn btn-success nbtn" id="joinbtn" >@Messages("views.group.jointhisgroup")</button>
+            }else{
+            @if(Groups.userStatusInGroup(group.id, Integer.parseInt(session.get("userID").get)) == 2){
+             <button  onclick='isjoin(event)' class="btn btn-primary adroite" id="cancelbtn" >@Messages("views.group.cancelgroupappliation")</button>
+            }else{
+              <button  onclick='isjoin(event)' class="btn btn-primary adroite" id="leavebtn" >@Messages("views.group.leavethisgroup")</button>
+            }}
+
+        @if(Groups.canThisUserChangeGroupDefinition(Integer.parseInt(session.get("userID").get), group.id)&&Groups.canThisUserChangeGroupName(Integer.parseInt(session.get("userID").get), group.id)){
+          <button class="btn btn-primary madroite" onclick="managebtn(0)" id="togedit">@Messages("views.manage")</button>
+        }else{
+          @if(Groups.canThisUserChangeGroupDefinition(Integer.parseInt(session.get("userID").get), group.id)){
+            <button class="btn btn-primary madroite" onclick="managebtn(0)" id="togedit">@Messages("views.manage")</button>
+          }else{
+            @if(Groups.canThisUserApproveApplications(Integer.parseInt(session.get("userID").get), group.id)||Groups.canThisUserChangeRanks(Integer.parseInt(session.get("userID").get), group.id)){
+              <button class="btn btn-primary madroite" onclick="managebtn(0)" id="togedit">@Messages("views.manage")</button>
+            }
+          }
+        }
+        }else{
+
+            <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" onclick='isjoin(event)' class="btn btn-success nbtn" id="joinbtn" >@Messages("views.group.jointhisgroupifconnected")</a>
+
+         }
+        </div>
+        <div class="dgmid"><br/>
+      <h2 class="acenter" id="egname" data-id="key" style="cursor:pointer">@Html(group.name)</h2>
+      <p style="word-wrap:break-word;" class="linkifyit acenter" id="egdef" style="cursor:pointer">@Html(group.definition)</p>
+      @if(connected && Groups.canThisUserDeleteGroup(session.get("userID").get.toLong, group.id)){
+        <a class="popDelete dcenter cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(1,@group.id,event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+        <script>
+           $('.popDelete').popover();
+        </script>
+      }
+      @if(connected){
+        <p class="acenter debat_time"><a data-toggle="modal" data-target="#mbinc" data-pid="@group.id" data-type="1" style='cursor:pointer;'><span id="spnbmbr">@group.numberMembers</span> @Messages("views.group_member")</a></p>
+      }else{
+        <p class="acenter debat_time"><a><span id="spnbmbr">@group.numberMembers</span> @Messages("views.group_member")</a></p>
+      }
+      </div>
+    </div>
+      <div class="col-xs-12" style="padding-top:0;">
+      @if(connected) {
+      @if(Groups.canThisUserCreateGroupPrivateDebates(Integer.parseInt(session.get("userID").get), group.id)&&Groups.canThisUserCreateGroupActions(Integer.parseInt(session.get("userID").get), group.id)&&Groups.canThisUserCreateGroupPetitions(session.get("userID").get.toLong, group.id)){
+        <div class="nbtn" style="text-align:center;">
+          <button data-toggle="modal" data-target="#nv_debat" class="btn btn-primary">@Messages("views.debate_new")</button>
+          <!-- <button class="btn btn-primary" onclick="createAction()">@Messages("views.action_new")</button> -->
+          <!--<button class="btn btn-primary" data-toggle="modal" data-target="#nv_petition">@Messages("views.petition_new")</button>-->
+          <a class="btn btn-primary" href="/createaction?@group.id">@Messages("views.action_new")</a>
+        </div>
+      }else{
+        @if(Groups.canThisUserCreateGroupPrivateDebates(Integer.parseInt(session.get("userID").get), group.id)){
+          <button data-toggle="modal" data-target="#nv_debat" class="btn btn-primary nbtn">@Messages("views.debate_new")</button>
+        }
+        @if(Groups.canThisUserCreateGroupActions(Integer.parseInt(session.get("userID").get), group.id)){
+          <button class="btn btn-primary nbtn" onclick="createAction()">@Messages("views.action_new")</button>
+        }
+      }
+
+      @if((group.privacy != 0 && connected && Groups.userStatusInGroup(group.id, Integer.parseInt(session.get("userID").get)) == 1)||(group.privacy == 0)){
+
+      <!-- <div class="col-xs-12 col-md-6 hom">
+        <a class="dcenter" onclick="justMbr()" style="font-size:1.2em;cursor:pointer;"><span id="spnbmbr">@group.numberMembers</span> @Messages("views.group_member")</a>
+        <div class="output-5ambr"></div>
+      </div> -->
+
+      @if(Groups.userStatusInGroup(group.id, Integer.parseInt(session.get("userID").get)) == 1){
+        <div class="nedit">
+      <div class="col-xs-12 col-md-3 hom">
+        <a class="dcenter" onclick="justDeb()" style="font-size:1.2em;cursor:pointer;">@Messages("views.debates")</a>
+        <div class="output-5debats"></div>
+      </div>
+      <div class="col-xs-12 col-md-6 hom">
+        <!-- <a class="dcenter" onclick="justPet()" style="font-size:1.2em;cursor:pointer;">@Messages("views.petitions")</a> -->
+        <!-- <div class="output-5petitions"></div> -->
+        <div id="tcom1@group.id"></div>
+      </div>
+      <div class="col-xs-12 col-md-3 hom">
+        <a class="dcenter" onclick="justAct()" style="font-size:1.2em;cursor:pointer;">@Messages("views.actpet")</a>
+        <div class="output-5actions"></div>
+      </div>
+      <div class="justMbr">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.group_member")</h2>
+        <div class="output-ambr"></div>
+      </div>
+      <div class="justDeb">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.debates")</h2>
+        <div class="output-debats"></div>
+      </div>
+      <div class="justPet">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.petitions")</h2>
+        <div class="output-petitions"></div>
+      </div>
+      <div class="justAct">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.actions")</h2>
+        <div class="output-actions"></div>
+      </div>
+      </div>
+    }else{
+      <div class="col-xs-12 col-md-3 hom">
+        <a class="dcenter" onclick="justDeb()" style="font-size:1.2em;cursor:pointer;">@Messages("views.debates")</a>
+        <div class="output-5debats"></div>
+      </div>
+      <div class="col-xs-12 col-md-6 hom">
+        <!-- <a class="dcenter" onclick="justPet()" style="font-size:1.2em;cursor:pointer;">@Messages("views.petitions")</a>
+        <div class="output-5petitions"></div> -->
+        <div id="tcom1@group.id"></div>
+      </div>
+      <div class="col-xs-12 col-md-3 hom">
+        <a class="dcenter" onclick="justAct()" style="font-size:1.2em;cursor:pointer;">@Messages("views.actpet")</a>
+        <div class="output-5actions"></div>
+      </div>
+      <div class="justMbr">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.group_member")</h2>
+        <div class="output-ambr"></div>
+      </div>
+      <div class="justDeb">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.debates")</h2>
+        <div class="output-debats"></div>
+      </div>
+      <div class="justPet">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.petitions")</h2>
+        <div class="output-petitions"></div>
+      </div>
+      <div class="justAct">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.actions")</h2>
+        <div class="output-actions"></div>
+      </div>
+    }
+      }
+
+    }else{
+    @if(group.privacy == 0){
+      <div class="col-xs-12 col-md-3 hom">
+        <a class="dcenter" onclick="justDeb()" style="font-size:1.2em;cursor:pointer;">@Messages("views.debates")</a>
+        <div class="output-5debats"></div>
+      </div>
+      <div class="col-xs-12 col-md-6 hom">
+        <!-- <a class="dcenter" onclick="justPet()" style="font-size:1.2em;cursor:pointer;">@Messages("views.petitions")</a>
+        <div class="output-5petitions"></div> -->
+        <div id="tcom1@group.id"></div>
+      </div>
+      <div class="col-xs-12 col-md-3 hom">
+        <a class="dcenter" onclick="justAct()" style="font-size:1.2em;cursor:pointer;">@Messages("views.actpet")</a>
+        <div class="output-5actions"></div>
+      </div>
+      <div class="justMbr">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.group_member")</h2>
+        <div class="output-ambr"></div>
+      </div>
+      <div class="justDeb">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.debates")</h2>
+        <div class="output-debats"></div>
+      </div>
+      <div class="justPet">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.petitions")</h2>
+        <div class="output-petitions"></div>
+      </div>
+      <div class="justAct">
+        <a onclick="hom()" style="font-size:1.2em;cursor:pointer;">@Messages("views.back")</a>
+        <h2 class="acenter">@Messages("views.actions")</h2>
+        <div class="output-actions"></div>
+      </div>
+    }
+    }
+      <div class="divedit">
+        <p class="acenter">@Groups.getNbreMembersWithRank((group.id: Long),1) @Messages("views.group_rank2")</p>
+        <p class="acenter">@Messages("views.group_appmbr")</p>
+        <div class="output-mbra"></div>
+        <p class="acenter">@Messages("views.manage")</p>
+        <div class="output-chmbr"></div>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+
+
+<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/dropzone/3.12.0/dropzone.min.js"></script> -->
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/3.12.0/css/dropzone.css" type="text/css" rel="stylesheet" /> -->
+<script>
+  var mode=0;
+  function hom(){
+    $('.justDeb, .justPet, .justAct, .justMbr').hide();
+    $('.hom').show();
+  }
+  $(function() {
+    comment5disp(1,@group.id,true,0,1);
+  });
+function isjoin(event){
+  $(event.target).prop('disabled',true);
+  if($("#joinbtn").text() == "@Messages("views.group.jointhisgroup")")
+  {
+    $.post("/group/join",{groupID: @group.id}, function(data){
+      $(event.target).prop('disabled',false);
+      if(data == 1)
+      {
+        location.reload();
+        $(event.target).text("@Messages("views.group.leavethisgroup")");
+        $('#spnbmbr').text(parseInt($('#spnbmbr').text())+1);
+      }
+      if (data == 2)
+      {
+        $(event.target).text("@Messages("views.group.cancelgroupappliation")");
+      }
+    });
+  }
+  else
+  {
+    $.post("/group/leave",{groupID: @group.id}, function(data){
+      $(event.target).prop('disabled',false);
+      if(data == 1)
+      {
+        location.reload();
+        $(event.target).text("@Messages("views.group.jointhisgroup")");
+        $('#spnbmbr').text(parseInt($('#spnbmbr').text())-1);
+      }
+      if(data == 2)
+      {
+        $(event.target).text("@Messages("views.group.jointhisgroup")");
+      }
+      if(data == 3)
+      {
+        $(event.target).text("@Messages("views.group.notleavinghisgroupbecauseonlyadmin")");
+      }
+    });
+  }
+}
+Handlebars.registerHelper("srank", function() {
+var lavalue = parseInt(Handlebars.escapeExpression(this.rank));
+if(lavalue == 1000){
+  return "@Messages("views.group_rank1000")";
+}else if (lavalue == 2) {
+  return "@Messages("views.group_rank2")";
+}
+else{
+  return "@Messages("views.group_rank1")";
+}
+});
+</script>
+<script id="ambr-template0" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="row rambr" style="margin:3px;">
+          <div class="col-xs-12 col-md-10 col-md-offset-1 debat dambr" style="background-color:rgba(0,0,255,0.05);padding:5px;">
+            <div class="col-xs-12 col-sm-9">
+              <a class="author_name" href="/member/{{id}}">{{firstname}}  {{name}} ({{username}})</a> <span class="rank-{{id}}">{{srank}}</span>
+              <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+              <input type="hidden" class="pmrank" value="{{rank}}"/>
+            </div>
+          </div>
+        </div>
+    {{/each}}
+  </script>
+<script>
+$('.justMbr, .justDeb, .justPet, .justAct').hide();
+/*var curdispambr = -1;
+var curloadambr = true;
+function displayambr(){
+  curloadambr =true;
+  $('.output-ambr').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif pambr loagif40"/>');
+  $.ajax({
+        url: 'json/membersInGroup/@group.id/'+curdispambr+'/25',
+        type: 'get',
+        //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+        dataType: 'JSON',
+        success: function(data, status) {
+          debugit(data);
+        var item = {'response' : data};
+        var source   = $('#ambr-template0').html();
+        var template = Handlebars.compile(source);
+        $('.pambr').hide();
+        $('.output-ambr').append(template(item));
+        if(data.length== 25){
+          curloadambr =false;
+        }
+        else{
+          curloadambr =true;
+        }
+        }
+      });
+}
+function display5ambr(){
+  $('.output-5ambr').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif p5ambr loagif40"/>');
+  $.ajax({
+        url: 'json/membersInGroup/@group.id/-1/5',
+        type: 'get',
+        //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+        dataType: 'JSON',
+        success: function(data, status) {
+          debugit(data);
+        var item = {'response' : data};
+        var source   = $('#ambr-template0').html();
+        var template = Handlebars.compile(source);
+        $('.p5ambr').hide();
+        $('.output-5ambr').append(template(item));
+        }
+      });
+}
+display5ambr();
+function justMbr(){
+  $('.hom').hide();
+  $('.justMbr').show();
+  if($('.output-ambr').children().length == 0){
+    displayambr();
+  }
+}
+$(window).on('scroll', function(){
+  if ($('.dambr').length > 0) {
+    if($('.dambr:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadambr){
+        curdispDeb= $('.dambr:last()').children('.pmT').val();
+        displayambr();
+    }
+  }
+});*/
+Handlebars.registerHelper("mT2", function() {
+var lavalue = parseInt(Handlebars.escapeExpression(this.updatedTimestamp));
+if(!isNaN((lavalue/1000))){
+  return (lavalue/1000);
+}});
+</script>
+
+@if(connected && Groups.canThisUserChangeGroupName(Integer.parseInt(session.get("userID").get), group.id)){
+<script>
+var listel ='#listapprobation, .createDbt, .divedit';
+$(listel).hide();
+function managebtn(pop){
+  if(mode==0){
+    $('.nedit').hide();
+    $(listel).show();
+    if($('.output-mbra').children().length == 0){
+      displaychmbr();
+      displayMbrA();
+    }
+  $('#egname').css('cursor','pointer');
+  $('#egname').editable({
+      ajaxOptions: {
+        type: 'post',
+      },
+      type: 'text',
+      title: 'Enter username',
+      //mode: 'inline',
+      url: '@group.id/edit/name',
+      name: 'key',
+      pk: 'key',
+      validate: function(value) {
+        if($.trim(value) == '') {
+            return 'This field is required';
+        }
+      },
+      success: function(data, config){
+        debugit(data);
+        debugit(config);
+      }
+  });
+  $('#egdef').css('cursor','pointer');
+  $('#egdef').editable({
+      ajaxOptions: {
+        type: 'post',
+      },
+      type: 'textarea',
+      mode: 'inline',
+      placement: 'bottom',
+      url: '@group.id/edit/definition',
+      name: 'key',
+      pk: 'key',
+      validate: function(value) {
+        if($.trim(value) == '') {
+            return 'This field is required';
+        }
+      },
+      success: function(data, config){
+        debugit(data);
+        debugit(config);
+      }
+  });
+  mode=1;
+  $('#togedit').text('@Messages("views.done")');
+  }
+  else {
+    $('.nedit').show();$(listel).hide();$('#egdef').editable('destroy');$('#egname').editable('destroy');mode=0;$('#togedit').text('@Messages("views.manage")');
+  }
+}
+
+</script>
+}else{
+@if(connected && Groups.canThisUserChangeGroupDefinition(Integer.parseInt(session.get("userID").get), group.id)){
+<script>
+var listel ='#listapprobation, .createDbt, .divedit';
+$(listel).hide();
+function managebtn(pop){
+  if(mode==0){
+    $('.nedit').hide();
+    $(listel).show();
+    if($('.output-mbra').children().length == 0){
+      displaychmbr();
+      displayMbrA();
+    }
+  $('#egdef').css('cursor','pointer');
+  $('#egdef').editable({
+      ajaxOptions: {
+        type: 'post',
+      },
+      type: 'textarea',
+      mode: 'inline',
+      placement: 'bottom',
+      url: '@group.id/edit/definition',
+      name: 'key',
+      pk: 'key',
+      validate: function(value) {
+        if($.trim(value) == '') {
+            return 'This field is required';
+        }
+      },
+      success: function(data, config){
+        debugit(data);
+        debugit(config);
+      }
+  });
+  mode=1;$('#togedit').text('@Messages("views.done")');
+  }
+  else {
+    $('.nedit').show();$(listel).hide();$('#egdef').editable('destroy');mode=0;$('#togedit').text('@Messages("views.manage")');
+  }
+}
+</script>
+}else{
+<script>
+  var listel ='#listapprobation, .createDbt, .divedit';
+  $(listel).hide();
+  function managebtn(pop){
+    if(mode==0){
+      $('.nedit').hide();
+      if($('.output-mbra').children().length == 0){
+        displaychmbr();
+        displayMbrA();
+      }
+    $(listel).show();
+    mode=1;$('#togedit').text('@Messages("views.done")');
+    }
+    else {
+      $('.nedit').show();$(listel).hide();mode=0;$('#togedit').text('@Messages("views.manage")');
+    }
+  }
+</script>
+}}
+
+@if(connected && Groups.canThisUserChangeRanks(Integer.parseInt(session.get("userID").get), group.id)){
+  <script id="chmbr-template0" type="text/x-handlebars-template">
+      {{#each response}}
+          <div class="row rchmbr" style="margin:3px;">
+            <div class="col-xs-12 col-md-10 col-md-offset-1 debat dchmbr" style="background-color:rgba(0,0,255,0.05);padding:5px;">
+              <div class="col-xs-12 col-sm-9">
+                <a class="author_name" href="/member/{{id}}">{{firstname}}  {{name}} ({{username}})</a> <span class="rank-{{id}}">{{srank}}</span>
+                <span class="debat_time" data-livestamp="{{mT2}}"></span>
+                <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+                <input type="hidden" class="pmrank" value="{{rank}}"/>
+              </div>
+              <div class="col-xs-12 col-sm-3">
+                <!-- Single button -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary btn-xs dropdown-toggle dt{{id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     @Messages("views.group_changest") <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="vchmbr" style="cursor:pointer;" data-id="{{id}}" data-v="1">@Messages("views.group_rank1")</a></li>
+                    <li><a class="vchmbr" style="cursor:pointer;" data-id="{{id}}" data-v="2">@Messages("views.group_rank2")</a></li>
+                    <li><a class="vchmbr" style="cursor:pointer;" data-id="{{id}}" data-v="1000">@Messages("views.group_rank1000")</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+      {{/each}}
+    </script>
+  <script>
+  //chmbr
+  var curdispchmbr = -1;
+  var curloadchmbr = true;
+  function displaychmbr(){
+    curloadchmbr =true;
+    $('.output-chmbr').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif pchmbr loagif40"/>');
+    $.ajax({
+          url: 'json/membersInGroup/@group.id/'+curdispchmbr+'/25',
+          type: 'get',
+          //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+          dataType: 'JSON',
+          success: function(data, status) {
+            debugit(data);
+          var item = {'response' : data};
+          var source   = $('#chmbr-template0').html();
+          var template = Handlebars.compile(source);
+          $('.pchmbr').hide();
+          if($('.output-chmbr').children().length == 0){
+            $('.output-chmbr').html(template(item));
+          }
+          else{
+            $('.output-chmbr').append(template(item));
+          }
+          if(data.length== 25){
+            curloadchmbr =false;
+          }
+          else{
+            curloadchmbr =true;
+          }
+          $('.dt@session.get("userID").get').hide();
+          votechmbr();
+          }
+        });
+  }
+  Handlebars.registerHelper("mT2", function() {
+  var lavalue = parseInt(Handlebars.escapeExpression(this.updatedTimestamp));
+  if(!isNaN((lavalue/1000))){
+    return (lavalue/1000);
+  }});
+  //displaychmbr(); //si edit
+  function votechmbr(){
+    $('.vchmbr').each(function(){
+      $(this).click(function(){
+        var thisone = $(this);
+        $.ajax({
+              url: '/group/@group.id/changeMemberRank',
+              type: 'post',
+              data: {newrank: thisone.data('v'), memberID: thisone.data('id')},
+              success: function(data, status) {
+                debugit(data);
+                if(thisone.data('v') ==1000){$('.rank-'+thisone.data('id')).text("@Messages("views.group_rank1000")");}
+                else if(thisone.data('v')==2){$('.rank-'+thisone.data('id')).text("@Messages("views.group_rank2")");}
+                else{$('.rank-'+thisone.data('id')).text("@Messages("views.group_rank1")");}
+              }
+            });
+      });
+      $(this).removeClass('vchmbr')
+    });
+  }
+  $(window).on('scroll', function(){
+    if ($('.dchmbr').length > 0) {
+      if($('.dchmbr:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadchmbr){
+          curdispDeb= $('.dchmbr:last()').children('.pmT').val();
+          displaychmbr();
+      }
+    }
+    });
+    </script>
+}
+@if(connected && Groups.canThisUserApproveApplications(Integer.parseInt(session.get("userID").get), group.id)){
+  <script id="mbra-template0" type="text/x-handlebars-template">
+      {{#each response}}
+          <div class="row rmbra" style="margin:3px;">
+            <div class="col-xs-12 col-md-10 col-md-offset-1 debat dmbr" style="background-color:rgba(0,0,255,0.05);padding:5px;">
+              <div class="col-xs-12 col-sm-9">
+                <a class="author_name" href="/member/{{id}}">{{firstname}}  {{name}} ({{username}})</a>
+                <span class="debat_time" data-livestamp="{{mT2}}"></span>
+                <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+                <input type="hidden" class="pmid" value="{{id}}"/>
+              </div>
+              <div class="col-xs-12 col-sm-3">
+                <button class="btn btn-success btn-sm vapp" data-id="{{id}}" data-v="1">@Messages("views.accept")</button>
+                <button class="btn btn-danger btn-sm vapp" data-id="{{id}}" data-v="0">@Messages("views.reject")</button>
+              </div>
+            </div>
+          </div>
+      {{/each}}
+    </script>
+  <script>
+  var curdispMbrA = -1;
+  var curloadMbrA = true;
+  function displayMbrA(){
+    curloadMbrA =true;
+    $('.output-mbra').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif pmbra loagif40"/>');
+    $.ajax({
+          url: 'json/membersWaintingForApprobation/@group.id/'+curdispMbrA+'/25',
+          type: 'get',
+          //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+          dataType: 'JSON',
+          success: function(data, status) {
+            debugit(data);
+          var item = {'response' : data};
+          var source   = $('#mbra-template0').html();
+          var template = Handlebars.compile(source);
+          $('.pmbra').hide();
+          if($('.output-mbra').children().length == 0){
+            $('.output-mbra').html(template(item));
+          }
+          else{
+            $('.output-mbra').append(template(item));
+          }
+          if(data.length== 25){
+            curloadMbrA =false;
+          }
+          else{
+            curloadMbrA =true;
+          }
+          votembra();
+          //$('.timeago').timeago();
+          //$('#outputcomment .post-container').linkify({target: "_blank"});
+          }
+        });
+  }
+  //displayMbrA(); si edit
+  function votembra(){
+    $('.vapp').each(function(){
+      if($(this).data('v') == 1){
+        $(this).attr('id', 'bvfm'+$(this).data('id'));
+      }
+      else {
+        $(this).attr('id', 'bvam'+$(this).data('id'));
+      }
+      $(this).click(function(){
+        var thisone = $(this);
+        $('bvam'+$(this).data('id')).prop('disabled',true);
+        $('bvfm'+$(this).data('id')).prop('disabled',true);
+        $.ajax({
+              url: '/group/@group.id/application',
+              type: 'post',
+              data: {decision: thisone.data('v'), memberID: thisone.data('id')},
+              success: function(data, status) {
+                debugit(data);
+                thisone.parents('.rmbra').hide();
+                $('.output-chmbr').empty();curdispambr=-1;displaychmbr();
+              }
+            });
+
+      });
+      $(this).removeClass('vapp')
+    });
+  }
+    $(window).on('scroll', function(){
+      if ($('.dmbr').length > 0) {
+        if($('.dmbr:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadMbrA){
+            curdispDeb= $('.dmbr:last()').children('.pmT').val();
+            displayMbrA();
+        }
+      }
+      });
+
+</script>
+}
+
+@if((group.privacy != 0 && connected && Groups.userStatusInGroup(group.id, Integer.parseInt(session.get("userID").get)) == 1)||(group.privacy == 0)){
+
+@handlebars.h5debats()
+  <script>
+  @if(connected && Groups.canThisUserCreateGroupPrivateDebates(Integer.parseInt(session.get("userID").get), group.id)){
+      var no5deb = '<button data-toggle="modal" data-target="#nv_debat" class="btn btn-primary nbtn">@Messages("views.debate_new")</button>';
+  }else{
+      var no5deb = '@Messages("views.noDebGoup")';
+  }
+
+  @if(connected && Groups.canThisUserCreateGroupPetitions(session.get("userID").get.toLong, group.id)){
+    var no5pet = '<!--<button class="btn btn-default" data-toggle="modal" data-target="#nv_petition">@Messages("views.petition_new")</button>-->';
+  }else{
+    var no5pet = '@Messages("views.noPetGoup")';
+  }
+
+  @if(connected && Groups.canThisUserCreateGroupActions(Integer.parseInt(session.get("userID").get), group.id)){
+    var no5act = '<a class="btn btn-default" href="/createaction?@group.id">@Messages("views.action_new")</a><br><!--<button class="btn btn-default" data-toggle="modal" data-target="#nv_petition">@Messages("views.petition_new")</button>-->';
+  }else{
+    var no5act = '@Messages("views.noActGoup")';
+  }
+  var curdispDeb = -1;
+  var curloadDeb = true;
+  function displayDebate(){
+    curloadDeb =true;
+    $('.output-debats').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+    $.ajax({
+          url: '/debate/json/lastxDebates/@group.id/'+curdispDeb+'/25',
+          type: 'get',
+          dataType: 'JSON',
+          success: function(data, status) {
+            debugit(data);
+          var item = {'response' : data};
+          var source   = $('#debats-5template0').html();
+          var template = Handlebars.compile(source);
+          $('.loagif').hide();
+          if($('.output-debats').children().length == 0){
+            $('.output-debats').html(template(item));
+          }
+          else{
+            $('.output-debats').append(template(item));
+          }
+          if(data.length== 25){
+            curloadDeb =false;
+          }
+          else{
+            curloadDeb =true;
+          }
+          //$('.timeago').timeago();
+          //$('#outputcomment .post-container').linkify({target: "_blank"});
+          }
+        });
+
+  }
+  function justDeb(){
+    $('.hom').hide();
+    $('.justDeb').show();
+    if($('.output-debats').children().length == 0){
+      displayDebate();
+    }
+  }
+  function display5Debate(){
+    $('.output-5debats').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loa5deb loagif40"/>');
+    $.ajax({
+          url: '/debate/json/lastxDebates/@group.id/-1/5',
+          type: 'get',
+          dataType: 'JSON',
+          success: function(data, status) {
+          if(data.length ==0){
+            $('.output-5debats').append(no5deb);
+          }
+          var item = {'response' : data};
+          var source   = $('#debats-5template0').html();
+          var template = Handlebars.compile(source);
+          $('.loa5deb').hide();
+          $('.output-5debats').append(template(item));
+          }
+        });
+  }
+  Handlebars.registerHelper("mT", function() {
+  var lavalue = parseInt(Handlebars.escapeExpression(this.modificationTimestamp));
+  if(!isNaN((lavalue/1000))){
+    return (lavalue/1000);
+  }});
+  $(window).on('scroll', function(){
+    if ($('.debat').length > 0) {
+      if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadDeb){
+          curdispDeb= $('.debat:last()').children('.pmT').val();
+          displayDebate();
+      }
+    }
+  });
+  display5Debate();
+  </script>
+  @handlebars.h5petitions()
+  <script>
+  // var curdispPet = -1;
+  // var curloadPet = true;
+  // function displayPetition(){
+  //   curloadPet =true;
+  //   $('.output-petitions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+  //   $.ajax({
+  //         url: '/comment/1/@group.id/'+curdispPet+'/25',
+  //         type: 'get',
+  //         dataType: 'JSON',
+  //         success: function(data, status) {
+  //           debugit('petitions');
+  //           debugit(data);
+  //         data.forEach(function(entry){
+  //           entry.definition = outputRestrict(entry.definition);
+  //           if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment(entry.timeEnd).format('LLL');}
+  //           entry.not5disp=1;
+  //         });
+  //         var item = {'response' : data};
+  //         var source   = $('#petitions-5template0').html();
+  //         var template = Handlebars.compile(source);
+  //         data.forEach(function(entry){
+  //           comment5disp(5,entry.id,true,2);
+  //         });
+  //         $('.loagif').hide();
+  //         if($('.output-petitions').children().length == 0){
+  //           $('.output-petitions').html(template(item));
+  //         }
+  //         else{
+  //           $('.output-petitions').append(template(item));
+  //         }
+  //         if(data.length== 25){
+  //           curloadPet =false;
+  //         }
+  //         else{
+  //           curloadPet =true;
+  //         }
+  //         }
+  //       });
+  // }
+  // function justPet(){
+  //   $('.hom').hide();
+  //   $('.justPet').show();
+  //   if($('.output-petitions').children().length == 0){
+  //     displayPetition();
+  //   }
+  // }
+  // function display5Petition(){
+  //   $('.output-5petitions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loa5pet loagif40"/>');
+  //   $.ajax({
+  //         url: '/comment/1/@group.id/-1/5',
+  //         type: 'get',
+  //         dataType: 'JSON',
+  //         success: function(data, status) {
+  //         data.forEach(function(entry){
+  //           entry.definition = outputRestrict(entry.definition);
+  //           if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment(entry.timeEnd).format('LLL');}
+  //         });
+  //         if(data.length ==0){
+  //           $('.output-5petitions').append(no5pet);
+  //         }
+  //         var item = {'response' : data};
+  //         var source   = $('#petitions-5template0').html();
+  //         var template = Handlebars.compile(source);
+  //         $('.loa5pet').hide();
+  //         $('.output-5petitions').append(template(item));
+  //         }
+  //       });
+  // }
+  // $(window).on('scroll', function(){
+  //   if ($('.petition').length > 0) {
+  //     if($('.petition:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadPet){
+  //         curdispPet= $('.petition:last()').children('.pmT').val();
+  //         displayPetition();
+  //     }
+  //   }
+  // });
+  //display5Petition();
+  </script>
+  @handlebars.h5actions()
+  <script>
+  var curdispAct = -1;
+  var curloadAct = true;
+  function displayAction(){
+    curloadAct =true;
+    $('.output-actions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+    $.ajax({
+          url: '/group/json/petitionAndDebates/@group.id/'+curdispAct+'/25',
+          type: 'get',
+          dataType: 'JSON',
+          success: function(data, status) {
+            debugit(data);
+            $('.loagif').hide();
+            data.forEach(function(entry){
+              entry.not5disp=1;
+              if(entry.addressLocation){
+                //entry.definition = outputRestrict(entry.definition);
+                entry.timeBegin = moment.utc(entry.timeBegin).format('LLL');
+                if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment.utc(entry.timeEnd).format('LLL');}
+                var item = {'response' : [entry]};
+                var source   = $('#actions-5template0').html();
+                var template = Handlebars.compile(source);
+                $('.output-5actions').append(template(item));
+                comment5disp(4,entry.id,true,2);
+              }else {
+                //entry.definition = outputRestrict(entry.definition);
+                if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment(entry.timeEnd).format('LLL');}
+                var item = {'response' : [entry]};
+                var source   = $('#petitions-5template0').html();
+                var template = Handlebars.compile(source);
+                $('.output-5actions').append(template(item));
+                comment5disp(5,entry.id,true,2);
+              }
+              lpdesigntriger();
+            });
+          // data.forEach(function(entry){
+          //   entry.definition = outputRestrict(entry.definition);
+          //   entry.timeBegin = moment.utc(entry.timeBegin).format('LLL');
+          //   if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment.utc(entry.timeEnd).format('LLL');}
+          //   entry.not5disp=1;
+          // });
+          // var item = {'response' : data};
+          // var source   = $('#actions-5template0').html();
+          // var template = Handlebars.compile(source);
+
+          // if($('.output-actions').children().length == 0){
+          //   $('.output-actions').html(template(item));
+          // }
+          // else{
+          //   $('.output-actions').append(template(item));
+          // }
+          // data.forEach(function(entry){
+          //   comment5disp(4,entry.id,true,2);
+          // });
+          if(data.length== 25){
+            curloadAct =false;
+          }
+          else{
+            curloadAct =true;
+          }
+          }
+        });
+  }
+  function justAct(){
+    $('.hom').hide();
+    $('.justAct').show();
+    if($('.output-actions').children().length == 0){
+      displayAction();
+    }
+  }
+  function display5Action(){
+    $('.output-5actions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loa5act loagif40"/>');
+    $.ajax({
+          url: '/group/json/petitionAndDebates/@group.id/-1/5',
+          type: 'get',
+          dataType: 'JSON',
+          success: function(data, status) {
+          console.log(data);
+          data.forEach(function(entry){
+            if(entry.addressLocation){
+              //entry.definition = outputRestrict(entry.definition);
+              entry.timeBegin = moment.utc(entry.timeBegin).format('LLL');
+              if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment.utc(entry.timeEnd).format('LLL');}
+              var item = {'response' : [entry]};
+              var source   = $('#actions-5template0').html();
+              var template = Handlebars.compile(source);
+              $('.output-5actions').append(template(item));
+            }else {
+              //entry.definition = outputRestrict(entry.definition);
+              if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment(entry.timeEnd).format('LLL');}
+              var item = {'response' : [entry]};
+              var source   = $('#petitions-5template0').html();
+              var template = Handlebars.compile(source);
+              $('.output-5actions').append(template(item));
+            }
+            lpdesigntriger();
+          });
+          if(data.length ==0){
+            $('.output-5actions').append(no5act);
+          }
+          $('.loa5act').hide();
+          }
+        });
+  }
+  $(window).on('scroll', function(){
+    if ($('.action').length > 0) {
+      if($('.action:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadAct){
+          curdispAct= $('.action:last()').children('.pmT').val();
+          displayAction();
+      }
+    }
+  });
+  display5Action();
+  </script>
+
+}
+}
+}

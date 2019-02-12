@@ -1,0 +1,26 @@
+@(message: String)(implicit messages: Messages)
+@import helper._
+
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <script src="https://code.jquery.com/jquery.min.js"></script> -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+  <meta charset="utf-8">
+  <title>Page not found</title>
+  <style>
+    .tc{text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="font-size:5em;text-align:center">D<span class="text-success">emocras</span></h2>
+    <h1 style="font-size:12em;display:block;margin:auto;text-align:center;">4<span class="text-success">0</span>4</h1>
+    <h2 class="tc">that's an err<span class="text-success">o</span>r</h2>
+    <h3 class="tc">@Messages("page_not_found")</h2>
+    <h4 class="tc"><a href='/'>@Messages("page_not_found_link")</a></h3>
+  </div>
+
+</body>
+</html>

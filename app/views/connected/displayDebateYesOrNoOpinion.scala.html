@@ -1,0 +1,118 @@
+
+@(message: String, debateYesOrNoOpinion: models.DebateYesOrNot, connectedd: Boolean)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, connectedd, Debates.getDebateObject(debateYesOrNoOpinion.idDebate).question) {
+
+	<script>
+fbq('track', 'ViewContent', {
+value: debateYesOrNoOpinion.id,
+currency: 'debate'
+});
+</script>
+
+<!-- @debateYesOrNoOpinion.id
+
+@debateYesOrNoOpinion.idDebate
+@debateYesOrNoOpinion.comment
+@debateYesOrNoOpinion.idMember
+@debateYesOrNoOpinion.username
+@debateYesOrNoOpinion.votefor
+@debateYesOrNoOpinion.voteagainst
+@debateYesOrNoOpinion.modificationTimestamp
+DebateYesOrNot(id: Long, idDebate: Long, comment:String, idMember: Long, username: String, opinion: Int, votefor: Int, voteagainst: Int, popularity: Long, modificationTimestamp: java.sql.Timestamp, creationTimestamp: java.sql.Timestamp) extends EntryClass -->
+<div class="container">
+  <div class="col-xs-12 col-md-10 col-md-offset-1 pheader">
+    <h2 style="text-align:center;" class="linkit">@Debates.getDebateObject(debateYesOrNoOpinion.idDebate).question</h2>
+    <div style="text-align:center;"><a href="/debate/@debateYesOrNoOpinion.idDebate">@Messages("views.returnDebate")</a></div>
+    <div class="shareBox"><a class="picon-facebook shic" onclick="return !window.open(this.href, 'Facebook', 'width=640,height=300')"  href="http://www.facebook.com/sharer.php?u=http://democras.com/debate/yesornoopinion/@debateYesOrNoOpinion.id"
+target="_blank"></a>
+    <a class="twitter-share-button picon-twitter-3 shic" onclick="return !window.open(this.href, 'Twitter', 'width=640,height=300')" href="https://twitter.com/intent/tweet?text=Check: http://democras.com/debate/yesornoopinion/@debateYesOrNoOpinion.id" data-size="large"></a>
+    <a href='mailto:?body=http://democras.com/debate/yesornoopinion/@debateYesOrNoOpinion.id'><span class='glyphicon glyphicon-envelope shic'></span></a>
+  </div>
+  </div>
+@connected.handlebars.hdebatimeline(connectedd,debateYesOrNoOpinion.idDebate)
+<div class="row">
+  <div class="col-xs-12 col-md-offset-1 col-md-10">
+
+<div id="onedeb"></div>
+</div>
+</div>
+</div>
+<span class="curCom">@Html(debateYesOrNoOpinion.comment)</span>
+<script>
+$('.curCom').hide();
+var item = {'response' : [{id: @debateYesOrNoOpinion.id,idDebate: @debateYesOrNoOpinion.idDebate,comment:
+$('.curCom').html(), idMember:
+@debateYesOrNoOpinion.idMember, opinion:
+@debateYesOrNoOpinion.opinion, username:
+'@debateYesOrNoOpinion.username', votefor:
+@debateYesOrNoOpinion.votefor,voteagainst:
+@debateYesOrNoOpinion.voteagainst,
+creationTimestamp: '@debateYesOrNoOpinion.creationTimestamp' }]};
+var source   = $('#debats-timeline').html();
+var template = Handlebars.compile(source);
+$('#onedeb').append(template(item));
+$(document).ready(function() {
+comment5disp(6,@debateYesOrNoOpinion.id,true,2);
+});
+$('#onedeb div.cd-timeline-block').removeClass('cd-timeline-block rnope');
+$('#onedeb div>div').css({'width':'100%'});
+@if(connectedd){
+didVote(@debateYesOrNoOpinion.id);
+voteYN();
+function didVote(pid){
+  $.get("/debate/json/opinion/voteForThisYesOrNoOpinion/@debateYesOrNoOpinion.idDebate/"+pid, function(data){
+    if(data == 0){
+      $('#bva'+pid).prop('disabled',true);
+    }
+    else if (data == 1) {
+      $('#bvf'+pid).prop('disabled',true);
+    }
+
+  });
+}
+var curvote;
+var btndown;
+function voteYN(){
+  // /debate/:id/yesorno/vote
+  $('.votex').each(function(){
+    if($(this).data('v') == 1){
+      $(this).attr('id', 'bvf'+$(this).data('id'));
+    }
+    else {
+      $(this).attr('id', 'bva'+$(this).data('id'));
+    }
+    $(this).click(function(){
+      debugit($(this));
+      var thisone = $(this);
+      thisone.prop('disabled',true);
+      $.ajax({
+            url: '/debate/@debateYesOrNoOpinion.idDebate/yesorno/vote',
+            type: 'POST',
+            data: {vote: thisone.data('v'), idOpinion: thisone.data('id')},
+            success: function(dat, status) {
+              if(thisone.data('v') == 0){
+                if ($('#bvf'+thisone.data('id')).is(':disabled')) {
+                  $('#bvf'+thisone.data('id')).children(".bvf").text(parseInt($('#bvf'+thisone.data('id')).children(".bvf").text())-1);
+                  $('#bvf'+thisone.data('id')).prop('disabled',false);
+                }
+                $('#bva'+thisone.data('id')).children(".bva").text(parseInt($('#bva'+thisone.data('id')).children(".bva").text())+1);
+                $('#bva'+thisone.data('id')).prop('disabled',true);//peut enlever
+              }
+              else {
+                if ($('#bva'+thisone.data('id')).is(':disabled')) {
+                  $('#bva'+thisone.data('id')).children(".bva").text(parseInt($('#bva'+thisone.data('id')).children(".bva").text())-1);
+                  $('#bva'+thisone.data('id')).prop('disabled',false);
+                }
+                $('#bvf'+thisone.data('id')).prop('disabled',true);//peut enlever
+                $('#bvf'+thisone.data('id')).children(".bvf").text(parseInt($('#bvf'+thisone.data('id')).children(".bvf").text())+1);
+              }
+            }});
+    });
+    $(this).removeClass('votex');
+  });
+}
+}
+</script>
+
+
+}

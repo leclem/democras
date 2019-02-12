@@ -1,0 +1,21 @@
+@()(implicit messages: Messages)
+<script id="group-template" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="rofw" style="margin:3px;">
+          <div class="debat" style="background-color:rgba(0,0,255,0.05);">
+
+          <a class="author_name" href="/group/{{id}}">{{{name}}}</a><span class="debat_time adroite" data-livestamp="{{modificationTimestamp}}"></span>
+          <br/>
+          <span style="word-wrap:break-word;">{{{definition}}}</span>
+          {{#if privacy}}
+            <span class="label label-primary adroite">@Messages("views.group_privategroup")</span> &nbsp;
+          {{/if}}
+          <!--<br/>Messages("views.group_nm"):
+          {{numberMembers}}
+          <span class="adroite">
+          <button class="btn btn-success btn-xs">Messages("views.group.jointhisgroup")</button>
+        </span>-->
+          </div>
+        </div>
+    {{/each}}
+  </script>

@@ -1,0 +1,17 @@
+@(comment: String, memberFollowing: models.MemberInfo, memberStats: models.MemberStats)(implicit messages: play.api.i18n.Messages)
+@mails.main(messages) {
+
+     <table>
+                            <tr>
+                                <td valign="top" style="padding:0 10px 10px 0">
+                                </td>
+                                <td valign="middle" style="padding:0 10px 10px 0;color:#000;font-size:14px;">@Messages("mail.followMember.message") @memberFollowing.username <br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- Mettre ici le profil du membre avec ses stats exactement comme affiché sur la page membre-->
+                            </tr>
+                            
+                        </table>
+			
+}

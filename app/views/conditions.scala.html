@@ -1,0 +1,63 @@
+@(message: String)(implicit messages: Messages)
+@import helper._
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Democras</title>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <meta charset="utf-8">
+<style>
+    .tj{text-align: justify;}
+    .acenter{
+      text-align: center;
+    }
+  </style>
+  </head><body>
+
+  <div class="row cgu">
+    <div class="col-xs-12 col-md-10 col-md-offset-1">
+      <h2 class="acenter">@Messages("views.cgu")</h2>
+      <p class="tj">
+        @Messages("views.cgu.1")
+        @Messages("views.cgu.group")
+
+        <br/>
+        @Messages("views.cgu.access")
+        <br/>
+      </p>
+
+    </div>
+  </div>
+      <div class="row policy" id="row_policy">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+      <h2 class="acenter">@Messages("views.policy")</h2>
+      <p class="tj">
+
+      @Messages("views.policy.cookie")
+      <br/><br/>
+      @Messages("views.policy.pers")
+      <br/><br/>
+      @Messages("views.policy.dataq")
+      <br/>
+      @Messages("views.policy.dataa")
+      <br/><br/>
+    </p>
+    </div>
+  </div>
+<!-- </head><body>
+
+  <div class="container dcenter">
+
+<h4 class="acenter"><a href='/'>@Messages("page_not_found_link")</a></h3>
+  </div> -->
+
+</body>
+
+</html>

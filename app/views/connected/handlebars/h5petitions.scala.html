@@ -1,0 +1,28 @@
+@()(implicit messages: Messages)
+<script id="petitions-5template0" type="text/x-handlebars-template">
+    {{#each response}}
+    <div class="row" style="margin:3px;">
+      <div class="col-xs-12 petition" style="background-color:rgba(0,0,255,0.05);border-radius:3px;">
+      <a class="author_name np" href="/petition/{{id}}">{{{name}}}</a>
+      <span class="pull-right np"><span class="debat_time adroite" data-livestamp="{{mT}}"></span></span>
+      <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+      <br/>
+      <div class="lpdesigntriger" style="word-wrap:break-word;">{{{definition}}}</div>
+      <br/>
+      <a data-toggle="modal" data-target="#mbinc" data-pid="{{id}}" data-type="5" style='cursor:pointer;'>
+        <span id="spnbmbr-{{id}}">{{numberJoined}}</span> @Messages("views.group_member")</a>
+      <span class="adroite">
+      <!--<button class="btn btn-xs joinbtn" id="jbtn{{id}}" data-id="{{id}}"></button>-->
+    </span>
+    {{#if not5disp}}
+    <div class="mt5">
+      <a onclick="comment5disp(5,{{id}},true,1);" style="cursor:pointer">@Messages("views.seecomments") (<span class="nbCom5{{id}}"></span>)</a> ·
+      <a onclick="addcommentbtn('5{{id}}')" class="cp">@Messages("views.commentadd")</a>
+    </div>
+    <div id="tcom5{{id}}"></div>
+    {{/if}}
+      </div>
+    </div>
+
+    {{/each}}
+  </script>

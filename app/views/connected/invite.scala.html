@@ -1,0 +1,96 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true) {
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-offset-3 col-md-6">
+        <h2 class="acenter">@Messages("views.share")</h2>
+        <!--
+        <button id="authorize-button" style="visibility: hidden">Authorize</button>
+        <script>
+        var clientId = '252380158127-l4qc4n0tlfjlglro5qlu7tqhfb7v17jf.apps.googleusercontent.com';
+var apiKey = 'AIzaSyBLobdMN-hvZIGeTzhlesTeZb22BILOnxo';
+var scopes = 'https://www.googleapis.com/auth/contacts.readonly';
+function handleClientLoad() {
+  gapi.client.setApiKey(apiKey);
+  window.setTimeout(checkAuth,1);
+}
+
+function checkAuth() {
+alert("heyh")
+  gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+}
+
+function handleAuthResult(authResult) {
+  var authorizeButton = document.getElementById('authorize-button');
+  $.ajax({
+      type: 'POST',
+      url: 'http://democras.com/authorize',
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response.
+      },
+      processData: false,
+      data: authResult['code']
+    });
+  if (authResult && !authResult.error) {
+    authorizeButton.style.visibility = 'hidden';
+  } else {
+    authorizeButton.style.visibility = '';
+    authorizeButton.onclick = handleAuthClick;
+  }
+}
+
+function handleAuthClick(event) {
+  gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+  return false;
+}
+// Load the API and make an API call.  Display the results on the screen.
+      function makeApiCall() {
+        gapi.client.load('plus', 'v1', function() {
+          var request = gapi.client.plus.people.get({
+            'userId': 'me'
+          });
+          request.execute(function(resp) {
+            var heading = document.createElement('h4');
+            var image = document.createElement('img');
+            image.src = resp.image.url;
+            heading.appendChild(image);
+            heading.appendChild(document.createTextNode(resp.displayName));
+            document.getElementById('content').appendChild(heading);
+          });
+        });
+      }
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <div id="content"></div>
+    <p>Retrieves your profile name using the Google Plus API.</p>
+        -->
+        
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=724251474386860";
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        function fbsend(){
+        FB.ui({
+        method: 'send',
+        link: 'https://democras.com',
+        app_id: '724251474386860',
+        display: 'popup'
+        });
+        }
+        </script>Facebook:
+        <div class="fb-like" data-href="https://www.facebook.com/Democras-516339725217427/" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+          <br/><a onclick="fbsend()">@Messages("views.sendwfb")</a><br/><br/><br/>
+          Twitter: <a class="twitter-share-button picon-twitter-3 shic" style="font-size: 2em;" onclick="return !window.open(this.href, 'Twitter', 'width=640,height=300')" href="https://twitter.com/intent/tweet?text=Check Democras! http://democras.com/" data-size="large"></a>
+          <br>E-mail: <a href='mailto:?body=Check this website: http://democras.com/'><span class='glyphicon glyphicon-envelope shic' style="font-size: 2em;"></span></a>
+
+      </div>
+    </div>
+  </div>
+
+}

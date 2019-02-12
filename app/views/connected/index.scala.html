@@ -1,0 +1,211 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, "Democras", Some("home")) {
+
+  @message
+
+<script>
+
+  </script>
+  <div class="container dcenter">
+  <p id="nonMobile"></p>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="indexInvite acenter">
+
+      </div>
+      <div class="mainInvite acenter">
+        @Messages("views.index.inviteYourFriends")
+        <a href="/share" class="btn btn-primary btn-xs">@Messages("views.index.inviteFriendsBtn")</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-3 hom" style="margin-left:15px;padding:0 5px;">
+
+        <div class="output-likedMembers"></div>
+      </div>
+      <div class="col-xs-1 col-md-1 hom"></div>
+      <div class="col-xs-11 col-md-7 hom">
+        <div class="output-member"></div>
+      </div>
+    </div>
+  </div>
+
+@handlebars.hactivities()
+@handlebars.hdispactivities()
+<script type="text/javascript">
+$('.cgu, .policy').hide();
+var curdisp = -1;
+var curloading = true;
+var plimit= 25;
+var hashExe;
+var firstLoading = true;
+function openInviteMore(event){
+  $(event.target).parents('.hideIndexInvite').removeClass('hideIndexInvite');
+  $(event.target).hide();
+}
+function getFriendsMember(){
+  $.ajax({
+        url: '/member/friends/get',
+        type: 'GET',
+        success: function(data, status) {
+          console.log(data);
+          if(data.length > 0){
+            $('.indexInvite').empty();
+            $('.indexInvite').addClass('hideIndexInvite');
+            // data.sort(function(a,b) {return (a.optionalUserId < b.optionalUserId) ? 1 : ((b.optionalUserId < a.optionalUserId) ? -1 : 0);} );
+            var data2 = shuffle(data);
+            data = data2.slice(0, 19);
+            data.forEach(function(entry){
+              if(entry.optionalUserId != -1){
+                var emailRow = '<div class="col-xs-12 col-sm-3 addFriend">'
+                +'<img class="friendPicture" src="https://idmcr.s3-us-west-2.amazonaws.com/'+entry.optionalUsername+'.jpg" onError="this.onerror=null;this.src=\'@routes.Assets.at("images/user.jpg")\';"/><br/>'
+                +entry.optionalUsername+"<br/><button class='btn btn-primary btn-xs' data-id='"+entry.optionalUserId+"' onclick='followMbr(event)'>@Messages("views.follow")</button></div>";
+              }else{
+                var emailRow = "<div class='col-xs-12 col-sm-3 addFriend'>"+entry.friendMail+"<br/><button class='btn btn-xs btn-primary' data-id='"+entry.friendMail+"' onclick='sentEmail(event)'>@Messages("views.invite")</button></div>";
+              }
+              $('.indexInvite').append(emailRow);
+            });
+            $('.indexInvite').append('<button class="btn btn-primary btn-sm btn-lp" style="top: 150px;" onclick="openInviteMore(event)">@Messages("views.readmore")</button>');
+          }
+        },
+        error: function(xhr, desc, err) {
+          debugit(xhr);
+          debugit("Details: " + desc + "\nError:" + err);
+        }
+  });
+}
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+function sentEmail(event){
+  var pid = $(event.target).data('id');
+  $(event.target).prop('disabled',true);
+      $.ajax({
+        url: '/member/friends/send',
+        type: 'POST',
+        data: {'mails[]': pid},
+        success: function(data,va,vb){
+          //debugit(data);
+          $(event.target).toggleClass('active');
+        }
+      });
+}
+getFriendsMember();
+function displayMember(){
+  curloading =true;
+  $('.output-member').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loac loagif40"/>');
+  hashExe = {didVote:[],colordisplay:[],voteopYN:[],dejavote:[],voteYN:[],didVoteOp:[],checkStatus:[],isFollowingDebate:[]};
+  $.ajax({
+        url: 'member/json/newsfeed/'+curdisp+'/'+plimit,
+        type: 'get',
+        //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+        dataType: 'JSON',
+        success: function(data, status) {
+          debugit(data);
+          $(".loac").hide();
+          hdispactivities(data);
+          exeFunc(hashExe);
+          debugit(data);
+          curloading =false;
+          if(data.length==0 && firstLoading){
+            $('.output-member').append("@Html(Messages("views.youhavetofollow"))");
+            $('.output-member').append('<br><a href="/concept" id="tourconcept"><div class="entg"><div> \
+      <span class="mega-octicon octicon-law fst"></span></div><div> \
+    <span class="tcat"> @Messages("views.concepts") </span> \
+    </div> \
+  </div></a><a href="/debate" id="tourdebate"><div class="entg"><div> \
+    <span class="mega-octicon octicon-megaphone fst"></span></div><div> \
+    <span class="tcat">  @Messages("views.debates")  </span> \
+    </div> \
+  </div></a><a href="/group" id="tourgroup"><div class="entg"><div> \
+    <span class="mega-octicon octicon-organization fst"></span></div><div> \
+    <span class="tcat" style="font-size: 16px;line-height: 32px;">  @Messages("views.groups")  </span> \
+    </div> \
+  </div></a><a href="/action" id="touraction"><div class="entg"><div> \
+    <span class="mega-octicon octicon-location fst"></span></div><div> \
+    <span class="tcat">  @Messages("views.actions")  </span> \
+    </div> \
+  </div></a>');
+            curloading =true;
+          }
+          firstLoading = false;
+        }
+
+        }
+
+        );
+}
+displayMember();
+$(window).on('scroll', function(){
+  if ($('.activt').length > 0) {
+    if($('.activt:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.activt:last()').children('.activmt').val();
+        displayMember();
+      }
+  }
+  });
+  ///member/json/newsfeed/:maxTimestamp/:number
+  likedMembersList = [];
+function displayLikedMembers(poffset){
+if (window.innerWidth > 800){
+  plmdisp='-1';
+  if(poffset == 0){
+    plmdisp='-1';
+  }
+  $.ajax({
+        url: '/member/json/rankingLikes/'+plmdisp+'/50',
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          debugit(data);
+          data.forEach(function(entry){
+            entry.presentation = entry.presentation.split("<br>").join(' ').substr(0,30);
+            likedMembersList.push(entry);
+          });
+          var item = {'response' : data};
+          var source   = $('#likedMembers-template').html();
+          var template = Handlebars.compile(source);
+          $('.output-likedMembers').append('<span class="dcenter" style="font-weight:bold;"> @Messages("views.likedMembers")</span>');
+          $('.output-likedMembers').append('<span class="dcenter" style="font-size:12px"> @Html(Messages("views.likedMembersExpl"))</span>');
+          $('.output-likedMembers').append('<span class="dcenter" style="font-size:12px"> @Html(Messages("views.likerMembersYourRanking")) <b><span class="mStat5"></span></b></span>');
+
+          $('.output-likedMembers').append(template(item));
+        }
+      });
+      }
+      else{
+        return;
+      }
+}
+displayLikedMembers(0);
+</script>
+<script id="likedMembers-template" type="text/x-handlebars-template">
+    {{#each response}}
+    <div class="mbox fmbox" style="min-height: 60px;margin:0;margin-bottom:3px;margin-right:15px;background-color:white;">
+      <img class="minpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+      <div class="mboxin">
+        <div class="mboxh"><a href='/member/{{id}}' class='done' style="font-weight: bold;">{{{firstname}}} {{{name}}}</a> <a class="author_name np done" href="/member/{{id}}"> @@{{{username}}}</a></div>
+        <div class="mboxb"><span style="word-wrap:break-word;">{{{presentation}}} ...</span><br/>
+          <span class="glyphicon glyphicon-thumbs-up"></span> {{numberLikes}}
+          {{#if isUserFollowing}}<button class="btn btn-primary btn-xs active" data-id="{{id}}" onclick="followMbr(event)">@Messages("views.munfollow")</button>
+          {{else}}
+          <button class="btn btn-primary btn-xs" data-id="{{id}}" onclick="followMbr(event)">@Messages("views.follow")</button>
+          {{/if}}
+        </div>
+        <div class="mboxf mbinctime">
+          <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+</script>
+}

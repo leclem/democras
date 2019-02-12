@@ -1,0 +1,6 @@
+{
+  "name": "Democras",
+  "description": "Because we believe in democracy",
+  "image": "heroku/scala",
+  "addons": [ "heroku-postgresql" ]
+}

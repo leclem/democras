@@ -1,0 +1,354 @@
+@(message: String, redirectURL: String = "/", isApp: Boolean = false)(implicit messages: Messages)
+@import helper._
+
+<!DOCTYPE html>
+<html xmlns:og="http://ogp.me/ns#">
+<head>
+
+  <meta charset="utf-8">
+
+  <title>Democras - @Messages("views.subtitle")</title>
+  <meta property="og:title" content="Democras - @Messages("views.subtitle")" />
+  <meta property="og:image" content="https://democras.com/assets/images/democras-fb4.png" />
+  <meta property="og:image" content="https://democras.com/assets/images/democras-fb5.png" />
+  <meta property="og:url" content="https://democras.com" />
+  <meta property="og:description" content="Réseau social de démocratie participative. A l'aide de débats, groupements, et actions de masse, il permet à tout citoyen ou mouvement de se concerter, de se regrouper et d'agir."/>
+
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+  <meta name="google-signin-scope" content="profile email">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/octicons/3.1.0/octicons.min.css" rel="stylesheet" type="text/css" />
+  <meta name="google-signin-client_id" content="483427273002-g9hcqk1f8j6p8t03di9f90lfr6kvg0jh.apps.googleusercontent.com.apps.googleusercontent.com">
+  <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
+  <!-- <script src="https://apis.google.com/js/api:client.js"></script> -->
+
+
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqBootstrapValidation/1.3.7/jqBootstrapValidation.min.js"></script>
+  <link href="@routes.Assets.at("css/pictonic.css")" rel="stylesheet">
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75476417-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script>
+<!--FB init Stuff-->
+window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    FB.init({
+      appId      : '514964885289852',                        // App ID from the app dashboard
+      status     : false,                                 // Check Facebook Login status
+      xfbml      : true                                  // Look for social plugins on the page
+    });
+    
+    // *** here is my code ***
+    if (typeof facebookInit == 'function') {
+        facebookInit();
+    }
+    
+  };
+(function(d){
+    var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+    js = d.createElement('script'); js.id = id; js.async = true;
+    js.src = "//connect.facebook.net/en_US/all.js";
+    d.getElementsByTagName('head')[0].appendChild(js);
+}(document));
+
+function connectFB(){
+  FB.getLoginStatus(function(response) {
+     console.log(response.authResponse.accessToken);
+     console.log("/connectfb/" + response.authResponse.accessToken + "/%2f")
+      window.location = "/connectfb/" + response.authResponse.accessToken + "/%2f";
+    });
+}
+
+function facebookInit() {
+   // Initialisation of the listener
+   FB.Event.subscribe('auth.statusChange', function () {
+     connectFB();
+   });
+}
+</script>
+
+  <!-- Bootstrap -->
+  <link href="@routes.Assets.at("css/bootstrap.min.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("css/index_v2.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("css/login_v2.css")" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Maven+Pro:500' rel='stylesheet' type='text/css'><!-- https://github.com/fengyuanchen/cropper -->
+  <style>
+  .DemoTitle{
+    font-size:5em;margin-bottom:0;
+  }
+  .DemoSubTitle{
+    margin:0;font-size:1.5em;
+  }
+  @@media (max-width:800px) {
+    .presentationPage2 h4{
+      font-size: 16px;
+    }
+    .h2{
+      font-size: .8em;
+    }
+    .presentationPage2 h2{
+      font-size: 25px;
+    }
+    .DemoTitle{
+      font-size:4em;margin-bottom:0;
+    }
+    .DemoSubTitle{
+      margin:0;font-size:1em;
+    }
+  }
+  @@media (max-height:500px) {
+    .content-wrapper .title{
+      margin-top: 0px;
+    }
+  }
+  html, body{
+    overflow: auto;
+  }
+  .titleimg{
+    margin-top: 25px;
+  }
+  .imgTitle{
+    width: 30%;
+max-width: 250px;
+    display: block;
+    margin: auto;
+    cursor: pointer;
+  }
+
+html, body {
+    height: inherit;
+}
+  </style>
+</head><body>
+
+
+  <!--page principale-->
+  <!-- <div id="video-background"></div>
+  <canvas id="canvas"></canvas> -->
+<div class="part1" style="margin-top:25px;">
+  <div class="title">
+    <h2 class="acenter DemoTitle" style="font-size: 2.8em;">D<span class="text-success">emocras</span></h2>
+    <h2 class="acenter DemoSubTitle"><span class="text-success"></span>@Messages("views.subtitle")<span class="text-success"></span></h2>
+  </div>
+  <div class="titleimg">
+  @if(!isApp){
+    <img src="https://s3-us-west-2.amazonaws.com/idmcr/static/android.jpg" alt="android" class="imgTitle" onclick="window.open('https://play.google.com/store/apps/details?id=com.democras.democras2')"/>
+  }
+  </div>
+  <div class="wrap">
+    @message
+    @helper.form(action = routes.Connection.processConnectionForm(redirectURL), 'id->"sb_input") {
+      <div class="form-group">
+        <input type="text" class="form-control" name='username' id="username_input" placeholder='@Messages("views.forms.username")'>
+      </div>
+      <div class="form-group">
+        <input type="password" name="password" class="form-control" id="pass_input" placeholder="@Messages("views.forms.password")">
+      </div>
+      <div class="form-group" style="text-align:center">
+        <!-- <input type="checkbox"/> @Messages("views.stayconnect") -->
+      </div>
+      <input class="btn btn-success btn-lg btn-block" id='connect' value="@Messages("views.connect")" type="submit"/>
+    }
+    
+    
+    <div class="or">
+      @Messages("views.or") <br/>
+      <div  class="fb-login-button"  data-scope="public_profile, email" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="false">@Messages("views.signinfb")</div>
+      <br/>@Messages("views.or") <br/>
+      <button class="btn btn-primary btn-sm" onclick="$('html, body').animate({ scrollTop: $('#part3').offset().top }, 1000);">@Messages("views.forms.subscription")</button><br/>
+      <!-- <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#about" style="margin-top: 3px;">@Messages("views.about")</button> -->
+
+    </div>
+    <a href="#" data-toggle="modal" data-target="#forgot" class="dcenter">@Messages("views.forgotPass")</a>
+    <!--<button type="button" name="button" id="customBtn">SIGN IN</button>-->
+  </div>
+</div>
+  <!-- <div class="pathField learn-more nextFooter cp" onclick="nextItem()">
+  <span style="vertical-align: middle;">@Messages("views.whatisdemocras")</span>
+</div> -->
+<div class="part2">
+  <div class="container ma" style="text-align:justify;">
+    <span class="presentationPage2">
+      @Html(Messages("views.democras_presentation"))
+    </span>
+
+  </div>
+</div>
+
+<div class="part3" id="part3">
+  <div class="title title2">
+    <h2 class="acenter DemoTitle" style="font-size: 2.8em;margin-top:0;">D<span class="text-success">emocras</span></h2>
+    <h2 style="margin-top:0;margin-bottom:0;text-align: center;" class="DemoSubTitle">@Messages("views.forms.subscription")</h2>
+  </div>
+  <div class="wrap wrapsub">
+    <form id="cmuf" novalidate onsubmit="return false;">
+      <div class="control-group">
+        <div class="form-group">
+          <input type="email" data-validation-required-message="@Messages("views.forms.required")" data-validation-email-message="@Messages("views.forms.notvalidmail")" class="form-control" name='mail' id="smail_input" placeholder='@Messages("views.forms.mail")' required>
+          <p class="help-block" style="color:red;"></p>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="form-group">
+          <input type="text" style="display:inline-block;" class="form-control inputSub" name='username' data-validation-required-message="@Messages("views.forms.required")" id="susername_input" placeholder='@Messages("views.forms.username")' pattern="(?!\d)([0-9A-Za-z\.\-\_]){5,}" data-validation-pattern-message="@Messages("views.forms.notvalid")" required>
+          <a  tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="@Messages("views.help.username")" class="textinfo"><span class="glyphicon glyphicon-info-sign"></span></a>
+          <p class="help-block" style="color:red;"></p>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="form-group">
+          <input type="password" style="display:inline-block;" name="password" data-validation-required-message="@Messages("views.forms.required")" class="form-control inputSub" id="spass_input" placeholder="@Messages("views.forms.password")"  minlength="5" required>
+          <a  tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="@Messages("views.help.password")" class="textinfo"><span class="glyphicon glyphicon-info-sign"></span></a>
+          <p class="help-block" style="color:red;"></p>
+        </div>
+      </div>
+      <input type="hidden" value="@Messages("views.curLang")" name="lang"/>
+      <div class="form-group" style="text-align:center">
+        <span style="font-size:0.7em;">@Html(Messages("views.agreecgu"))</span>
+      </div>
+      <div class="alert alert-warning" role="alert" id="alertnosubscribe"></div>
+      <input class="btn btn-success btn-lg btn-block" id="firstsubscribe" value="@Messages("views.forms.subscription")" type="submit"/>
+
+    </form>
+  </div>
+</div>
+<div class="policies">
+  <span class="cgufooter" style="padding: 20px 10px;font-size: 0.7em;">
+    <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=724251474386860";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+  <div class="fb-like" data-href="https://www.facebook.com/Democras-516339725217427/" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+
+
+    <a onclick="return !window.open(this.href, 'Terms', 'width=640,height=640')" href="/terms#row_policy">@Messages("views.policy")</a>  | <a onclick="return !window.open(this.href, 'Terms', 'width=640,height=640')" href="/terms">@Messages("views.cgu")</a>
+    <!-- s| <a href="/#">@Messages("views.sponsor")</a> -->
+    <span style="float:right;">@Messages("views.forms.lang"): <img onclick="curLang('en')" src="@routes.Assets.at("images/en.jpg")" style="width:16px;cursor:pointer;" />
+     <img onclick="curLang('es')" src="@routes.Assets.at("images/es.jpg")" style="width:16px;cursor:pointer;" />
+     <img onclick="curLang('fr')" src="@routes.Assets.at("images/fr.jpg")" style="width:16px;cursor:pointer;" />
+
+   </span>
+  </span>
+</div>
+
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js'></script> -->
+
+<script>
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if(iOS){
+  $('div.content-wrapper').addClass('ipadding');
+}
+$('.textinfo').popover();
+$('#username_input').focus();
+// ------------- VARIABLES ------------- //
+var ticking = false;
+var isFirefox = (/Firefox/i.test(navigator.userAgent));
+var isIe = (/MSIE/i.test(navigator.userAgent)) || (/Trident.*rv\:11\./i.test(navigator.userAgent));
+var scrollSensitivitySetting = 30; //Increase/decrease this number to change sensitivity to trackpad gestures (up = less sensitive; down = more sensitive)
+var currentSlideNumber = 0;
+function curLang(plang){
+  if(plang=="fr"){
+    $.get("/changelang/fr",function(data){
+      location.reload();
+    })
+  }else if(plang=="es"){
+    $.get("/changelang/es",function(data){
+      location.reload();
+    })
+  }else{
+    $.get("/changelang/en",function(data){
+      location.reload();
+    });
+  }
+}
+$('form#cmuf input').jqBootstrapValidation(
+  {
+    submitSuccess: function ($form, event) {
+      createmUser();
+    }
+  }
+);
+$('#alertnosubscribe').hide();
+function createmUser(){
+  $('#firstsubscribe').prop('disabled',true);
+  $.ajax({url:'/firstsubscribe',type:'post',data:$('#cmuf').serialize(),success:function(data){
+    if(data == 1){
+      $('#username_input').val($('#susername_input').val());
+      $('#pass_input').val($('#spass_input').val());
+      $('#connect').click();
+    }else if (data == 1) {
+      $('#alertnosubscribe').text('@Messages("views.nosubscribe.mail")').show('slideup');
+    }else if (data == 2) {
+      $('#alertnosubscribe').text('@Messages("views.nosubscribe.user")').show('slideup');
+    }else {
+      $('#alertnosubscribe').text('@Messages("views.nosubscribe.error")').show('slideup');
+    }
+    if(data != 1){$('#firstsubscribe').prop('disabled',false);}
+  }});
+}
+</script>
+<!-- <script src="@routes.Assets.at("javascripts/bubbles.js")"></script> -->
+<script>
+var dev =0;
+function debugit(ptar){
+  if(dev==1){
+    console.log(ptar);
+  }
+}
+function forgotPass(event){
+  if($.trim($('#newPassUser'))!=''){
+    $(event.target).button('loading');
+    $.ajax({url:'/forget',type:'post',data:{username:$.trim($('#newPassUser').val())},success:function(data){
+      if(data==1){
+        $(event.target).parents('.modal-body').empty().append('<p class="acenter">@Messages("views.successForget")</p>');
+      }else {
+        $(event.target).button('reset');
+      }
+    }});
+  }
+}
+function forgetPassEnter(e){
+  if (e.keyCode == 13) {
+    $('#forgetPassBtn').click();
+  }
+}
+</script>
+<div class="modal fade" id="forgot" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header pheadermdl">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="acenter" style="font-size: 1.4em;">@Messages("views.forgotPass")</h2>
+      </div>
+      <div class="modal-body">
+        <p class="acenter">@Messages("views.forgotPassMess")</p>
+        <input type="text" class="form-control" id="newPassUser" value="" placeholder="@Messages("views.forms.username")" onkeypress="forgetPassEnter(event)"/>
+        <div class="mt5" style="height:40px">
+          <button type="button" name="button" class="btn btn-success btn-block pc" data-loading-text="@Messages("views.loading")" onclick="forgotPass(event)" id="forgetPassBtn">@Messages("views.send")</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

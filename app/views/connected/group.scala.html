@@ -1,0 +1,247 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, Messages("views.groups"), Some("group")) {
+<!-- s'occuper de en attente d'approbation plus group managé plus réécrire modebtn-->
+  <div class="modal fade" id="nv_group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header pheadermdl">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h2 class="acenter">@Messages("views.head.legroup")</h2>
+          <p class="acenter">@Messages("views.head.lagdescription")</p>
+        </div>
+        <div class="modal-body">
+            <button class="btn btn-info nbtn" onclick="priv()" id="privbtn">@Messages("views.group_privategroup")</button><br/>
+            <span>
+              <input type="text" id="ngname" name="name" value="" class="form-control" placeholder="@Messages("views.forms.groupname")" onkeypress="remainingC(event, @Application.maxCharacternames)"/>
+              <!--<h6 class="pull-right count_message">@Application.maxCharacternames @Messages("views.remainingc")</h6><br>-->
+            </span>
+            <span>
+              <textarea type="text" id="ngdefinition" name="definition" class="form-control comtxa" placeholder="@Messages("views.forms.groupdefinition")" row="2" onkeypress="remainingC(event, @Application.maxCharacterDefinitions)"></textarea>
+              <!-- <h6 class="pull-right count_message">@Application.maxCharacterDefinitions @Messages("views.remainingc")</h6><br><br>-->
+            </span>
+            <div class="alert alert-warning" role="alert" id="alertpop">@Messages("views.debate_pop")</div>
+            <button class="btn btn-primary btn-block" data-loading-text="@Messages("views.loading")" onclick="createGroup(event)">@Messages("views.create")</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="listgroupe">
+  <div class="container">
+    <div class="row" style="margin:3px;">
+      <div class="col-xs-12 col-md-10 col-md-offset-1">
+        <div class="alert alert-info alert-dismissible atmess" id="atalert" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <span id="atmess">@message</span>
+        </div>
+    <ul class="nav nav-tabs">
+      <li role="presentation" id="li0" class="active" style="cursor:pointer;"><a style="color:black" onclick="modebtn(0)">@Messages("views.group_latest")</a></li>
+      <li role="presentation" id="li1" style="cursor:pointer;"><a style="color:black" onclick="modebtn(1);">@Messages("views.group_yours")</a></li>
+      <li role="presentation" id="li3" style="cursor:pointer;"><a style="color:black" onclick="modebtn(3);">@Messages("views.group_isadmin")</a></li>
+      <li role="presentation" id="li2" style="cursor:pointer;"><a style="color:black" onclick="modebtn(2);">@Messages("views.group_wait")</a></li>
+    </ul>
+    <div class="nbtn" style="text-align:center;">
+<button  class="btn btn-primary" data-toggle="modal" data-target="#nv_group" style="">@Messages("views.grp_new")</button>
+<a href="#" tabindex="0" style="font-size: 1.8em;vertical-align: middle;" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="@Messages("views.help.groups")" data-title="@Messages("views.head.legroup")" class="text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+</div>
+</div>
+</div>
+<div class="output-groups">
+
+</div>
+</div>
+</div>
+
+<script id="group-template" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="row" style="margin:3px;">
+          <div class="col-xs-12 col-md-10 col-md-offset-1 debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+
+          <a class="author_name col-xs-12 col-sm-10 np" href="/group/{{id}}">{{{name}}}</a>
+          <span class="col-xs-12 col-sm-2 np"><span class="debat_time adroite" data-livestamp="{{mT}}"></span></span>
+          <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+          <br/>
+          <div class="lpdesigntriger" style="word-wrap:break-word;">{{{definition}}}</div>
+          {{#if privacy}}
+          <span class="label label-primary adroite">@Messages("views.group_privategroup")</span> &nbsp;
+          {{/if}}
+          <br/>
+          <a data-toggle="modal" data-target="#mbinc" data-pid="{{id}}" data-type="1" style='cursor:pointer;'> <span id="spnbmbr-{{id}}">{{numberMembers}}</span> @Messages("views.group_member")</a>
+          <span class="adroite">
+          <button class="btn btn-xs joinbtn" id="jbtn{{id}}" data-id="{{id}}"></button>
+        </span>
+          </div>
+        </div>
+    {{/each}}
+  </script>
+
+<script>
+if($.trim($('#atmess').text())==""){
+  $('.atmess').hide();
+}
+$('#nv_group').on('shown.bs.modal', function(){
+  $('input#ngname').focus();
+});
+
+var curdisp = -1;
+var curloading = true;
+var mode = 0;
+var refresh= 1;
+var plimit=10;
+var ngpriv = 0;
+var axLoading1=false;
+$("#alertpop").hide();
+function modebtn(pop){
+  if(pop==0){refresh=1;mode=0;displayGroup();$('#li0').addClass('active');$('#li1, #li2, #li3').removeClass('active');}
+  else if(pop==2){refresh=1;mode=2;displayGroup();$('#li2').addClass('active');$('#li1, #li0, #li3').removeClass('active');}
+  else if(pop==3){refresh=1;mode=3;displayGroup();$('#li3').addClass('active');$('#li1, #li0, #li2').removeClass('active');}
+  else{refresh=1;mode=1;displayGroup();$('#li1').addClass('active');$('#li0, #li2, #li3').removeClass('active');}
+}
+function priv(){
+  if($('#privbtn').hasClass('active')){
+    ngpriv =0;
+    $('#privbtn').removeClass('active');
+  }else {
+    ngpriv = 1;
+    $('#privbtn').addClass('active');
+  }
+  ngpriv = 1;
+}
+function createGroup(e)
+{
+  if ($.trim($("#ngdefinition").val()) != ""||$.trim($("#ngname").val()) != "") {
+    $(e.target).button('loading');
+
+    var pdef = $.trim($("#ngdefinition").val());
+    var pname = $.trim($("#ngname").val());
+    $.ajax({
+          url: '/group',
+          type: 'POST',
+          data: {privacy: ngpriv, definition: pdef, name: pname},
+          success: function(data, status) {
+            if(typeof data === 'number'){
+            $('#nv_groupe').modal("hide");
+            location.href = '/group/'+data;}
+            else{alert(data);}
+          }});
+  }
+  else {
+    $('#alertpop').show('slideup');
+  }
+}
+function displayGroup(){
+  if(refresh==1){$('.output-groups').empty();curdisp = -1;refresh=0;}
+  if (mode==1) {var purl = 'member/json/groupsIn/@session.get("userID")/'+curdisp+'/'+plimit;}
+  else if (mode==2) {var purl = '/group/json/lastxGroupsAppliedByUser/'+curdisp+'/'+plimit;}
+  else if (mode==3) {var purl = '/group/json/lastxGroupsWithRank/1000/'+curdisp+'/'+plimit;}
+  else {var purl = '/group/json/lastxGroups/'+curdisp+'/'+plimit}
+  curloading =true;
+  if(axLoading1){return;}
+  axLoading1 = true;
+  $('.output-groups').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+  $.ajax({
+        url: purl,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data.length == 0 && mode == 1){
+            $('.output-groups').html('<p class="acenter">@Messages("views.yunogroup") @Messages("views.group_low") !</p>');
+          }
+          if(data.length == 0 && (mode == 2 || mode == 3)){
+            $('.output-groups').html('<p class="acenter">@Messages("views.yunosectgroup1") @Messages("views.group_low") @Messages("views.yunosectgroup2")</p>');
+          }
+          axLoading1 = false;
+          $('.loagif').hide();
+          data.forEach(function(entry){
+            //entry.definition = outputRestrict(entry.definition);
+          });
+          var item = {'response' : data};
+          var source   = $('#group-template').html();
+          var template = Handlebars.compile(source);
+          $('.output-groups').append(template(item));
+          lpdesigntriger();
+          data.forEach(function(entry){if(mode==0){checkStatus(entry.id);}else{$('#jbtn'+entry.id).hide();}});
+          if(data.length == 10){curloading =false;}
+          else{curloading =true;
+          }
+          debugit(data);
+        }
+      });
+}
+
+function checkStatus(pop){
+  $.ajax({
+        url: 'group/json/userStatusInGroup/'+pop,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data == 1){$('#jbtn'+pop).addClass('btn-primary').text('@Messages("views.member")').attr('title','');}
+          else if (data == 2) {
+            $('#jbtn'+pop).addClass('btn-primary').text('@Messages("views.wait")').attr('title','@Messages("views.group.leavethisgroup")?');
+          }
+          else {
+            $('#jbtn'+pop).addClass('btn-success').text('@Messages("views.group.jointhisgroup")').attr('title','');
+          }
+          debugit(data);
+          isjoin('#jbtn'+pop);
+        }
+      });
+}
+function isjoin(pvapop){
+      $(pvapop).click(function(){
+        var thisone = $(this);
+        thisone.removeClass('joinbtn');
+        if(thisone.text() == "@Messages("views.group.jointhisgroup")")
+        {
+          $.post("/group/join",{groupID: thisone.data('id')}, function(data){
+            if(data == 1)
+            {
+              $('#jbtn'+thisone.data('id')).addClass('btn-primary').removeClass('btn-success').text('@Messages("views.member")').attr('title','@Messages("views.group.leavethisgroup")?').attr('title','');
+              $('#spnbmbr-'+thisone.data('id')).text(parseInt($('#spnbmbr-'+thisone.data('id')).text())+1);
+            }
+            if (data == 2)
+            {
+              thisone.text("@Messages("views.wait")").addClass('btn-primary').removeClass('btn-success');
+            }
+          });
+        }
+        else
+        {
+          $.post("/group/leave",{groupID: thisone.data('id')}, function(data){
+            if(data == 1)
+            {
+              thisone.text("@Messages("views.group.jointhisgroup")").addClass('btn-success').removeClass('btn-primary');
+              $('#spnbmbr-'+thisone.data('id')).text(parseInt($('#spnbmbr-'+thisone.data('id')).text())-1);
+            }
+            if(data == 2)
+            {
+              thisone.text("@Messages("views.group.jointhisgroup")").addClass('btn-success').removeClass('btn-primary');
+            }
+            if(data == 3)
+            {
+              thisone.text("@Messages("views.group.notleavinghisgroupbecauseonlyadmin")");
+            }
+          });
+        }
+        //isjoin();
+      });
+}
+displayGroup();
+Handlebars.registerHelper("mT", function() {
+var lavalue = parseInt(Handlebars.escapeExpression(this.modificationTimestamp));
+if(!isNaN((lavalue/1000))){
+  return (lavalue/1000);
+}});
+$(window).on('scroll', function(){
+  if ($('.debat').length > 0) {
+    if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.debat:last()').children('.pmT').val();
+        displayGroup();
+    }
+  }
+});
+
+
+</script>
+}

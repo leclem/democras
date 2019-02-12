@@ -1,0 +1,239 @@
+
+@(message: String, memberInfo: models.MemberInfo)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, memberInfo.username) {
+
+<style>
+.firstname{
+  font-size:16px;
+  font-weight:bold;
+}
+.pseudo{
+  font-size:15px;
+  font-weight:
+}
+.other{
+  padding-bottom:10px;
+}
+.wrap_profile{
+  z-index:0;
+  border-radius:4px;
+  position: relative;
+  margin-top: -85px;
+  text-align:center;
+  padding-top:90px;
+  padding-bottom:15px;
+  background:rgba(120,50,255,0.1);
+}
+.div_profile_pic{
+  z-index:1;
+  height:170px;
+  width:170px;
+  border-radius:100%;
+  position:relative;
+  margin:auto;
+}
+.div_profile_pic img{
+  z-index:1;
+  height:170px;
+  width:170px;
+  border-radius:100%;
+  border: 5px solid white;
+}
+.center{
+  text-align:center;
+}
+@@media only screen and (min-width:750px){
+  .gauche{
+    border-right:1px solid black;
+  }
+}
+.change_pp{
+  margin-top: -85px;
+  text-align:center;
+}
+</style>
+  @message
+  @if(memberInfo != null){
+    <div class="container">
+      <br/>
+      <div class="div_profile_pic">
+        <img src="https://idmcr.s3-us-west-2.amazonaws.com/@(memberInfo.username).jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+      </div>
+      <div class="wrap_profile">
+        <div class="row">
+          <div class="col-xs-12 stats">
+            <b><span class="curStat3"></span></b><br>
+            <span class="octicon octicon-organization" title="@Messages("views.nbTotFollowers")"></span> <span class="curStat1"></span> <span class="glyphicon glyphicon-thumbs-up" title="@Messages("views.nbTotlikeshis")"></span> <span class="curStat2"></span> <a href="#" style="font-size: 1.3em;vertical-align: middle;" data-placement="bottom" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Html(Messages("views.nbTotFollowersandlikesHis"))" class="textinfo text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+      <br/>
+          </div>
+          <div class="col-xs-12 firstname">
+         @Html(memberInfo.firstname) @Html(memberInfo.name)
+        </div></div>
+        <div class="row"><div class="col-xs-12 pseudo">
+          @@@Html(memberInfo.username)
+        </div></div>
+        <div class="row"><div class="col-xs-12 other linkit">
+        @Html(memberInfo.ville) <br>
+        @Html(memberInfo.presentation)
+        </div></div>
+        <!-- if(User.isFollowingThisMember(Integer.parseInt(session.get("userID").get), memberInfo.id)){
+          <button class="btn btn-primary btn-lg" onclick="">UnFollow</button>
+        } else{
+          <button class="btn btn-primary btn-lg" onclick="">Follow</button>
+          Pour follow un mec, faire un POST avec key="userid a suivre(donc memberInfo.id pour ce bouton)" sur /member/follow
+        }-->
+        <button class="btn btn-primary btn-lg" id="followmbtn" onclick="followMbr2()">@Messages("views.follow")</button>
+        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#nv_convers" data-username="@memberInfo.username">@Messages("views.convers.new")</button>
+        <br/><br/><button class="btn btn-primary" data-pid="0" data-toggle="modal" data-target="#followersModal">@Messages("views.followers")</button>
+        <button class="btn btn-primary" data-pid="1" data-toggle="modal" data-target="#followersModal">@Messages("views.following")</button>
+      </div>
+      <div>
+
+        <div class="row">
+        <div class="output-memberLeft">
+          <div class="col-xs-12 col-sm-4 gauche">
+            <h3 class="acenter">@Messages("views.debates")</h3>
+            <div class="output-5debats"></div>
+            <h3 class="acenter">@Messages("views.groups")</h3>
+            <div class="output-groups"></div>
+          </div>
+          </div>
+          <div class="col-xs-12 col-sm-8"><h3 class="acenter">@Messages("views.activ")</h3>
+          <div class="output-member"></div>
+        </div>
+
+
+
+      </div>
+      <div class="row"><div class="col-xs-12 center"><br/><br/><i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script>
+  $.ajax({url:'/member/json/isFollowing/0/@memberInfo.id',type:'get',success: function(data){if(data==1){$('#followmbtn').text("@Messages("views.munfollow")").addClass("active");}}});
+  //$.ajax({url:'/member/json/isFollowing/1/@memberInfo.id',type:'get',success: function(data){debugit(data);}});
+
+  function followMbr2(){
+    var purl, ptext;
+    $('#followmbtn').prop('disabled',true);
+    if($('#followmbtn').text()=="@Messages("views.munfollow")"){
+      purl = "/member/unfollow";
+      ptext = "@Messages("views.follow")";
+    }
+    else{
+      purl = "/member/follow";
+      ptext = "@Messages("views.munfollow")";
+    }
+        $.ajax({
+          url:purl,
+          type: "post",
+          data: {objectFollowed: 0, idObject: @memberInfo.id},
+          success: function(data,va,vb){
+            //debugit(data);
+            $('#followmbtn').text(ptext).toggleClass('active');
+            $('#followmbtn').prop('disabled',false);
+
+          }
+        });
+
+  }
+  var gSessionId=@session.get("userID");
+  </script>
+
+  @handlebars.h5debats()
+    @handlebars.h5group()
+  @handlebars.hactivities()
+  @handlebars.hdispactivities()
+  @handlebars.hfollow(memberInfo)
+<script type="text/javascript">
+//stats
+$.ajax({url: '/member/json/stats/@memberInfo.id', type: 'get', success: function(data){
+  console.log(data);
+  $('.curStat1').text(data.numberFollowers);//numberLikes
+  $('.curStat2').text(data.numberLikes);
+  $('.curStat3').html(getGetOrdinal(data.ranking));
+  //$('.curStat4').text(data.totalNumberMembers);
+}});
+//rest
+var curdisp = -1;
+var curloading = true;
+var plimit= 25;
+var hashExe;
+function displayMember(){
+  curloading =true;
+  $('.output-member').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loac loagif40"/>');
+  hashExe = {didVote:[],colordisplay:[],voteopYN:[],dejavote:[],voteYN:[],didVoteOp:[],checkStatus:[],isFollowingDebate:[]};
+  $.ajax({
+        url: '/member/json/activity/@memberInfo.id/'+curdisp+'/'+plimit,
+        type: 'get',
+        //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+        dataType: 'JSON',
+        success: function(data, status) {
+          //debugit(data);
+          $(".loac").hide();
+          hdispactivities(data);
+          exeFunc(hashExe);
+          //debugit(data);
+          curloading =false;
+          if(data.length==0){curloading=true;}
+        }});
+}
+displayMember();
+function displayGroups(){
+  $('.output-groups').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif2 loagif40"/>');
+  $.ajax({
+        url: '/member/json/groupsIn/@memberInfo.id/-1/5',
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          data.forEach(function(entry){
+            entry.modificationTimestamp = (entry.modificationTimestamp)/1000;
+          });
+          //debugit(data);
+        var item = {'response' : data};
+        var source   = $('#group-template').html();
+        var template = Handlebars.compile(source);
+        $('.output-groups').html(template(item));
+          //$('#outputcomment .post-container').linkify({target: "_blank"});*/
+        }
+      });
+}
+displayGroups();
+function disp5debate(){
+  $('.output-5debats').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40 lg"/>');
+  $.ajax({url:"/debate/json/lastxDebatesParticipatedOfUser/@memberInfo.id/-1/5",type:"get",success:function(data){
+          //debugit(data);
+        var item = {'response' : data};
+        var source   = $('#debats-5template0').html();
+        var template = Handlebars.compile(source);
+        $('.lg').hide();
+        data.forEach(function(entry){
+          isFollowingDebate(entry.id);
+        });
+        $('.output-5debats').append(template(item));
+        followDebat();
+  }});
+}
+disp5debate();
+$(window).on('scroll', function(){
+  if ($('.activt').length > 0) {
+    if($('.activt:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.activt:last()').children('.activmt').val();
+        displayMember();
+      }
+  }
+  });
+  </script>
+
+
+   }else{
+     Cet utilisateur n'existe pas
+   }
+
+
+}

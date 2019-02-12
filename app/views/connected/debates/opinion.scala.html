@@ -1,0 +1,565 @@
+
+@(message: String, debateInfo: models.Debate, connectedd: Boolean = true)(implicit session: play.api.mvc.Session, messages: Messages)
+@defining(if(connectedd){messages}else{play.api.i18n.Messages.Implicits.applicationMessages(Lang(debateInfo.language), play.api.Play.current)}) { implicit messages =>
+
+  @main(messages, connectedd, debateInfo.question) {
+    @message
+    <link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+    @if(Messages("views.summernoteLang")=="fr-FR"){
+    <script src="@routes.Assets.at("javascripts/lang/summernote-fr-FR.js")"></script>
+    }
+    @if(Messages("views.summernoteLang")=="es-ES"){
+    <script src="@routes.Assets.at("javascripts/lang/summernote-es-ES.js")"></script>
+    }
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1 pheader">
+          <span>@Messages("views.debate_debate"): <span class="label label-primary">@Messages("views.debate_findasolution")</span></span>
+
+
+          <span class="debat_time pull-right" data-livestamp="@(debateInfo.modificationTimestamp/1000)"></span>
+          <h2 style="text-align:center;" class="linkit">@Html(debateInfo.question)</h2>
+          <p class="acenter">
+          @if(debateInfo.privateGroupId != -1){
+      	    @Messages("views.bygroup") <a href="@routes.Groups.getGroup(debateInfo.privateGroupId).url">@Groups.getGroupModel(debateInfo.privateGroupId).name</a>
+          }else{
+            @Messages("views.by") <a class="author_name" href="/member/@debateInfo.idCreator">@{controllers.User.gettUsercameFromID(debateInfo.idCreator)}</a>
+          }
+          </p>
+          <div class="shareBox"><a class="picon-facebook shic" onclick="return !window.open(this.href, 'Facebook', 'width=640,height=300')"  href="http://www.facebook.com/sharer.php?u=http://democras.com/debate/@debateInfo.id"
+    target="_blank"></a>
+          <a class="twitter-share-button picon-twitter-3 shic" onclick="return !window.open(this.href, 'Twitter', 'width=640,height=300')" href="https://twitter.com/intent/tweet?text=Check: http://democras.com/debate/@debateInfo.id" data-size="large"></a>
+          <a href='mailto:?body=http://democras.com/debate/@debateInfo.id'><span class='glyphicon glyphicon-envelope shic'></span></a>
+        </div>
+          @if(connectedd && (
+	        (debateInfo.privateGroupId != -1 && Groups.canThisUserDeleteGroupContent(session.get("userID").get.toLong, debateInfo.privateGroupId))
+	        ||
+	        (debateInfo.privateGroupId == -1 && session.get("userID").get.toLong == debateInfo.idCreator)
+	        )){
+            <a class="popDelete dcenter cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(3,@debateInfo.id,event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+            <script>
+               $('.popDelete').popover();
+            </script>
+	        }
+          <!-- <p class="acenter">Mettre ici les tags</p> -->
+
+
+          @if(!connectedd ) {
+            <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-primary jdbtn@debateInfo.id nbtn">@Messages("views.follow")</a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6 col-md-offset-3 opinionD">
+          <p style="text-align:center">@Messages("views.debate_avis")</p>
+
+          <textarea type="text" id="comment" name="comment" value="" class="form-control" placeholder="@Messages("views.forms.argueyourposition")" rows="3" style="resize: vertical;" onkeypress="$('#connectMdl').modal('show')" onclick="$('#connectMdl').modal('show')"></textarea>
+         <!--  <h6 class="pull-right count_message">@Application.maxCharactersOpinions @Messages("views.remainingc")</h6><br/><br/>-->
+          <div class="alert alert-warning" role="alert" id="alertpop">@Messages("views.debateo_pop")</div>
+          <button href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-primary adroite">@Messages("views.send")</button>
+
+        </div>
+      }else{
+        <button class="btn btn-primary jdbtn@debateInfo.id nbtn" onclick="followDebat()">@Messages("views.follow")</button>
+            </div>
+          </div>
+              @if(!Debates.hasAlreadyGivenHisOpinion(debateInfo.id, Integer.parseInt(session.get("userID").get), debateInfo.typeOfDebate)){
+                <div class="col-xs-12 col-md-6 col-md-offset-3 opinionD">
+                  <p style="text-align:center">@Messages("views.debate_avis")</p>
+
+                  <!-- <textarea type="text" id="comment" name="comment" value="" class="form-control" placeholder="@Messages("views.forms.argueyourposition")" rows="3" style="resize: vertical;" onkeypress="remainingC(event, @Application.maxCharactersOpinions)"></textarea> -->
+                  <div id="summernoteO"></div>
+                 <!--  <h6 class="pull-right count_message">@Application.maxCharactersOpinions @Messages("views.remainingc")</h6><br/><br/>-->
+                  <div class="alert alert-warning" role="alert" id="alertpop">@Messages("views.debateo_pop")</div>
+                  <input type="submit" class="btn btn-primary adroite" onclick="sendOpinion()" id="sdop" value="@Messages("views.send")">
+
+                </div>
+              }
+            }
+
+
+      <div class="col-xs-12">
+        <div class="listconcept">
+
+
+          <!--<table id="listco" class="table">
+        </table>-->
+        <div class="output-opinions">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@connected.handlebars.hdebatimeline(connectedd,debateInfo.id)
+<script id="opinion-template" type="text/x-handlebars-template">
+  {{#each response}}
+  <div class="row" style="margin:3px;">
+    <div class="debat">
+      <div style="word-wrap:break-word;" class="linkit lpdesigntriger">{{{comment}}}</div> @Messages("views.by") <a class="author_name" href="/member/{{idMember}}">{{username}}</a>
+      {{#if canChange}}
+      <a class="popDelete cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(32,{{id}},event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+      {{/if}}
+      <span class="debat_time adroite" data-livestamp="{{mT}}"></span>
+      <input type="hidden" class="pmT" id="oppmT{{id}}" value="{{popularity}}">
+      <br/>
+      <span class="adroite">{{math}}
+        @if(connectedd){
+          <button class="btn btn-success btn-xs voteopx" data-id="{{id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bvf">{{votefor}}</span></button>
+          <button class="btn btn-danger btn-xs voteopx" data-id="{{id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bva">{{voteagainst}}</span></button>
+          <button class="btn btn-primary btn-xs giveop{{id}}">@Messages("views.debate_avis")</button>
+        }else{
+          <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-success btn-xs voteopx" data-id="{{id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bvf">{{votefor}}</span></a>
+          <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-danger btn-xs voteopx" data-id="{{id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bva">{{voteagainst}}</span></a>
+          <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-primary btn-xs giveop{{id}}">@Messages("views.debate_avis")</a>
+        }
+      </span>
+      <br/>
+      @if(connectedd){
+      <div class="addgiveop{{id}} mt5">
+        <table width="100%">
+          <tr data-id={{id}}><td><button class="btn btn-success btn-block btn-sm yopbtn" onclick="vopbtn(event)"><span class="glyphicon glyphicon-thumbs-up"></span></button></td>
+            <td><button class="btn btn-danger btn-block btn-sm nopbtn" onclick="vopbtn(event)"><span class="glyphicon glyphicon-thumbs-down"></span></button></td></tr>
+          </table>
+          <!-- <textarea type="text" class="form-control" id="optx{{id}}" placeholder="@Messages("views.forms.argueyourposition")" rows="2" style="resize: vertical;"></textarea> -->
+          <div id="optx{{id}}"></div>
+          <div class="alert alert-warning" role="alert" id="alertin{{id}}">@Messages("views.debateyn_pop")</div>
+          <button class="btn btn-primary btn-xs adroite" data-id="{{id}}" onclick="sendynop(event)">@Messages("views.send")</button>
+        </div>}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <section id="cd-timeline{{id}}" class="cd-container" >
+          <!-- style="margin-top:-25px;" -->
+        </section>
+      </div>
+    </div>
+    {{/each}}
+  </script>
+  <script>
+  $('#summernoteO').summernote({lang:'@Messages("views.summernoteLang")',focus: true,minHeight: 100,placeholder: '@Messages("views.forms.argueyourposition")',toolbar: [
+      // [groupName, [list of button]]
+      ['style', ['bold', 'italic', 'underline', 'clear']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['table', ['table']],
+      ['insert', ['link', 'hr']],
+      ['view', ['fullscreen']]
+    ],callbacks: {
+        onPaste: function (e) {
+            var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+
+            e.preventDefault();
+
+            // Firefox fix
+            setTimeout(function () {
+                document.execCommand('insertText', false, bufferText);
+            }, 10);
+        }
+    }
+  });
+  $("#alertpop").hide();
+  @if(connectedd ) {
+  function sendOpinion()
+  {
+    if (!$('#summernoteO').summernote('isEmpty')) {
+      var pcom = $('#summernoteO').summernote('code');
+      $('#sdop').prop('disabled', true);
+      $.ajax({
+        url: '/debate/@debateInfo.id/opinion',
+        type: 'POST',
+        data: {comment: pcom},
+        success: function(data, status) {
+          debugit(data);
+          location.reload();
+        }
+      });
+    }
+    else {
+      $('#alertpop').show('slideup');
+    }
+  }
+  var hashop ={};
+  function vopbtn(e){
+    $(e.target).addClass('active');
+    $(e.target).parent().siblings().children().removeClass('active');//cousins
+    if($(e.target).hasClass('yopbtn')){hashop[$(e.target).parents('tr').data('id')]=1;}
+    else{hashop[$(e.target).parents('tr').data('id')]=0;}
+  }
+  function sendynop(e){
+    var thisid=$(e.target).data('id');
+    var pcom = $.trim($("#optx"+thisid).summernote('code'));
+    var pop = hashop[thisid];
+    if (pop!=undefined && !$("#optx"+thisid).summernote('isEmpty')) {
+      $(e.target).prop('disabled', true);
+      $(e.target).siblings('textarea').prop('disabled', true);
+      $.ajax({
+        url: '/debate/@debateInfo.id/opinion/'+thisid+'/yesorno',
+        type: 'POST',
+        data: {opinion: pop, comment: pcom},
+        success: function(data, status) {
+          getOpVote(thisid);
+          $('#cd-timeline'+thisid).empty();
+          $('.giveop'+thisid).text('@Messages("views.debate_already")').prop('disabled',true);
+          $('.addgiveop'+thisid).empty();
+        }
+      });
+    }
+    else {
+      $("#alertin"+thisid).show('slideup');
+    }
+
+  }
+  function followDebat(){
+    $('.jdbtn@debateInfo.id').prop('disabled',true);
+    if($('.jdbtn@debateInfo.id').text() == "@Messages("views.follow")"){
+      purl = "/member/follow";
+      ptext = "@Messages("views.munfollow")";
+    }
+    else{
+      purl = "/member/unfollow";
+      ptext = "@Messages("views.follow")";
+    }
+    $.ajax({
+      url:purl,
+      type: "post",
+      data: {objectFollowed: 3, idObject: @debateInfo.id},
+      success: function(data,va,vb){
+        debugit(data);
+        $('.jdbtn@debateInfo.id').text(ptext).prop('disabled',false).toggleClass('active');
+      }
+    });
+  }
+  function isFollowingDebate(){
+    $.ajax({url:'/member/json/isFollowing/3/@debateInfo.id',type:'get',success: function(data){if(data==1){$('.jdbtn'+@debateInfo.id).text("@Messages("views.munfollow")").addClass('active');}}});
+  }
+  isFollowingDebate();
+
+  function voteYN(){
+    // /debate/:id/yesorno/vote
+    $('.votex').each(function(){
+      if($(this).data('v') == 1){
+        $(this).attr('id', 'bvf'+$(this).data('id'));
+      }
+      else {
+        $(this).attr('id', 'bva'+$(this).data('id'));
+      }
+      $(this).click(function(){
+        debugit($(this));
+        var thisone = $(this);
+        thisone.prop('disabled',true);
+        $.ajax({
+          url: '/debate/@debateInfo.id/yesorno/vote',
+          type: 'POST',
+          data: {vote: thisone.data('v'), idOpinion: thisone.data('id')},
+          success: function(dat, status) {
+            if(thisone.data('v') == 0){
+              if ($('#bvf'+thisone.data('id')).is(':disabled')) {
+                $('#bvf'+thisone.data('id')).children(".bvf").text(parseInt($('#bvf'+thisone.data('id')).children(".bvf").text())-1);
+                $('#bvf'+thisone.data('id')).prop('disabled',false);
+              }
+              $('#bva'+thisone.data('id')).children(".bva").text(parseInt($('#bva'+thisone.data('id')).children(".bva").text())+1);
+              $('#bva'+thisone.data('id')).prop('disabled',true);//peut enlever
+            }
+            else {
+              if ($('#bva'+thisone.data('id')).is(':disabled')) {
+                $('#bva'+thisone.data('id')).children(".bva").text(parseInt($('#bva'+thisone.data('id')).children(".bva").text())-1);
+                $('#bva'+thisone.data('id')).prop('disabled',false);
+              }
+              $('#bvf'+thisone.data('id')).prop('disabled',true);//peut enlever
+              $('#bvf'+thisone.data('id')).children(".bvf").text(parseInt($('#bvf'+thisone.data('id')).children(".bvf").text())+1);
+            }
+          }});
+        });
+        $(this).removeClass('votex');
+      });
+    }
+  }//end is connected
+    function voteopYN(){
+      // /debate/:id/yesorno/vote
+      $('.voteopx').each(function(){
+        if($(this).data('v') == 1){
+          $(this).addClass('bvopf'+$(this).data('id'));
+        }
+        else {
+          $(this).addClass('bvopa'+$(this).data('id'));
+        }
+        @if(connectedd ) {
+        $(this).click(function(){
+          debugit($(this));
+          var thisone = $(this);
+          thisone.prop('disabled',true);
+          $.ajax({
+            url: '/debate/@debateInfo.id/opinion/vote',
+            type: 'POST',
+            data: {vote: thisone.data('v'), idOpinion: thisone.data('id')},
+            success: function(dat, status) {
+              if(thisone.data('v') == 0){
+                if ($('.bvopf'+thisone.data('id')).is(':disabled')) {
+                  $('.bvopf'+thisone.data('id')).children(".bvf").text(parseInt($('.bvopf'+thisone.data('id')).children(".bvf").text())-1);
+                  $('.bvopf'+thisone.data('id')).prop('disabled',false);
+                }
+                $('.bvopa'+thisone.data('id')).children(".bva").text(parseInt($('.bvopa'+thisone.data('id')).children(".bva").text())+1);
+                $('.bvopa'+thisone.data('id')).prop('disabled',true);//peut enlever
+              }
+              else {
+                if ($('.bvopa'+thisone.data('id')).is(':disabled')) {
+                  $('.bvopa'+thisone.data('id')).children(".bva").text(parseInt($('.bvopa'+thisone.data('id')).children(".bva").text())-1);
+                  $('.bvopa'+thisone.data('id')).prop('disabled',false);
+                }
+                $('.bvopf'+thisone.data('id')).prop('disabled',true);//peut enlever
+                $('.bvopf'+thisone.data('id')).children(".bvf").text(parseInt($('.bvopf'+thisone.data('id')).children(".bvf").text())+1);
+              }
+              colordisplay(thisone.data('id'));
+            }});
+          });
+        }else {
+          colordisplay($(this).data('id'));
+        }
+          $(this).removeClass('voteopx');
+        });
+      }
+      var curdisp = 9223372036854770000;
+      var curloading = true;
+      function displayDebate(){
+        curloading =true;
+        var plimit= 25;
+        $('.output-opinions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+        $.ajax({
+          //url: '/debate/json/opinion/@debateInfo.id/lastxopinions/'+curdisp+'/25',
+          url: '/debate/json/opinion/@debateInfo.id/lastxopinionsOrderedByPopularity/'+curdisp+'/'+plimit,
+          type: 'get',
+          dataType: 'JSON',
+          success: function(data, status) {
+            $('.loagif').hide();
+            if (data.length<=0) {
+              $('#cd-timeline').hide();
+            }
+            else {
+              debugit(data);
+              data.forEach(function(entry){
+                @if(connectedd ) {
+                  if(@session.get("userID") == entry.idMember){
+                    entry.canChange=true;
+                  }
+                }
+                //entry.comment = outputRestrict(entry.comment);
+              });
+
+              var item = {'response' : data};
+              var source   = $('#opinion-template').html();
+              var template = Handlebars.compile(source);
+              $('.output-opinions').append(template(item));
+              lpdesigntriger();
+              @if(connectedd ) {
+                voteopYN();
+              }
+              @if(connectedd ) {
+              data.forEach(function(entry){
+                $("#alertin"+entry.id).hide();
+                $("#optx"+entry.id).summernote({lang:'@Messages("views.summernoteLang")',focus: true,minHeight: 100,placeholder: '@Messages("views.forms.argueyourposition")',toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'hr']],
+                    ['view', ['fullscreen']]
+                  ],callbacks: {
+                      onPaste: function (e) {
+                          var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+
+                          e.preventDefault();
+
+                          // Firefox fix
+                          setTimeout(function () {
+                              document.execCommand('insertText', false, bufferText);
+                          }, 10);
+                      }
+                  }
+                });
+                showOpBtn(entry.id, entry.numberofyesornoopinions);
+                //readMore(entry.id,0);
+                @if(connectedd ) {
+                  dejavote(entry.id);
+                }
+              });
+              $('.popDelete').popover();
+            }else{
+              data.forEach(function(entry){
+                //colordisplay(entry.id);
+                showOpBtn(entry.id, entry.numberofyesornoopinions);
+              });
+              voteopYN();
+            }
+              if(data.length== plimit){
+                curloading =false;
+              }
+              else{
+                curloading =true;
+              }
+              $('.linkit').linkify({target: "_blank"});
+              //$('.timeago').timeago();
+              //$('#outputcomment .post-container').linkify({target: "_blank"});
+              //addcommentctrl();
+              //faire le linkify
+            }
+          }
+        });
+      }
+      function showOpBtn(pid, numberYesOrNo){
+        if(numberYesOrNo!= 0){
+          $('#cd-timeline'+pid).html('<button class="btn btn-primary btn-xs dcenter ma" onclick="getOpVote('+pid+')">Voir les opinions ('+numberYesOrNo+')</button>');
+        }
+      }
+      var axLoading32 =[];
+      var curopdisp = 9223372036854770000;
+      function getOpVote(pid){
+        plimit=15;
+        if(axLoading32.indexOf(pid) > -1){return;}
+        $('#cd-timeline'+pid).append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+        if($('#cd-timeline'+pid).children('.pmT') >=0){
+
+        }
+        axLoading32.push(pid);
+        $.ajax({
+          url: "/debate/json/opinion/@debateInfo.id/opinionsYesOrNosOrderedByPopularity/"+pid+"/-1/"+curopdisp+"/"+plimit,
+          type: 'get',
+          //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+          dataType: 'JSON',
+          success: function(data, status) {
+            var indexloa32 =  axLoading32.indexOf(pid);
+            axLoading32.splice(indexloa32, 1);
+            if (data.length<=0) {
+              $('#cd-timeline'+pid).hide();
+            }
+            else {
+              $('#cd-timeline'+pid).show();
+              //var date = new Date(timestamp*1000);
+              data.forEach(function(entry){
+                @if(connectedd ) {
+                if(@session.get("userID") == entry.idMember){
+                  entry.canChange=true;
+                }
+              }
+                //entry.comment = outputRestrict(entry.comment);
+              });
+              debugit(data);
+              var item = {'response' : data};
+              var source   = $('#debats-timeline').html();
+              var template = Handlebars.compile(source);
+              $('.loagif').hide();
+              //Attention si timestamp popularity!
+              if($('#cd-timeline'+pid).children('.btn').length >= 0){
+                $('#cd-timeline'+pid).empty();
+              }
+              if($('#cd-timeline'+pid).children().length == 0){
+                $('#cd-timeline'+pid).html(template(item));
+              }
+              else{
+                $('#cd-timeline'+pid).append(template(item));
+              }
+              lpdesigntriger();
+              $('.popDelete').popover();
+              data.forEach(function(entry){
+                @if(connectedd ) {
+                  didVote(entry.id);
+                }
+                //readMore(entry.id,1);
+                comment5disp(6,entry.id,true,2);
+              });
+              @if(connectedd ) {
+                voteYN();
+              }
+              if(data.length== plimit){
+                $('#cd-timeline'+pid).append('<button class="btn btn-primary btn-xs dcenter ma" onclick="getOpVote('+pid+')">Voir les opinions</button>');
+              }
+            }
+            $('.linkit').linkify({target: "_blank"});
+          }
+        });
+      }
+      @if(connectedd ) {
+      function didVote(pid){
+        $.get("/debate/json/opinion/voteForThisYesOrNoOpinion/@debateInfo.id/"+pid, function(data){
+          if(data == 0){
+            $('#bva'+pid).prop('disabled',true);
+          }
+          else if (data == 1) {
+            $('#bvf'+pid).prop('disabled',true);
+          }
+        });
+      }
+      function dejavote(pid){
+        ///debate/json/opinion/voteForThisOpinion/:debateID/:opinionID
+        colordisplay(pid);
+        //http://localhost:9000/debate/json/opinion/hasAlreadyYesOrNoPostedOnOpinion/@debateInfo.id/
+        $('.addgiveop'+pid).hide();
+        $.get("/debate/json/opinion/voteForThisOpinion/@debateInfo.id/"+pid, function(data){
+          if(data == 0){
+            $('.bvopa'+pid).prop('disabled',true);
+          }
+          else if (data == 1) {
+            $('.bvopf'+pid).prop('disabled',true);
+          }
+        });
+        $.ajax({
+          url: '/debate/json/opinion/hasAlreadyYesOrNoPostedOnOpinion/@debateInfo.id/'+pid,
+          type: 'get',
+          //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+          dataType: 'JSON',
+          success: function(data) {
+            if(data==false){
+              $('.giveop'+pid).click(function(){
+                $('.addgiveop'+pid).toggle('slideup');
+              })
+            }else{
+              $('.giveop'+pid).text('@Messages("views.debate_already")').prop('disabled',true);
+              $('.addgiveop'+pid).empty();
+            }
+
+          }
+        });
+        //http://localhost:9000/debate/json/opinion/@debateInfo.id/opinionsYesOrNos/" + data[i].id + "/1/@(System.currentTimeMillis())/10
+
+      }
+    }
+      function colordisplay(pidc){
+        if(parseInt($('.bvopf'+pidc).children(".bvf").text()) > parseInt($('.bvopa'+pidc).children(".bva").text())){
+          $('.bvopa'+pidc).parents('.debat').attr("style","background-color:rgba(0,255,0,0.1);");
+        }
+        else if (parseInt($('.bvopf'+pidc).children(".bvf").text()) < parseInt($('.bvopa'+pidc).children(".bva").text())) {
+          $('.bvopa'+pidc).parents('.debat').attr("style","background-color:rgba(255,0,0,0.1);");
+        }
+        else {
+          $('.bvopa'+pidc).parents('.debat').attr("style","background-color:rgba(255,255,0,0.1);");
+        }
+      }
+      /*
+      function addcommentctrl(){
+      $('.addcommentD').each(function(){
+      var thisone = $(this);
+      thisone.parent().siblings('.addcomment').hide();
+      $(this).click(function(){
+      thisone.parent().siblings('.addcomment').toggle('slideup');
+    })
+  })
+}*/
+$(window).on('scroll', function(){
+  if ($('.debat').length > 0) {
+    if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+      curdisp= $('.debat:last()').children('.pmT').val();
+      displayDebate();
+    }
+  }
+});
+displayDebate();
+
+Handlebars.registerHelper("math", function() {
+  var lvalue = parseFloat(Handlebars.escapeExpression(this.votefor));
+  var rvalue = parseFloat(Handlebars.escapeExpression(this.voteagainst));
+  if(!isNaN((lvalue/(rvalue+lvalue)) * 100)){
+    return Math.round((lvalue/(rvalue+lvalue)) * 100)+"% ";
+  }});
+</script>
+}
+}

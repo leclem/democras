@@ -1,0 +1,224 @@
+
+@(message: String, connected: Boolean = true)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, connected) {
+
+<style>
+#map-canvas {
+height:100%;
+}
+.controls {
+margin-top: 16px;
+border: 1px solid transparent;
+border-radius: 2px 0 0 2px;
+box-sizing: border-box;
+-moz-box-sizing: border-box;
+height: 32px;
+outline: none;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input {
+background-color: #fff;
+font-family: Roboto;
+font-size: 15px;
+font-weight: 300;
+margin-left: 12px;
+padding: 0 11px 0 13px;
+text-overflow: ellipsis;
+width: 400px;
+}
+
+#pac-input:focus {
+border-color: #4d90fe;
+}
+
+.pac-container {
+font-family: Roboto;
+}
+
+#type-selector {
+color: #fff;
+background-color: #4d90fe;
+padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+font-family: Roboto;
+font-size: 13px;
+font-weight: 300;
+}
+.wpmap{
+width:100%;
+height:400px;
+}
+#target {
+width: 345px;
+}
+</style>
+
+
+
+<div class="listgroupe">
+  <div class="container">
+    <div class="row" style="margin:3px;">
+      <div class="col-xs-12 col-md-10 col-md-offset-1">
+		@if(!connected) {
+			<h1>@Messages("views.actions")</h1>
+		}
+        <div class="alert alert-info alert-dismissible atmess" id="atalert" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <span id="atmess">@message</span>
+        </div>
+    <ul class="nav nav-tabs">
+    @if(connected){
+      <li role="presentation" id="li0" class="active" style="cursor:pointer;"><a style="color:black" onclick="modebtn(0)">@Messages("views.action_latest")</a></li>
+      <li role="presentation" id="li1" style="cursor:pointer;"><a style="color:black" onclick="modebtn(1);">@Messages("views.action_yours")</a></li>
+      <li role="presentation" id="li2" style="cursor:pointer;"><a style="color:black" onclick="modebtn(2);">@Messages("views.action_created")</a></li>
+    }
+    </ul>
+    @if(connected){
+    <div class="nbtn" style="text-align:center;">
+      <button onclick="location.href='/createaction'" class="btn btn-primary" href="/createaction">@Messages("views.action_new")</button>
+      <a href="#" tabindex="0" style="font-size: 1.8em;vertical-align: middle;" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="@Messages("views.help.actions")" data-title="@Messages("views.head.laction")" class="text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+    </div>
+    }
+      </div>
+    </div>
+
+
+<div class="output-actions">
+
+</div>
+</div>
+</div>
+
+
+<script id="action-template" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="row" style="margin:3px;" >
+          <div class="col-xs-12 col-md-10 col-md-offset-1 debat" style="background-color:rgba(0,0,255,0.05);padding:0;">
+            <div class="col-xs-12 col-md-7">
+          <a class="author_name" href="/action/{{id}}">{{{name}}}</a>
+          <span class="debat_time" data-livestamp="{{mT}}"></span>
+          <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+          <br/>
+          <span style="word-wrap:break-word;">{{{definition}}}</span><br/>
+          <a data-toggle="modal" data-target="#mbinc" data-pid="{{id}}" data-type="4" style='cursor:pointer;'>{{numberJoined}} @Messages("views.action.nm")</a><br/>
+          @Messages("views.action.startT"): {{timeBegin}}<br/>
+          {{#if timeEnd}}
+          @Messages("views.action.endT"): {{timeEnd}}
+          {{/if}}
+        </div>
+          <div class="col-xs-12 col-md-5">
+            <span class=""><a href="/action/{{id}}"><table style="width:100;" align="center"><tr><td>
+                    <span style="display:block;text-align:center;">{{nameLocation}}</span>
+                  </td></tr><tr><td>
+                      <img class="dbma" src="http://maps.google.com/maps/api/staticmap?center={{latitude}},{{longitude}}&zoom=16&markers={{latitude}},{{longitude}}&size=300x100&sensor=true" alt="" />
+                    </td></tr></table></a></span>
+          </div>
+          <div class="p010 mt5">
+            <a onclick="comment5disp(4,{{id}},true,1);" style="cursor:pointer">@Messages("views.seecomments") (<span class="nbCom4{{id}}"></span>)</a> ·
+            <a onclick="addcommentbtn('4{{id}}')" class="cp">@Messages("views.commentadd")</a>
+          </div>
+          <div class="p010" id="tcom4{{id}}"></div>
+            </div>
+          </div>
+
+    {{/each}}
+  </script>
+
+<script>
+if($.trim($('#atmess').text())==""){
+  $('.atmess').hide();
+}
+var curdisp = -1;
+var curloading = true;
+var mode = 0;
+var refresh= 1;
+var plimit=10;
+var axLoading4=false;
+function modebtn(pop){
+  if(pop==0){refresh=1;mode=0;displayAction();$('#li0').addClass('active');$('#li1, #li2').removeClass('active');}
+  else if(pop==1){refresh=1;mode=1;displayAction();$('#li1').addClass('active');$('#li0, #li2').removeClass('active');}
+  else{refresh=1;mode=2;displayAction();$('#li2').addClass('active');$('#li1, #li0').removeClass('active');}
+}
+function displayAction(){
+  if(refresh==1){$('.output-actions').empty();curdisp = -1;refresh=0;}
+  if (mode==1) {var purl = '/action/json/lastxActionsJoined/'+curdisp+'/'+plimit;}
+  else if (mode==2) {var purl= '/action/json/lastxActionsCreated/'+curdisp+'/'+plimit;}
+  else {var purl= '/action/json/lastxActions/-1/'+curdisp+'/'+plimit}
+  curloading =true;
+  $('.output-actions').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+  if(axLoading4){return;}
+  axLoading4 = true;
+  $.ajax({
+        url: purl,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data.length == 0 && mode == 1){
+            $('.output-actions').html('<p class="acenter">@Messages("views.yunopartaction") @Messages("views.action_low")!</p>');
+          }
+          if(data.length == 0 && mode == 2){
+            $('.output-actions').html('<p class="acenter">@Messages("views.yunocreateaction")@Messages("views.action_low")!</p>');
+          }
+          axLoading4 = false;
+          $('.loagif').hide();
+          data.forEach(function(entry){
+            entry.definition = outputRestrict(entry.definition);
+            entry.timeBegin = moment.utc(entry.timeBegin).format('LLL');
+            if(entry.timeEnd == -1){entry.timeEnd = 0}else{entry.timeEnd = moment.utc(entry.timeEnd).format('LLL');}
+          });
+          var item = {'response' : data};
+          var source   = $('#action-template').html();
+          var template = Handlebars.compile(source);
+          $('.output-actions').append(template(item));
+          data.forEach(function(entry){
+            comment5disp(4,entry.id,true,2);
+          });
+          if(data.length == 10){curloading =false;}
+          else{
+            curloading =true;
+          }
+          //$('#outputcomment .post-container').linkify({target: "_blank"});
+        }});
+}
+displayAction();
+Handlebars.registerHelper("mT", function() {
+var lavalue = parseInt(Handlebars.escapeExpression(this.modificationTimestamp));
+if(!isNaN((lavalue/1000))){
+  return (lavalue/1000);
+}});
+$(window).on('scroll', function(){
+  if ($('.debat').length > 0) {
+    if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.debat:last()').find('.pmT').val();
+        debugit(curdisp);
+        displayAction();
+      }
+  }
+  });
+/*
+function newcept()
+{
+  if($("#addbtn").text()=="@Messages("views.close")")
+    {
+      $("#nouveauconcept").hide();
+      $("#addbtn").text("@Messages("views.action_new")");
+    }
+    else
+      {
+  $("#nouveauconcept").show();
+  $("#addbtn").text("@Messages("views.close")");
+}
+}
+*/
+//function tlg(plg){debugit(plg);}
+// This example adds a search box to a map, using the Google Place Autocomplete
+// feature. People can enter geographical searches. The search box will return a
+// pick list containing a mix of places and predicted search terms.
+//mulolalojo
+
+
+</script>
+}

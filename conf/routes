@@ -1,0 +1,208 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET     /codetravail            controllers.Debates.getDebate(id: Long ?= 12)
+GET     /codetravai            controllers.Debates.getDebate(id: Long ?= 12)
+GET     /codetrava            controllers.Debates.getDebate(id: Long ?= 12)
+GET     /immigration            controllers.Debates.getDebate(id: Long ?= 882)
+
+#Website parameters
+GET     /changelang/:lang            controllers.Application.changeLanguage(lang)
+
+
+# Home page
+GET     /                           controllers.Application.index
+GET     /fr                         controllers.Application.indexFR
+GET     /es                         controllers.Application.indexES
+GET     /en                         controllers.Application.indexEN
+GET     /index                      controllers.Application.index
+GET     /indexRedirection/:redirectPath         controllers.Application.indexRedirect(redirectPath: String)
+GET     /login                      controllers.Application.login
+GET     /blog                      controllers.Application.blog
+POST    /connect/:redirection         controllers.Connection.processConnectionForm(redirection: String)
+GET     /connectfb/:token/:redirection   controllers.Connection.processFBConnection(token: String, redirection: String)
+GET     /disconnect      controllers.Connection.disconnect
+POST    /firstsubscribe  controllers.Connection.processSubscriptionLoginForm
+POST    /subscribe       controllers.Connection.processSubscriptionForm
+POST    /subscribefb     controllers.Connection.processSubscriptionFBForm
+GET     /about           controllers.Application.about
+GET     /thanksfordonation controllers.Application.thanksfordonation
+GET     /terms      controllers.Application.conditions
+GET     /tour            controllers.Application.tour
+GET     /contact            controllers.Application.contact
+GET     /settings            controllers.Application.settings
+GET     /subscription  controllers.Application.subscription
+GET     /notification  controllers.Application.notification
+GET     /searchAll/:maxTimestamp/:number  controllers.Application.searchNothing(maxTimestamp: Long, number: Int)
+GET     /search  controllers.Application.search
+GET     /search/:searchEntry/:maxTimestamp/:number  controllers.Application.searchOrderedByTimestampJSON(searchEntry: String, maxTimestamp: Long, number: Int)
+POST    /forget controllers.Connection.processUserPasswordForgetForm
+GET     /forget/:hash controllers.Application.forget(hash: String)
+POST    /resetpassword controllers.Connection.processUserPasswordResetForm
+GET     /mobile                     controllers.Application.mobile
+GET     /mobileapp                  controllers.Application.mobileApp
+GET     /press                      controllers.Application.press
+GET     /unsubscribe/:mail          controllers.Application.saveMail(mail: String)
+GET     /scrap                      controllers.Scraping.scrapFacebookActions
+
+#Connected
+GET     /help  controllers.Application.help
+GET     /invite controllers.Application.invite
+GET     /share controllers.Application.share
+
+#Conversations
+GET   /conversation                      controllers.Application.conversation
+POST  /conversation/create               controllers.Conversations.processConversationCreationForm
+POST  /conversation/send                 controllers.Conversations.processConversationSendingForm
+GET   /conversation/json/conversationsOrderedByTimestamp/:maxTimestamp/:number controllers.Conversations.getLastConversationsOfUserOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET   /conversation/json/conversationMessagesOrderedByTimestamp/:id/:maxTimestamp/:number  controllers.Conversations.getLastConverationMessagesOrderedbyTimestampJSON(id: Long, maxTimestamp: Long,number: Int)
+GET  /conversation/:conversationID controllers.Conversations.getConversation(conversationID: Long)
+
+#Concepts
+GET   /concept                      controllers.Application.concept(message: String ?= "")
+POST  /concept                      controllers.Concepts.processConceptCreationForm
+POST  /concept/delete               controllers.Concepts.processConceptDelete
+GET   /concept/deleted              controllers.Application.concept(message: String ?= "views.concep_deleted")
+POST  /concept/edit/:id/description controllers.Concepts.processConceptDescriptionModification(id: Int)
+GET   /concept/:id                  controllers.Concepts.getConcept(id: Long)
+GET   /concept/:id/votefor          controllers.Concepts.voteForConcept(id: Long, vote:Boolean ?= true)
+GET   /concept/:id/voteagainst      controllers.Concepts.voteForConcept(id: Long, vote:Boolean ?= false)
+GET   /concept/:id/cancelvote       controllers.Concepts.cancelVote(id: Long)
+GET   /concept/json/lastxConcepts/:maxTimestamp/:number controllers.Concepts.getLastConceptsOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET   /concept/getUserVote/:conceptId                      controllers.Concepts.getUserVoteJSON(conceptId: Long)
+GET   /concept/json/lastxConceptsParticipated/:maxTimestamp/:number    controllers.Concepts.getLastConceptsParticipatedOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET   /concept/json/lastxConceptsCreated/:maxTimestamp/:number  controllers.Concepts.getLastConceptsCreatedByUserOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+
+#Groups
+GET    /group                     controllers.Application.group(message: String ?= "")
+GET    /group/deleted             controllers.Application.group(message: String ?= "views.group_deleted")
+GET    /group/:id                 controllers.Groups.getGroup(id: Long)
+POST   /group/join                controllers.Groups.joinGroup
+POST   /group/leave               controllers.Groups.leaveGroup
+POST   /group                     controllers.Groups.processGroupCreationForm
+POST   /group/delete              controllers.Groups.processGroupDelete
+POST   /group/:id/application     controllers.Groups.decideGroupApplication(id: Long)
+#POST   /group/file               controllers.Groups.upload
+POST   /group/:id/changeMemberRank controllers.Groups.changeMemberRank(id: Long)
+POST   /group/:id/edit/definition controllers.Groups.processGroupDefinitionModification(id: Long)
+POST   /group/:id/edit/name controllers.Groups.processGroupNameModification(id: Long)
+GET    /group/json/lastxGroups/:maxTimestamp/:number controllers.Groups.getLastGroupsOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET    /group/json/lastxGroupsAppliedByUser/:maxTimestamp/:number controllers.Groups.getLastGroupsCandidatedOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET    /group/json/membersInGroup/:id/:maxTimestamp/:number controllers.Groups.getMembersInGroupOrderedbyTimestampJSON(id: Long, maxTimestamp: Long, number: Int)
+GET    /group/json/membersWaintingForApprobation/:id/:maxTimestamp/:number controllers.Groups.getGroupApplicationsOrderedByTimestamJSON(id: Long, maxTimestamp: Long, number: Int)
+GET    /group/json/userStatusInGroup/:id controllers.Groups.userStatusInGroupJSON(id: Long)
+GET    /group/json/lastxGroupsJoined/:maxTimestamp/:number controllers.Groups.getLastGroupsJoinedOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET    /group/json/lastxGroupsWithRank/:rank/:maxTimestamp/:number controllers.Groups.getLastGroupsWhereUsedhaveThisRankOrderedbyTimestampJSON(rank: Int, maxTimestamp: Long, number: Int)
+GET    /group/json/petitionAndDebates/:idGroup/:maxTimestamp/:number controllers.Groups.getActionsAndPetitionsOfGroupOrderedByTimestampJSON(idGroup: Long, maxTimestamp: Long, number: Int)
+
+
+#Members
+GET    /member                    controllers.Application.memberInfo
+POST   /member                    controllers.User.processMemberInfoModificationForm
+POST   /member/follow controllers.User.follow
+POST   /member/unfollow controllers.User.unFollow
+#POST   /member/edit/:id          controllers.User.processMembertest(id: String)
+POST   /member/edit/firstname          controllers.User.processMemberFirstNameModification
+POST   /member/edit/name          controllers.User.processMemberNameModification
+POST   /member/edit/ville          controllers.User.processMemberVilleModification
+POST   /member/edit/mail          controllers.User.processMemberMailModification
+POST   /member/edit/presentation   controllers.User.processMemberPresentationModification
+POST   /member/edit/profilepicture          controllers.User.processProfilePictureModification
+POST   /member/postimage          controllers.User.processProfilePictureModification
+POST   /member/addLanguage     controllers.User.addNewLanguage
+POST   /member/removeLanguage  controllers.User.removeLanguage
+POST   /member/params/sendmail controllers.User.activateDeactivateSendMail
+GET    /member/params/sendmail controllers.User.isSendMailActivatedJSON
+POST   /member/friends/store controllers.User.storeMembersMails
+GET    /member/friends/get controllers.User.getMemberMails
+POST   /member/friends/send controllers.User.sendMemberEmails
+GET    /member/json/notifications/:maxTimestamp/:number      controllers.ActionRepport.getNotificationsOfUserJSON(maxTimestamp: Long, number: Int)
+GET    /member/json/hasusernotifications      controllers.ActionRepport.hasUserNewNotificationsJSON
+GET    /member/json/activity/:id/:maxTimestamp/:number       controllers.ActionRepport.getActionsDoneOfMemberOrderedByTimestampJSON(id: Long, maxTimestamp: Long, number: Int)
+GET    /member/json/groupsIn/:id/:maxTimestamp/:number                controllers.User.getGroupsOfAnMemberOrderedbyTimestampJSON(id: Long, maxTimestamp: Long, number: Int)
+GET    /member/json/isFollowing/:objectType/:id                controllers.User.isUserFollowingJSON(objectType: Int, id: Long)
+GET    /member/json/objectsFollowed/:objectType/:maxTimestamp/:number                controllers.User.objectsFollowed(objectType: Int, maxTimestamp: Long, number: Int)
+GET    /member/json/getUsername/:id controllers.User.getUsernameFromIDJSON(id: Long)
+GET    /member/json/newsfeed/:maxTimestamp/:number       controllers.ActionRepport.getUserNewsFeedOrderedByTimestampJSON(maxTimestamp: Long, number: Int)
+GET    /member/json/search/:searchentry/:number controllers.User.searchMember(searchentry: String, number: Int)
+GET    /member/json/stats/:idUser controllers.User.getUserStatsJSON(idUser: Long)
+GET    /member/json/languages controllers.User.retrieveUserLanguagesJSON
+GET    /member/json/rankingLikes/:maxLikes/:number controllers.User.getMembersOrderedByLikes(maxLikes: Long, number: Int, since: Int ?= 0)
+GET    /member/json/rankingLikesMonthly/:maxLikes/:number controllers.User.getMembersOrderedByLikes(maxLikes: Long, number: Int, since: Int ?= 1)
+GET    /member/json/membersFollowed/:memberID/:maxTimestamp/:number controllers.User.membersFollowed(memberID: Long, maxTimestamp: Long, number: Int)
+GET    /member/json/membersFollowing/:memberID/:maxTimestamp/:number controllers.User.membersFollowing(memberID: Long, maxTimestamp: Long, number: Int)
+GET    /member/:pseudo controllers.Application.memberDisplayString(pseudo: String)
+
+#Debate
+GET   /debate                     controllers.Application.debate(message: String ?= "")
+POST  /debate                     controllers.Debates.processDebateCreationForm
+POST  /debate/delete              controllers.Debates.processDebateDelete
+GET   /debate/deleted            controllers.Application.debate(message: String ?= "views.debate_deleted")
+GET   /debate/:id                 controllers.Debates.getDebate(id: Long)
+POST  /debate/:id/opinion         controllers.Debates.processDebateOpinionForm(id: Long)
+POST  /debate/:id/opinion/:idOpinion/yesorno         controllers.Debates.processDebateYesOrNoForm(id: Long, idOpinion:Long)
+GET   /debate/opinion/:idOpinion                     controllers.Debates.getDebateOpinion(idOpinion: Long)
+GET   /debate/yesornoopinion/:idYesOrNoOpinion       controllers.Debates.getDebateYesOrNoOpinion(idYesOrNoOpinion: Long)
+GET  /debate/json/opinion/hasAlreadyYesOrNoPostedOnOpinion/:debateID/:opinionID         controllers.Debates.hasAlreadyGivenHisYesOrNoOpinionOnOpinionJSON(debateID:Long, opinionID: Long)
+GET  /debate/json/opinion/voteForThisOpinion/:debateID/:opinionID         controllers.Debates.getUserVoteJSON(opinionID: Long, debateID:Long)
+GET  /debate/json/opinion/voteForThisYesOrNoOpinion/:debateID/:opinionID         controllers.Debates.getUserVoteOfYesOrNoJSON(opinionID: Long, debateID:Long)
+GET  /debate/json/opinion/:id/lastxopinions/:maxTimestamp/:number         controllers.Debates.getLastOpinionsOrderedbyTimestampJSON(id: Long, maxTimestamp: Long, number: Int)
+GET  /debate/json/opinion/:id/lastxopinionsOrderedByPopularity/:popularity/:number         controllers.Debates.getLastOpinionsOrderedbyPopularityJSON(id: Long, popularity: Long, number: Int)
+
+GET  /debate/json/opinion/:id/opinionsYesOrNosOrderedByPopularity/:idOpinion/:opinion/:popularity/:number controllers.Debates.getLastYesOrNoOpinionsOrderedByPopularityJSON(id: Long, idOpinion: Long, opinion: Int, popularity: Long, number: Int)
+GET  /debate/json/opinion/:id/opinionsYesOrNosOrderedByTimestamp/:idOpinion/:opinion/:maxTimestamp/:number controllers.Debates.getLastYesOrNoOpinionsOrderedbyTimestampJSON(id: Long, idOpinion: Long, opinion: Int, maxTimestamp: Long, number: Int)
+
+POST  /debate/:id/yesorno         controllers.Debates.processDebateYesOrNoForm(id: Long, idObjectUP:Long ?= -1)
+POST  /debate/yesorno/delete      controllers.Debates.processDebateYesOrNoDelete
+POST /debate/:id/yesorno/vote	  controllers.Debates.voteForYesOrNoOpinion(id: Long)
+POST /debate/:id/opinion/vote	  controllers.Debates.voteForOpinion(id: Long)
+POST  /debate/opinion/delete      controllers.Debates.processDebateOpinionDelete
+GET  /debate/json/yesorno/:id/lastxopinions/:opinion/:maxTimestamp/:number         controllers.Debates.getLastYesOrNoOpinionsForYesOrNoDebateOrderedbyTimestampJSON(id: Long, opinion: Int, maxTimestamp: Long, number: Int)
+GET  /debate/json/yesorno/:id/lastxopinionsbypopularity/:opinion/:popularity/:number         controllers.Debates.getLastYesOrNoOpinionsForYesOrNoDebateOrderedByPopularityJSON(id: Long,  opinion: Int, popularity: Long, number: Int)
+GET   /debate/json/lastxDebates/:groupPrivacy/:maxTimestamp/:number controllers.Debates.getLastDebatesOrderedbyTimestampJSON(groupPrivacy:Int, maxTimestamp: Long, number: Int)
+GET   /debate/json/lastxDebatesParticipated/:maxTimestamp/:number controllers.Debates.getLastDebatesParticipatedOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET /action/json/lastxDebatesCreated/:maxTimestamp/:number controllers.Debates.getLastDebatesCreatedByUserOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET /debate/json/lastxDebatesParticipatedOfUser/:userID/:maxTimestamp/:number controllers.Debates.getLastDebatesPArticipatedOfMemberOrderedByTimestampJSON(userID: Long, maxTimestamp: Long, number: Int)
+
+#Action
+
+GET /action controllers.Application.action(message: String ?= "")
+GET /action/:defaultLat/:defaultLong controllers.Application.actionWithLat(defaultLat: Double, defaultLong: Double, message: String ?= "")
+GET /createaction controllers.Actions.getCreateActionPage
+GET /naction controllers.Actions.getnActionPage
+POST /action controllers.Actions.processActionCreationForm
+POST /action/delete controllers.Actions.processActionDelete
+GET  /action/deleted            controllers.Application.action(message: String ?= "views.action_deleted")
+POST /action/join controllers.Actions.joinAction
+POST /action/leave controllers.Actions.leaveAction
+GET /action/:id controllers.Actions.getAction(id: Long)
+GET  /action/json/lastxActions/:groupPrivacy/:maxTimestamp/:number controllers.Actions.getLastActionsOrderedbyTimestampJSON(groupPrivacy: Long, maxTimestamp: Long, number: Int)
+GET  /action/json/lastxActionsJoined/:maxTimestamp/:number   controllers.Actions.getLastActionsJoinedOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET  /action/json/lastxActionsCreated/:maxTimestamp/:number controllers.Actions.getLastActionsCreateByUserOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET  /action/json/membersInAction/:id/:maxTimestamp/:number  controllers.Actions.getMembersInActionOrderedbyTimestampJSON(id: Long, maxTimestamp: Long, number: Int)
+GET  /action/json/getActions/:minTimestamp/:maxTimestamp/:ha/:hb/:va/:vb/:maxNumber controllers.Actions.getActionsJSON(minTimestamp: Long, maxTimestamp: Long, ha: Double, hb: Double, va: Double, vb: Double, maxNumber: Int)
+
+#Petition
+GET /petition controllers.Application.petition(message: String ?= "")
+POST /petition controllers.Petitions.processPetitionCreationForm
+POST /petition/delete controllers.Petitions.processPetitionDelete
+GET  /petition/deleted            controllers.Application.petition(message: String ?= "views.petition_deleted")
+POST /petition/join controllers.Petitions.joinPetition
+POST /petition/leave controllers.Petitions.leavePetition
+GET /petition/:id controllers.Petitions.getPetition(id: Long)
+GET  /petition/json/lastxPetitions/:groupPrivacy/:maxTimestamp/:number controllers.Petitions.getLastPetitionsOrderedbyTimestampJSON(groupPrivacy: Long, maxTimestamp: Long, number: Int)
+GET  /petition/json/lastxPetitionsJoined/:maxTimestamp/:number controllers.Petitions.getLastPetitionsJoinedOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET  /petition/json/lastxPetitionsCreated/:maxTimestamp/:number  controllers.Petitions.getLastPetitionsCreatedByUserOrderedbyTimestampJSON(maxTimestamp: Long, number: Int)
+GET  /petition/json/membersInPetition/:id/:maxTimestamp/:number  controllers.Petitions.getMembersInPetitionOrderedbyTimestampJSON(id: Long, maxTimestamp: Long, number: Int)
+
+#Comments
+POST /comment/post controllers.Comments.processCommentCreationForm
+POST /comment/modif controllers.Comments.processCommentModificationForm
+POST /comment/delete controllers.Comments.processCommentDelete
+GET  /comment/:objectType/:objectID/:maxTimestamp/:number controllers.Comments.getLastCommentsOrderedbyTimestampJSON(objectType: Long, objectID: Long, maxTimestamp: Long,number: Int)
+GET  /comment/number/:objectType/:objectID controllers.Comments.getNumberComments(objectType: Long, objectID: Long)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

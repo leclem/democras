@@ -1,0 +1,99 @@
+@(message: String)(implicit messages: Messages)
+@import helper._
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-signin-scope" content="profile email">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/octicons/3.1.0/octicons.min.css" rel="stylesheet" type="text/css" />
+    <meta name="google-signin-client_id" content="483427273002-g9hcqk1f8j6p8t03di9f90lfr6kvg0jh.apps.googleusercontent.com.apps.googleusercontent.com">
+    <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
+    <!-- <script src="https://apis.google.com/js/api:client.js"></script> -->
+  <title>Democras</title>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+
+
+  <link href="@routes.Assets.at("css/pictonic.css")" rel="stylesheet">
+  <!-- Bootstrap -->
+  <link href="@routes.Assets.at("css/bootstrap.min.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("css/index_v2.css")" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Maven+Pro:500' rel='stylesheet' type='text/css'><!-- https://github.com/fengyuanchen/cropper -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.min.js"></script>
+
+</head><body>
+
+  <div class="container dcenter">
+    <button class="btn nbtn btn-success btn-lg" onclick="begintour()">COMMENCER LE TOUR</button>
+    <a href="/concept" id="tourconcept"><div class="entg"><div>
+      <span class="mega-octicon octicon-law fst"></span></div><div>
+    <span class="tcat"> @Messages("views.concepts") </span>
+    </div>
+  </div></a><a href="/debate" id="tourdebate"><div class="entg"><div>
+    <span class="mega-octicon octicon-megaphone fst"></span></div><div>
+    <span class="tcat">  @Messages("views.debates")  </span>
+    </div>
+  </div></a><a href="/group" id="tourgroup"><div class="entg"><div>
+    <span class="mega-octicon octicon-organization fst"></span></div><div>
+    <span class="tcat" style="font-size:16px">  @Messages("views.groups")  </span>
+    </div>
+  </div></a><a href="/petition" id="tourpetition"><div class="entg"><div>
+    <span class="mega-octicon octicon-book fst"></span></div><div>
+    <span class="tcat">  @Messages("views.petitions")  </span>
+    </div>
+  </div></a><a href="/action" id="touraction"><div class="entg"><div>
+    <span class="mega-octicon octicon-location fst"></span></div><div>
+    <span class="tcat">  @Messages("views.actions")  </span>
+    </div>
+  </div></a>
+<h4 class="tc"><a href='/'>@Messages("page_not_found_link")</a></h3>
+  </div>
+
+</body>
+<script>
+  ////////BOOTSTRAP TOUR
+  var tour = new Tour({
+  steps: [
+  {
+    element: "#tourconcept",
+    title: "@Messages("views.head.leconcept")",
+    content: "@Messages("views.head.ladescription")"
+  },
+  {
+    element: "#tourdebate",
+    title: "@Messages("views.head.ledebat")",
+    content: "@Messages("views.head.ledebatdescription")"
+  },
+  {
+    element: "#tourgroup",
+    title: "@Messages("views.head.legroup")",
+    content: "@Messages("views.head.lagdescription")"
+  },
+  {
+    element: "#tourpetition",
+    title: "@Messages("views.head.lapetition")",
+    content: "@Messages("views.head.petitiondescription")"
+  },
+  {
+    element: "#touraction",
+    title: "@Messages("views.head.laction")",
+    content: "@Messages("views.head.actiondescription")"
+  }
+]});
+
+// Initialize the tour
+tour.init();
+
+function begintour(){
+  // Start the tour
+  tour.start(true);
+}
+</script>
+</html>

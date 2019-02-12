@@ -1,0 +1,61 @@
+@import helper._
+@(message: String, connected: Boolean)(implicit session: play.api.mvc.Session, messages: Messages)
+
+@main(messages, connected) {
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <script src="https://code.jquery.com/jquery.min.js"></script> -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+  <meta charset="utf-8">
+  <title>@Messages("views.about")</title>
+  <style>
+    .tc{text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="container">
+  <div class="row">
+    <h3 style="font-size:3em;text-align:center">@Messages("views.about.why")</h3>
+    <p>@Html(Messages("views.about.idea"))</p>
+    <h3 style="font-size:3em;text-align:center">@Messages("views.about.whoarewe")</h3>
+  </div>
+  <div class="row text-center" >
+              <div class="col-xs-12 col-sm-6 col-md-6">
+                <div class="blok text-center">
+                  <img src="assets/images/clem.jpg" class="img-circle" alt="Cinque Terre" >
+                  <h4>Clément Moutet</h4>
+                  <p><small>@Messages("views.about.clement")</small></p>
+                  <a class="btn btn-primary" href="https://www.linkedin.com/in/cl%25C3%25A9ment-moutet-b8717169">Linkedin</a>
+                  <a class="btn btn-primary" href="mailto:clementmoutet@@hec.edu">Mail</a>
+                  </div>
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-6">
+                <div class="blok text-center">
+                  <img src="assets/images/pap.jpg" class="img-circle" alt="Cinque Terre" >
+                  <h4>Pierre-Armand Pommier</h4>
+                  <p><small>@Messages("views.about.pap")</small></p>
+                  <a class="btn btn-primary" href="https://www.linkedin.com/in/papommier">Linkedin</a>
+                  <a class="btn btn-primary" href="mailto:pierre@@democras.com">Mail</a>
+                </div>
+              </div>
+              </div>
+   
+    <h3 style="font-size:3em;text-align:center">@Messages("views.about.careertitle")</h3>
+    <p>@Html(Messages("views.about.career"))</p>
+    <h3 style="font-size:3em;text-align:center">@Messages("views.about.donatetitle")</h3>
+    <p>@Html(Messages("views.about.donate"))</p>
+    <div align="center"><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="text-align:center">
+
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="3SJZSQCPSYHYY">
+<input type="image" src="https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal, le réflexe sécurité pour payer en ligne">
+<img alt="" border="0" src="https://www.paypalobjects.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
+
+</form></div>
+
+  </div>
+</body>
+</html>
+}

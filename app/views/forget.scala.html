@@ -1,0 +1,58 @@
+@(message: String, hash: String)(implicit messages: Messages)
+@import helper._
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+  <title>Democras</title>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqBootstrapValidation/1.3.7/jqBootstrapValidation.min.js"></script>
+  <!-- Bootstrap -->
+  <link href="@routes.Assets.at("css/bootstrap.min.css")" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Maven+Pro:500' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div class="container">
+    <h2 style="display:block;text-align:center;font-size:3em;">D<span class="text-success">emocras</span></h2>
+    <p style="display:block;text-align:center;">@Messages("views.forgetPageMess")</p>
+      <div class="form-group">
+        <input type="hidden" class="form-control" name='hash' id="nhash" value="@hash">
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+          <div class="form-group">
+            <input type="password" name="newPassword" id="nPass" class="form-control" placeholder="@Messages("views.forms.newpassword")">
+            <br/>
+            <input type="password" name="confirmPassword" id="cPass" class="form-control" placeholder="@Messages("views.forms.confirmpassword")">
+          </div>
+          <div class="alert alert-warning" role="alert" id="alertno">@Messages("views.forgetConfirmPassError")</div>
+          <button class="btn btn-success btn-lg btn-block" id='connect' type="submit" onclick="resetPass(event)">@Messages("views.changepassword")</button>
+        </div>
+      </div>
+  </div>
+<script>
+$('#alertno').hide();
+function resetPass(event){
+  if(($('#nPass').val()!=$('#cPass').val()) || $('#nPass').val().length <5){
+    $('#alertno').show();
+    return;
+  }
+  $(event.target).prop('disabled',true);
+  $.ajax({url:'/resetpassword',type:'post',data:{hash:$('#nhash').val(),newPassword:$('#nPass').val()},success:function(data){
+    if(data==1){
+      location.href='/';
+    }else {
+      $(event.target).prop('disabled',false);
+      $('#alertno').show();
+    }
+  }});
+}
+</script>
+</body>
+</html>

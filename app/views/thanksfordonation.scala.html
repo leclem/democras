@@ -1,0 +1,25 @@
+@import helper._
+@(message: String, connected: Boolean)(implicit session: play.api.mvc.Session, messages: Messages)
+
+@main(messages, connected) {
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <script src="https://code.jquery.com/jquery.min.js"></script> -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+  <meta charset="utf-8">
+  <title>@Messages("views.about")</title>
+  <style>
+    .tc{text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="container">
+  <br><br><br>
+    <h3 style="font-size:3em;text-align:center">@Messages("views.about.thanks")</h3><br>
+    <p>@Html(Messages("views.about.thanksfordonation"))</p>
+  </div>
+</body>
+</html>
+}

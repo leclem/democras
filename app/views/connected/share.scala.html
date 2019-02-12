@@ -1,0 +1,195 @@
+
+@(message: String, skipOption: Boolean = false)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true) {
+	<br>
+  <h4 class="dcenter">
+  <center><h3>@Messages("views.inviteYourFriends")</h3></center>
+  <!-- Help us spread the world by inviting friends from your email address book -->
+</h4>
+<div class="introductionText">
+<b style="color: #5b5b5b;display: block;text-align:center; font-size: 15px">@Html(Messages("views.inviteText"))</b>
+ @if(skipOption){
+   <center><br><a href="/">@Messages("views.inviteSkip")</a></center><br>
+ }
+ </div>
+  <div class="btn-group-vertical shareBtns" role="group" aria-label="...">
+ 
+    <button onclick="auth();" type="button" class="btn btn-default"><i class="fa fa-google" aria-hidden="true"></i> Gmail</button>
+    <button href="#" id="import" type="button" class="btn btn-default"><i class="fa fa-windows" aria-hidden="true"></i> Hotmail / Live</button>
+  </div>
+  <div class="emailOutput">
+    <div id="allEmails">
+      <table class="table"><tr><th>
+        <input type="text" class="form-control" id="searchFriend" placeholder="@Messages("views.search")" onkeyup="restrictFriendsList()"/>
+      </th><th><input type="checkbox" id="checkAll"/></th></tr></table>
+      <table class="table table-striped">
+      </table>
+    </div>
+    <button onclick="getAllChecked()" class="btn btn-primary dbma">@Messages("views.send")</button>
+  </div>
+  <div class="emailSent acenter">
+    @Messages("views.confirmInvite")<br>
+    <a href="/">@Messages("clicHereToReturnIndex")</a>
+  </div>
+
+  <!-- <a href="#" id="import">Chopper les contacts de hotmail</a> -->
+<script src="//js.live.net/v5.0/wl.js"></script>
+
+<script type="text/javascript">
+WL.init({
+    client_id: "4531729d-8cbf-46c6-8ab7-4f76d323cc82",
+    redirect_uri: "https://democras.com/share",
+    scope: ["wl.basic", "wl.contacts_emails"],
+    response_type: "token"
+});
+</script>
+<!-- https://login.live.com/oauth20_authorize.srf?client_id=4531729d-8cbf-46c6-8ab7-4f76d323cc82&scope=wl.signin+wl.basic+wl.contacts_emails&response_type=code-->
+<script src="https://apis.google.com/js/client.js"></script>
+<script type="text/javascript">
+  function getFriendsMember(){
+    $.ajax({
+          url: '/member/friends/get',
+          type: 'GET',
+          success: function(data, status) {
+            console.log(data);
+            allFriends = data;
+            displayListinTable(data);
+          },
+          error: function(xhr, desc, err) {
+            debugit(xhr);
+            debugit("Details: " + desc + "\nError:" + err);
+          }
+    });
+  }
+  function restrictFriendsList(){
+    var search = $('#searchFriend').val().toUpperCase();
+    var newAllFriends = [];
+    var restrictedList = jQuery.grep(allFriends, function(value) {
+      return value.friendMail.toUpperCase().indexOf(search) >= 0;
+    });
+    if($.trim($('#searchFriend').val())==""){restrictedList = allFriends;}
+    displayListinTable(restrictedList);
+  }
+  function displayListinTable(pList){
+    $('#allEmails .table-striped').empty();
+    pList.sort(function(a,b) {return (a.optionalUserId < b.optionalUserId) ? 1 : ((b.optionalUserId < a.optionalUserId) ? -1 : 0);} );
+    pList.forEach(function(entry){
+      if(entry.optionalUserId != -1){
+        var emailRow = "<tr><td>"+entry.optionalUsername+"</td><td><button class='btn btn-primary btn-xs' data-id='"+entry.optionalUserId+"' onclick='followMbr(event)'>@Messages("views.follow")</button></td></tr>";
+      }else{
+        var emailRow = "<tr><td>"+entry.friendMail+"</td><td><input type='checkbox'/></td></tr>";
+      }
+      $('#allEmails .table-striped').append(emailRow);
+    });
+  }
+	  function auth() {
+	    var config = {
+	      'client_id': '252380158127-l4qc4n0tlfjlglro5qlu7tqhfb7v17jf.apps.googleusercontent.com',
+	      'scope': 'https://www.googleapis.com/auth/contacts.readonly'
+	    };
+	    gapi.auth.authorize(config, function() {
+	      fetch(gapi.auth.getToken());
+
+	    });
+	  }
+    var allEmails = [];
+    var allFriends = [];
+	  function fetch(token) {
+	    $.ajax({
+		    url: "https://www.google.com/m8/feeds/contacts/default/full?access_token=" + token.access_token + "&max-results=20000&alt=json",
+		    dataType: "jsonp",
+		    success:function(data) {
+			          // display all your data in console
+                var jsonResponse = JSON.parse(JSON.stringify(data)).feed.entry;
+
+		        for (var iter = 0; iter < jsonResponse.length; iter++) {
+			      if (jsonResponse[iter].gd$email != undefined){
+			    	  for (var iter2 = 0; iter2 < jsonResponse[iter].gd$email.length; iter2++){
+                allEmails.push(jsonResponse[iter].gd$email[iter2].address);
+			    	  }
+			      }
+		        }
+            storeAllEmails();
+		    }
+		});
+	}
+  $("#checkAll").click(function(){
+    $('input:checkbox').not(this).prop('checked', this.checked);
+  });
+  function storeAllEmails(){
+    $('.emailOutput').show();
+    $('#allEmails .table-striped').append('<tr><td><img src="@routes.Assets.at("img/loa.gif")" class="dcenter ma"/></td></tr>');
+    $('.shareBtns').hide();
+    $('.introductionText').hide();
+    $.ajax({
+          url: '/member/friends/store',
+          type: 'POST',
+          data: {'mails[]': allEmails.join(",")},
+          success: function(data, status) {
+            getFriendsMember();
+            console.log(data);
+          },
+          error: function(xhr, desc, err) {
+            debugit(xhr);
+            debugit("Details: " + desc + "\nError:" + err);
+          }
+        });
+  }
+$('.emailOutput, .emailSent').hide();
+function getAllChecked(){
+  var allEmailsToSend = [];
+
+  $('input:checkbox:checked').not("#checkAll").each(function(item){
+    allEmailsToSend.push($(this).parents('tr').children().first().text());
+  });
+  $.ajax({
+        url: '/member/friends/send',
+        type: 'POST',
+        data: {'mails[]': allEmailsToSend.join(",")},
+        success: function(data, status) {
+          console.log(data);
+          $('.emailOutput').hide();
+          $('.emailSent').show();
+        },
+        error: function(xhr, desc, err) {
+          debugit(xhr);
+          debugit("Details: " + desc + "\nError:" + err);
+        }
+      });
+}
+jQuery( document ).ready(function() {
+//live.com api
+jQuery('#import').click(function(e) {
+    e.preventDefault();
+    WL.login({
+        scope: ["wl.basic", "wl.contacts_emails"]
+    }).then(function (response)
+    {
+		WL.api({
+            path: "me/contacts",
+            method: "GET"
+        }).then(
+            function (response) {
+                    //your response data with contacts
+            	console.log(response.data);
+              response.data.forEach(function(entry){
+                allEmails.push(entry.emails.preferred);
+              });
+              storeAllEmails();
+            },
+            function (responseFailed) {
+            	console.log(responseFailed);
+            }
+        );
+
+    },
+    function (responseFailed)
+    {
+        //console.log("Error signing in: " + responseFailed.error_description);
+    });
+});
+
+});
+</script>
+
+}

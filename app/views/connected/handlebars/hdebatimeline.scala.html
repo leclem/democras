@@ -1,0 +1,38 @@
+@(connected: Boolean, idDebate: Long)(implicit messages: Messages)
+<script id="debats-timeline" type="text/x-handlebars-template">
+    {{#each response}}
+    {{#if opinion}}
+    <div class="cd-timeline-block">
+      <div class="cd-timeline-content" style="background-color:rgba(0,255,0,0.1)">
+    {{else}}
+    <div class="cd-timeline-block rnope">
+      <div class="cd-timeline-content" style="background-color:rgba(255,0,0,0.1)">
+    {{/if}}
+        <div class="linkit lpdesigntriger">{{{comment}}}</div><br/>
+        <span class="debat_time">  @Messages("views.by") <a href='/member/{{idMember}}' class="name">{{{username}}}</a></span>
+        {{#if canChange}}
+        <a class="popDelete cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(31,{{id}},event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+        {{/if}}
+        <span class="debat_time" data-livestamp="{{cT}}"></span>
+        <input type="hidden" class="pmT" id="ynpmT{{id}}" value="{{popularity}}"/>
+        <input type="hidden" class="pmTidDebade" value="{{idDebate}}"/>
+         <br/>
+         {{math}}
+         @if(connected){
+           <button class="btn btn-success btn-xs votex" data-id="{{id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bvf">{{votefor}}</span></button>
+           <button class="btn btn-danger btn-xs votex" data-id="{{id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bva">{{voteagainst}}</span></button>
+         }else{
+           <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-success btn-xs votex"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bvf">{{votefor}}</span></a>
+           <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-danger btn-xs votex"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bva">{{voteagainst}}</span></a>
+         }
+         <div style="margin-top: 5px;">
+           <a onclick="comment5disp(6,{{id}},true,1);" style="cursor:pointer">@Messages("views.seecomments") (<span class="nbCom6{{id}}"></span>)</a>
+           @if(connected){
+              · <a onclick="addcommentbtn('6{{id}}')" class="cp">@Messages("views.commentadd")</a>
+           }
+         </div>
+         <div id="tcom6{{id}}"></div>
+       </div>
+     </div>
+    {{/each}}
+  </script>

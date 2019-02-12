@@ -1,0 +1,8 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages,  true, Messages("views.contactus")) {
+<div class="container">
+<h2 class="acenter">@Messages("views.contactus")</h2>
+<center>@Html(Messages("views.contact.text"))</center>
+</div>
+}

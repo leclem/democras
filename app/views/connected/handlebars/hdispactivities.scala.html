@@ -1,0 +1,108 @@
+@()(implicit messages: Messages)
+<script>
+function hdispactivities(data){
+  debugit(data);
+data.forEach(function(entry){
+  if(entry==1){console.log("return");return;}
+//debugit(entry.actor.firstname + " " +verbActi(entry.headers.verb)+" "+tempmode(entry.headers.verb));
+//entry.taction=tempmode(entry.headers.verb);
+entry.vaction=verbActi(entry.headers.verb);
+if(tempmode(entry.headers.verb)==2){
+  //entry.object.definition = outputRestrict(entry.object.definition);
+  if(entry.headers.verb=="CommentConcept"){entry.iscomment=1;}
+  var source   = $('#conceptactiv-template').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+  voteconcept();
+  if($.inArray(entry.object.id, hashExe.didVote)==-1){hashExe.didVote.push(entry.object.id);}
+  if($.inArray(entry.object.id, hashExe.colordisplay)==-1){hashExe.colordisplay.push(entry.object.id);}
+  //didVote(entry.object.id);
+  //colordisplay(entry.object.id);
+}
+else if(tempmode(entry.headers.verb)==0){
+  var source   = $('#member-template').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+}
+else if(tempmode(entry.headers.verb)==10){
+  var source   = $('#memberFollows-template').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+}
+else if(tempmode(entry.headers.verb)==1){
+  //entry.object.definition = outputRestrict(entry.object.definition);
+  if(entry.headers.verb == "GroupAccept"){entry.hasGroupAccept=1;}
+  var source   = $('#groupact-template').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+  if($.inArray(entry.object.id, hashExe.checkStatus)==-1){hashExe.checkStatus.push(entry.object.id);}
+  //checkStatus(entry.object.id);
+  isjoin();
+}
+else if((tempmode(entry.headers.verb)==3)||(tempmode(entry.headers.verb)==31)){
+  if(entry.headers.verb=="DebateCreation"||entry.headers.verb=="DebateCreationForGroup"||entry.headers.verb=="DebateCreationForGroup"){entry.hastarget=0;}
+  else{entry.hastarget=1;
+  }
+  if(entry.headers.verb=="VoteForOpinion"||entry.headers.verb=="VoteAgainstOpinion"||entry.headers.verb=="DebateOpinionParticipation"||entry.headers.verb=="ModifVoteForToAgainstOpinion"||entry.headers.verb=="ModifVoteAgainstToForOpinion"){entry.mainOpinion=1;}else{entry.mainOpinion=0;}
+  entry.object.timeBegin = moment(entry.object.timeBegin).format('LLL');
+  if(entry.object.timeEnd == -1){entry.object.timeEnd = 0}else{entry.object.timeEnd = moment(entry.object.timeEnd).format('LLL');}
+  if(tempmode(entry.headers.verb)==31){entry.hasgroupe=1;}
+  if(entry.headers.verb=="CommentYesornoopinion"||entry.headers.verb=="CommentYesOrNo"){entry.iscomment=1;}
+  var source   = $('#debatsactiv-template0').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+  isFollowingDebate(entry.object.id);
+  if($.inArray(entry.object.id, hashExe.isFollowingDebate)==-1){hashExe.isFollowingDebate.push(entry.object.id);}
+  followDebat();
+  if(entry.headers.verb=="VoteForOpinion"||entry.headers.verb=="VoteAgainstOpinion"||entry.headers.verb=="DebateOpinionParticipation"||entry.headers.verb=="ModifVoteForToAgainstOpinion"||entry.headers.verb=="ModifVoteAgainstToForOpinion"){
+    //voteopYN(entry.object.id);dejavote(entry.target.id,entry.object.id);
+    if($.inArray(entry.object.id, hashExe.voteopYN)==-1){hashExe.voteopYN.push(entry.object.id);}
+    if(oHasTable([entry.target.id,entry.object.id], hashExe.dejavote)==-1){hashExe.dejavote.push([entry.target.id,entry.object.id]);}
+  }
+  else if(entry.hastarget==1){
+    //console.log([entry.target.id,entry.object.id]);
+    //voteYN(entry.object.id);didVoteOp(entry.target.id,entry.object.id);
+    if($.inArray(entry.object.id, hashExe.voteYN)==-1){hashExe.voteYN.push(entry.object.id);}
+    if(oHasTable([entry.target.id,entry.object.id], hashExe.didVoteOp)==-1){hashExe.didVoteOp.push([entry.target.id,entry.object.id]);}
+  }
+}
+else if((tempmode(entry.headers.verb)==32)){
+  //entry.object.comment=outputRestrict(entry.object.comment);
+  //entry.target.comment=outputRestrict(entry.target.comment);
+  var source   = $('#debatsactivRepOp-template0').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+  if($.inArray(entry.object.idDebate, hashExe.isFollowingDebate)==-1){hashExe.isFollowingDebate.push(entry.object.idDebate);}
+  if($.inArray(entry.target.id, hashExe.voteYN)==-1){hashExe.voteYN.push(entry.object.id);}
+  if(oHasTable([entry.target.id,entry.object.idDebate], hashExe.didVoteOp)==-1){hashExe.didVoteOp.push([entry.target.id,entry.object.idDebate]);}
+}
+else if((tempmode(entry.headers.verb)==33)){
+  //entry.object.comment=outputRestrict(entry.object.comment);
+  //entry.object.comment=outputRestrict(entry.object.comment);
+  var source   = $('#CommentYesOrNoActiv-template0').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+  if($.inArray(entry.object.id, hashExe.voteYN)==-1){hashExe.voteYN.push(entry.object.id);}
+  if(oHasTable([entry.object.id,entry.object.idDebate], hashExe.didVoteOp)==-1){hashExe.didVoteOp.push([entry.object.id,entry.object.idDebate]);}
+}
+else if(tempmode(entry.headers.verb)==4){
+  //entry.object.definition = outputRestrict(entry.object.definition);
+  entry.object.timeBegin = moment(entry.object.timeBegin).format('LLL');
+  if(entry.object.timeEnd == -1){entry.object.timeEnd = 0}else{entry.object.timeEnd = moment(entry.object.timeEnd).format('LLL');}
+  var source   = $('#actionactiv-template').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+}
+else if(tempmode(entry.headers.verb)==5){
+  //entry.object.definition = outputRestrict(entry.object.definition);
+  var source   = $('#petitionactiv-template').html();
+  var template = Handlebars.compile(source);
+  $('.output-member').append(template(entry));
+}
+else{
+  // a faire
+}
+  });
+  lpdesigntriger();
+}
+</script>

@@ -1,0 +1,353 @@
+
+@(message: String, concept: Concept, connected: Boolean = true)(implicit session: play.api.mvc.Session, messages: Messages)
+@defining(if(connected){messages}else{play.api.i18n.Messages.Implicits.applicationMessages(Lang(concept.language), play.api.Play.current)}) { implicit messages =>
+
+@main(messages, connected, concept.name) {
+	
+	<script>
+fbq('track', 'ViewContentt', {
+id: debateYesOrNoOpinion.id,
+type: 'concept'
+});
+</script>
+  <style>
+path.slice{
+stroke-width:2px;
+}
+polyline{
+opacity: .3;
+stroke: black;
+stroke-width: 2px;
+fill: none;
+}
+svg text.percent{
+fill:white;
+text-anchor:middle;
+font-size:12px;
+}
+
+</style>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-md-10 col-md-offset-1 pheader" style="padding-top:0;">
+      <div id="messageduvote">@Messages("views.head.leconceptnon")</div>
+      <h2 class="acenter">@Html(concept.name)</h2>
+      <p style="word-wrap:break-word;" class="linkit acenter">@Html(concept.definition)</p>
+      <p class="acenter">@Messages("views.by") <a class="author_name" href="/member/@concept.idCreator">@{controllers.User.gettUsercameFromID(concept.idCreator)}</a></p>
+      <div class="shareBox"><a class="picon-facebook shic" onclick="return !window.open(this.href, 'Facebook', 'width=640,height=300')"  href="http://www.facebook.com/sharer.php?u=http://democras.com/concept/@concept.id"
+target="_blank"></a>
+      <a class="twitter-share-button picon-twitter-3 shic" onclick="return !window.open(this.href, 'Twitter', 'width=640,height=300')" href="https://twitter.com/intent/tweet?text=Check:http://democras.com/concept/@concept.id" data-size="large"></a>
+      <a href='mailto:?body=http://democras.com/concept/@concept.id'><span class='glyphicon glyphicon-envelope shic'></span></a>
+    </div>
+      <!-- <button class="btn btn-info nbtn" data-toggle="modal" data-target="#nv_convers" data-username="/concept/">@Messages("views.concep_invit")</button> -->
+      @if(connected && session.get("userID").get.toLong == concept.idCreator){
+        <a class="popDelete dcenter cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(2,@concept.id,event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+        <script>
+           $('.popDelete').popover();
+        </script>
+      }
+
+      <div class="row" style="margin-top:10px;">
+        <div class="col-xs-12 col-md-6">
+        @if(!connected){
+                @Messages("views.concep_connectToVote")
+              }
+          <table style="width:100%;">
+            <tr>
+              <td style="width:50%;">
+
+
+              @if(connected){
+                <button onclick="like(0)"class="btn btn-success btn-block" id="bup"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+              }else{
+                <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-success btn-block"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+              }
+              </td>
+              <td style="width:50%;">
+              @if(connected){
+                <button onclick="like(1)"class="btn btn-danger btn-block" id="bdown"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+              }else{
+                <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-danger btn-block"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+
+              }
+              </td>
+            </tr>
+          </table>
+
+
+        <p class="nblist">  @Messages("views.concep_mf") : <span id="mlike"></span> <br/>
+          @Messages("views.concep_ma") : <span id="mdlike"></span><br/>
+          @Messages("views.concep_mt") : <span id="mtlike"></span><br/></p>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <h4 class="acenter">Graph</h4>
+          <div id="donutPie" class="" style="display: block;margin: auto;">
+            <!--c'est ici que ce trouve le pie-->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-10 col-md-offset-1">
+      <div id="tcom2@concept.id"></div>
+    </div>
+  </div>
+</div>
+  @message
+  <!--<div class="leconcept">
+    <div class="container">
+
+
+    <div class="row">
+      <div class="col-xs-12 col-md-8">
+      For : <span id="mlike"></span> - Against : <span id="mdlike"></span>
+      <br/>
+
+      <a href="/concept/@concept.id/votefor" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+      <a href="/concept/@concept.id/voteagainst" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+      <button onclick="like(0)"class="btn btn-success btn-lg" id="bup"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+      <button onclick="like(1)"class="btn btn-danger btn-lg" id="bdown"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+
+        </div>
+
+      <div class="col-xs-12 col-md-4">
+
+        </div>
+      </div>
+    </div>
+    </div>
+
+
+  <h1></h1>-->
+
+
+
+  <script src="//d3js.org/d3.v3.min.js"></script>
+<script src="@routes.Assets.at("javascripts/Donut3D.js")"></script>
+<script>
+$(function() {
+    comment5disp(2,@concept.id,true,0);
+});
+
+var levoteman = 0
+@if(connected){
+levoteman = @Concepts.getUserVote(concept.id, Integer.parseInt(session.get("userID").get));
+}
+if (levoteman == 0){
+  $("#messageduvote").html('@Messages("views.head.leconceptnon")');
+}
+else if(levoteman == 1){
+  $("#messageduvote").html('@Messages("views.head.leconceptpour")');
+  $("#bup").toggleClass("active");
+}
+else{
+  $("#messageduvote").html('@Messages("views.head.leconceptcontre")');
+  $("#bdown").toggleClass("active");
+}
+
+
+
+
+var conceptmemberF = @concept.membersFor;
+var conceptmemberA = @concept.membersAgainst;
+if(parseInt(conceptmemberF) != 0 || parseInt(conceptmemberA) != 0){
+var salesData=[
+{label:"for", color:"#109618",value:conceptmemberF},
+{label:"against", color:"#DC3912", value:conceptmemberA},
+{label:"NONE", color:"#EFEF0F",value:0}
+];
+}
+else {
+  var salesData=[{label:"for", color:"#109618",value:conceptmemberF},
+  {label:"against", color:"#DC3912", value:conceptmemberA},
+  {label:"NONE", color:"#EFEF0F",value:1}
+  ];
+}
+var svg = d3.select("#donutPie").append("svg").attr("width",260).attr("height",220).attr("style","display: block;margin: auto;");
+
+//svg.append("g").attr("id","salesDonut");
+svg.append("g").attr("id","quotesDonut");
+
+//Donut3D.draw("salesDonut", randomData(), 150, 150, 130, 100, 30, 0.4);
+
+  Donut3D.draw("quotesDonut", randomData(), 130, 100, 130, 100, 20, 0);
+var l,d = 0;
+function changeData(lv,dv){
+//Donut3D.transition("salesDonut", randomData(), 130, 100, 30, 0.4);
+Donut3D.transition("quotesDonut", newData(lv,dv), 130, 100, 20, 0);
+}
+
+var day;
+function updatenumbers()
+{
+$("#mlike").text(conceptmemberF);
+$("#mdlike").text(conceptmemberA);
+$("#mtlike").text(parseInt(conceptmemberA)+parseInt(conceptmemberF));
+}
+updatenumbers();
+function like(dlike){
+
+  l = 0;
+  d = 0;
+  var cas=0;
+if(dlike==0)
+  {
+    $('#bup, #bdown').prop('disabled', true);
+    if($("#bup").hasClass("active"))
+      {
+        $.get(@concept.id+"/cancelvote", function(data, status){
+          if(status=="success") {
+            switchcass(4);
+            updatemtog(0);
+            }
+        })
+
+      }
+      else{
+    $.get(@concept.id+"/votefor", function(data){
+        switch(data)
+        {
+          case 11:
+              switchcass(0);
+              break;
+          case 21:
+              switchcass(1);
+              break;
+          case 6:
+              switchcass(6);
+              break;
+          default:
+              switchcass(6);
+        }
+        updatemtog(1);
+    });
+  }
+}
+else
+  {
+    $('#bup, #bdown').prop('disabled', true);
+    if($("#bdown").hasClass("active"))
+      {
+        $.get(@concept.id+"/cancelvote", function(data,status){
+          if(status=="success") {
+            switchcass(5);
+            updatemtog(0);
+            }
+        })
+      }
+      else{
+    $.get(@concept.id+"/voteagainst", function(data){
+        switch(data)
+        {
+          case 12:
+              switchcass(2);
+              break;
+          case 22:
+              switchcass(3);
+              break;
+          case 6:
+              switchcass(6);
+              break;
+          default:
+              switchcass(6);
+        }
+        updatemtog(2);
+    });
+  }
+  }
+
+
+}
+function updatemtog(a){
+  $('#bup, #bdown').prop('disabled',false);
+  switch(a)
+  {
+    case 1:
+      $("#messageduvote").text('@Messages("views.head.leconceptpour")');
+      break;
+    case 2:
+      $("#messageduvote").text('@Messages("views.head.leconceptcontre")');
+      break;
+    default:
+      $("#messageduvote").text('@Messages("views.head.leconceptnon")');
+  }
+}
+function switchcass(cas)
+{
+  debugit(cas);
+switch (cas) {
+    case 0:
+        changeData(1,0);
+        $("#bup").toggleClass("active");
+        break;
+    case 1:
+        changeData(1,-1);
+        $("#bup").toggleClass("active");
+        $("#bdown").toggleClass("active");
+        break;
+    case 2:
+        changeData(0,1);
+        $("#bdown").toggleClass("active");
+        break;
+    case 3:
+        changeData(-1,1);
+        $("#bdown").toggleClass("active");
+        $("#bup").toggleClass("active");
+        break;
+    case 4:
+        changeData(-1,0);
+        $("#bup").toggleClass("active");
+        break;
+    case 5:
+        changeData(0,-1);
+        $("#bdown").toggleClass("active");
+        break;
+    case 6:
+        alert("tu as deja vote");
+        break;
+    case 9:
+        alert("il ya une erreur");
+        break;
+    default:
+        changeData(0,0);
+        break;
+}
+}
+function newData(lv,dv)
+{
+  conceptmemberF=(lv)+conceptmemberF;
+  conceptmemberA=(dv)+conceptmemberA;
+  debugit("lv: "+lv+"dv: "+dv)
+  updatenumbers();
+  if(conceptmemberF != 0 || conceptmemberA != 0){
+  var salesData2=[
+      {label:"for", color:"#109618",value:conceptmemberF},
+      {label:"against", color:"#DC3912", value:conceptmemberA},
+      {label:"NONE", color:"#EFEF0F",value:0}
+    ];
+return salesData2.map(function(d){
+  return {label:d.label, value:d.value, color:d.color};});
+}
+else{
+  var salesData2=[
+    {label:"for", color:"#109618",value:conceptmemberF},
+    {label:"against", color:"#DC3912", value:conceptmemberA},
+      {label:"NONE", color:"#EFEF0F",value:1}
+    ];
+return salesData2.map(function(d){
+  return {label:d.label, value:d.value, color:d.color};});
+}
+}
+//$("#javasc").text("code:"+code);
+
+function randomData(){
+return salesData.map(function(d){
+return {label:d.label, value:d.value, color:d.color};});
+}
+</script>
+
+}
+}

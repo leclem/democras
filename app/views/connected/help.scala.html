@@ -1,0 +1,35 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, Messages("views.help")) {
+  <style media="screen">
+    .helpBlock{
+      text-align: justify;
+    }
+    .helpLink{
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  </style>
+  <div class="container">
+    <h2 class="acenter">@Messages("views.help")</h2><br>
+    <p class="helpBlock">
+      @Messages("views.help.begin")
+    </p>
+    <center>
+  <!--  <center><a href="#concepts" class="helpLink">@Messages("views.concepts")</a></center>
+  <center><a href="#debates" class="helpLink">@Messages("views.debates")</a></center>
+  <center><a href="#groups" class="helpLink">@Messages("views.groups")</a></center>
+  <center><a href="#actions" class="helpLink">@Messages("views.actions")</a></center>-->
+
+  <div id="concepts" class="helpBlock"><h2>@Messages("views.concepts")</h2>@Html(Messages("views.help.concepts"))</div>
+
+
+  <div id="debates" class="helpBlock"><h2>@Messages("views.debates")</h2>@Html(Messages("views.help.debates"))</div>
+
+  <div id="groups" class="helpBlock"><h2>@Messages("views.groups")</h2>@Html(Messages("views.help.groups"))</div>
+
+  <div id="actions" class="helpBlock"><h2>@Messages("views.actions")</h2>@Html(Messages("views.help.actions"))</div>
+  <br>
+  </div>
+
+}

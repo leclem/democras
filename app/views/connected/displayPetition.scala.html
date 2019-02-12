@@ -1,0 +1,159 @@
+
+@(message: String, petition: models.Petition, connected: Boolean = true)(implicit session: play.api.mvc.Session, messages: Messages)
+
+@*************************************
+ *If not connected, we take the language of the petition*
+ *************************************@
+@defining(if(connected){messages}else{play.api.i18n.Messages.Implicits.applicationMessages(Lang(petition.language), play.api.Play.current)}) { implicit messages =>
+
+@main(messages, connected) {
+<style>
+.firstname{
+  font-size:16px;
+  font-weight:bold;
+}
+.pseudo{
+  font-size:15px;
+  font-weight:
+}
+.other{
+  padding-bottom:10px;
+}
+.wrap_profile{
+  z-index:-1;
+  border-radius:4px;
+  position: relative;
+  margin-top: -85px;
+  text-align:center;
+  padding-top:90px;
+  padding-bottom:15px;
+  background:rgba(120,50,255,0.1);
+}
+.div_profile_pic{
+  height:170px;
+  width:170px;
+  border-radius:100%;
+  position:relative;
+  margin:auto;
+}
+.div_profile_pic img{
+  height:170px;
+  width:170px;
+  border-radius:100%;
+  border: 5px solid white;
+}
+.center{
+  text-align:center;
+}
+@@media only screen and (min-width:750px){
+  .gauche{
+    border-left:1px solid black;
+  }
+}
+.change_pp{
+  margin-top: -85px;
+  text-align:center;
+}
+</style>
+  @message
+  <!--s'occiper du créé par -->
+  <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1 pheader">
+          <h2 class="acenter">@Html(petition.name)</h2>
+          <p style="word-wrap:break-word;" class="acenter linkit">@Html(petition.definition)</p>
+          <p style="word-wrap:break-word;" class="acenter dateTimeEnd"></p>
+
+          <p class="acenter">
+          @if(petition.creatorType == 1){
+            @Messages("views.petition_creator_group") <a href="@routes.Groups.getGroup(petition.creatorID).url">@petition.creatorName</a>
+          }else{
+            @Messages("views.petition_creator_user") <a href="@routes.Application.memberDisplayString(petition.creatorID + "").url">@petition.creatorName</a>
+          }
+
+          @if(connected && (
+	        (petition.creatorType == 1 && Groups.canThisUserDeleteGroupContent(session.get("userID").get.toLong, petition.creatorID))
+	        ||
+	        (petition.creatorType == 0 && session.get("userID").get.toLong == petition.creatorID)
+	        )){
+            <a class="popDelete dcenter cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(5,@petition.id,event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+            <script>
+               $('.popDelete').popover();
+            </script>
+	        }
+          </p>
+          <p class="acenter debat_time"><a data-toggle="modal" data-target="#mbinc" data-pid="@petition.id" data-type="5" style='cursor:pointer;'><span id="spnbmbr">@petition.numberJoined</span> @Messages("views.group_member")</a></p>
+          @if(connected){ @if(Petitions.isMemberInPetition(Integer.parseInt(session.get("userID").get), petition.id)){
+          <button  onclick='isjoin()' class="btn btn-primary nbtn" id="joinbtn" >@Messages("views.petition.leavethispetition")</button>
+          } else {
+          <button  onclick='isjoin()' class="btn btn-success nbtn" id="joinbtn" >@Messages("views.petition.jointhispetition")</button>
+          } } else {
+          <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-success nbtn" id="joinbtn" >@Messages("views.petition.jointhispetition")</a>
+
+          }
+        </div>
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+
+        <!--id : @petition.id
+        Type du créateur (0 : membre, 1 groupe): @petition.creatorType <br />
+        ID du créateur (de groupe ou de membre) : @petition.creatorID <br />
+        Nom de l'action (de groupe ou de membre) : @petition.name <br />
+        Définition de l'action : @Html(petition.definition) <br />
+        Timestamp of end : @petition.timeEnd <br />
+        Number of people that joined this event : @petition.numberJoined <br />
+        Modifiation timestamp :! @petition.modificationTimestamp <br />-->
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-10 col-md-offset-1">
+        <div id="tcom5@petition.id"></div>
+      </div>
+    </div>
+  </div>
+<script>
+$(document).ready(function() {
+if("@petition.timeEnd" != "" && "@petition.timeEnd" != "-1"){
+  $('.dateTimeEnd').text("@Messages("views.action.endT"): "+moment.utc(@petition.timeEnd).format('LLL'));
+}
+});
+$(function() {
+    comment5disp(5,@petition.id,true,0);
+});
+
+
+var nbmbr = @petition.numberJoined;
+upnbmbr();
+function upnbmbr(){
+  $("#spnbmbr").text(nbmbr);
+}
+function isjoin(){
+  if($("#joinbtn").text() == "@Messages("views.petition.jointhispetition")")
+  {
+    $.post("/petition/join",{petitionID: @petition.id}, function(data){
+      if(data == 1)
+      {
+        $("#joinbtn").text("@Messages("views.petition.leavethispetition")").toggleClass('btn-success btn-primary');
+        nbmbr++;
+        upnbmbr();
+      }
+    });
+  }
+  else
+  {
+    $.post("/petition/leave",{petitionID: @petition.id}, function(data){
+      if(data == 1)
+      {
+        $("#joinbtn").text("@Messages("views.petition.jointhispetition")").toggleClass('btn-success btn-primary');
+        nbmbr--;
+        upnbmbr();
+      }
+    });
+  }
+}
+
+
+</script>
+
+}
+}

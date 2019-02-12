@@ -1,0 +1,201 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, Messages("views.search")) {
+
+<div class="container">
+  <div class="input-group mt5" style="transition:1s">
+        <input type="text" class="form-control" name="search" id="input_search" placeholder="@Messages("views.search") ..." onkeypress="searchEnter(event)">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="button" onclick="search(1,$('#input_search').val())"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+      </div>
+
+
+      <div class="output-search">
+
+      </div>
+</div>
+
+<script id="search-template" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="row" style="margin:3px;">
+          <div class="col-xs-12 col-md-10 col-md-offset-1 searchlist">
+            <div class="mbox fmbox" style="min-height: 60px;">
+              {{#if (if_eq typeEntry "member")}}
+              <img class="minpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{name}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+              {{else}}
+              <span class="mega-octicon octicon-{{octicon}} searchfst"></span>
+              {{/if}}
+              <div class="mboxin">
+                  <!-- <a class="author_name np" href="/{{typeEntry}}/{{id}}"> {{info}}</a> -->
+
+                {{#if (if_eq typeEntry "debate")}}
+                <div class="mboxh" style="padding-top: 9px;">
+                  <span class="label label-primary">{{{typeName}}}</span> <span class="label label-primary">{{infoDebate}}</span> <a href='/{{typeEntry}}/{{id}}' style="font-weight: bold;">{{{name}}}</a>
+                  {{#if canFollow}}
+                    <button class="btn btn-info btn-xs pull-right jd jd{{objectID}}btn{{id}}" data-id="{{id}}" data-objectID="{{objectID}}">@Messages("views.follow")</button></span>
+                  {{/if}}
+                </div>
+                {{else}}
+                <div class="mboxh"><span class="label label-primary">{{typeName}}</span> <a href='/{{typeEntry}}/{{id}}' style="font-weight: bold;">{{{name}}}</a>
+                  {{#if canFollow}}
+                    <button class="btn btn-info btn-xs pull-right jd jd{{objectID}}btn{{id}}" data-id="{{id}}" data-objectid="{{objectID}}">@Messages("views.follow")</button></span>
+                  {{/if}}
+                </div>
+                <div class="mboxb"><span style="word-wrap:break-word;">{{{info}}}</span>
+                </div>
+                {{/if}}
+                <div class="mboxf mbinctime">
+                  <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    {{/each}}
+  </script>
+
+<script>
+function searchEnter(e) {
+    if (e.keyCode == 13) {
+      search(1,$('#input_search').val());
+    }
+}
+//window.location.search.substring(1)
+curSearch = window.location.search.substring(1);
+curSearch = location.hash.substring(1);
+$('#input_search').val(curSearch);
+var plimit = 20;
+var curloading = true;
+var axLoading=false;
+var curdisp = -1;
+if(!curSearch){
+  $('.input-group').css("top","40%");
+}
+function search(prefresh,psearch){
+  if(prefresh==1){$('.output-search').empty();curdisp = -1;}
+  curloading =true;
+  if(!psearch){
+    $('.input-group').css("margin-top","20%");
+    return;}else{
+      $('.input-group').css("margin-top","5px");
+    }
+  location.hash = psearch;
+  curSearch = prefresh;
+  $('.output-search').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+  if(axLoading){return;}
+  axLoading=true;
+  $.ajax({
+        url: '/search/'+psearch+'/'+curdisp+'/'+plimit,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          axLoading=false;
+          if(data == 0){
+            $('.output-search').html('<span class="dcenter">@Messages("views.nosearch")</span>');
+          }
+          $('.loagif').hide();
+          data.forEach(function(item){
+            if(item.typeEntry != "member"){
+              switch (item.typeEntry) {
+                case "concept":
+                  item.octicon = "law";
+                  item.typeName = "@Messages("views.concepts")";
+                  break;
+                case "group":
+                  item.octicon = "organization";
+                  item.typeName = "@Messages("views.groups")";
+                  break;
+                case "debate":
+                  item.octicon = "megaphone";
+                  item.typeName = "@Messages("views.debates")";
+                  item.objectID=3;
+                  item.canFollow=1;
+                  if(item.info == "0"){
+                    item.infoDebate="@Messages("views.debate_yesorno")";
+                  }else{
+                    item.infoDebate="@Messages("views.debate_findasolution")";
+                  }
+                  break;
+                case "action":
+                  item.octicon = "location";
+                  item.typeName = "@Messages("views.actions")";
+                  break;
+                case "petition":
+                  item.octicon = "book";
+                  item.typeName = "@Messages("views.petitions")";
+                  break;
+                default:
+                  item.octicon = "book";
+                  item.typeName = "@Messages("views.petitions")";
+                  break;
+              }
+            }
+            else {
+              item.typeName = "@Messages("views.user")";
+              item.objectID=0;
+              item.canFollow=1;
+            }
+          });
+          console.log(data);
+           var item = {'response' : data};
+           var source   = $('#search-template').html();
+           var template = Handlebars.compile(source);
+           $('.output-search').append(template(item));
+           followThis();
+          if(data.length == plimit){curloading =false;}
+          else{
+            curloading = true;
+          }
+          //$('#outputcomment .post-container').linkify({target: "_blank"});
+        }});
+}
+function isFollowingThis(poid,pid){
+  $.ajax({url:'/member/json/isFollowing/'+poid+'/'+pid,type:'get',success: function(data){if(data==1){$('.jd'+poid+'btn'+pid).text("@Messages("views.munfollow")").addClass('active');}}});
+}
+function followThis(){
+  $('.jd').each(function(){
+    $(this).click(function(){
+        var thisone = $(this);
+        $('.jd'+thisone.data('objectid')+'btn'+thisone.data('id')).prop('disabled',true);
+        if(thisone.text() == "@Messages("views.follow")"){
+          purl = "/member/follow";
+          ptext = "@Messages("views.munfollow")";
+        }
+        else{
+          purl = "/member/unfollow";
+          ptext = "@Messages("views.follow")";
+        }
+            $.ajax({
+              url:purl,
+              type: "post",
+              data: {objectFollowed: thisone.data('objectid'), idObject: thisone.data('id')},
+              success: function(data,va,vb){
+                debugit(data);
+                $('.jd'+thisone.data('objectid')+'btn'+thisone.data('id')).text(ptext).prop('disabled',false).toggleClass('active');
+              }
+            });
+      });
+      isFollowingThis($(this).data('objectid'),$(this).data('id'));
+      $(this).removeClass('jd');
+    });
+}
+
+Handlebars.registerHelper('if_eq', function(a, b, opts) {
+    if(a == b) // Or === depending on your needs
+        return true;
+    else
+        return false;
+});
+$(window).on('scroll', function(){
+  if ($('.debat').length > 0) {
+    if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.debat:last()').children('.pmT').val();
+        search(0,curSearch);
+      }
+    }
+  });
+search(1,curSearch);
+</script>
+
+}

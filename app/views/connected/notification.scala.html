@@ -1,0 +1,64 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true) {
+<div class="row">
+  <div class="col-xs-12 col-md-10 col-md-offset-1 output-FullNotif">
+  </div>
+</div>
+
+<script id="notificationFullMenu-template" type="text/x-handlebars-template">
+  {{#each response}}
+  <div class="mbox" style="min-height:60px;border: black solid 1px;border-radius: 3px;padding: 5px;">
+      <img class="minpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{actor.username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+      <div class="mboxin">
+        <div class="mboxh">
+          {{#if saw}} {{else}}<div class="nNotif"></div> {{/if}}
+          <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{{vaction}}}
+        </div>
+        <div class="mboxb"><a href="/{{atype}}/{{object.id}}" style='cursor:pointer;'>
+          {{{what}}}
+        </a></div>
+        <div class="mboxf notifTime">
+          <span class="debat_time" data-livestamp="{{mT}}"></span>
+          <input type="hidden" class="pmT" value="{{headers.modificationTimestamp}}"/>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </script>
+<script>
+var curloading = true;
+var curdisp = -1;
+var plimit = 5;
+function getFullNotifications(){
+  $('.output-FullNotif').append('<img src="@routes.Assets.at("img/loa.gif")" class="disloaF dcenter" style="margin:auto;"/>');
+  curloading = true;
+  $.ajax({url:'/member/json/notifications/'+curdisp+'/'+plimit,success: function(data){
+    $('.disloaF').remove();
+    data = parseNotif(data);
+    debugit(data);
+    var item = {'response' : data};
+    var source   = $('#notificationFullMenu-template').html();
+    var template = Handlebars.compile(source);
+    $('.output-FullNotif').append(template(item));
+    if (data.length == 0 && $('.notifTime').length == 0) {
+      $('.output-FullNotif').html('<span class="dcenter">@Messages("views.nonotif")</span>');
+    }
+    if(data.length == plimit){
+      curloading =false;
+    }
+    console.log(data);
+  }});
+}
+getFullNotifications();
+
+$(window).on('scroll', function(){
+  if ($('.notifTime').length > 0) {
+    if($('.notifTime:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+        curdisp= $('.notifTime:last()').children('.pmT').val();
+        getFullNotifications();
+      }
+    }
+  });
+</script>
+}

@@ -1,0 +1,172 @@
+
+@(message: String, action: models.Action, connected: Boolean = true)(implicit session: play.api.mvc.Session, messages: Messages)
+
+@*************************************
+ *If not connected, we take the language of the action*
+ *************************************@
+@defining(if(connected){messages}else{play.api.i18n.Messages.Implicits.applicationMessages(Lang(action.language), play.api.Play.current)}) { implicit messages =>
+
+@main(messages, connected, action.name) {
+	
+	<script>
+fbq('track', 'ViewContentt', {
+id: action.id,
+type: 'action'
+});
+</script>
+
+<style>
+.firstname{
+  font-size:16px;
+  font-weight:bold;
+}
+.pseudo{
+  font-size:15px;
+  font-weight:
+}
+.other{
+  padding-bottom:10px;
+}
+.wrap_profile{
+  z-index:-1;
+  border-radius:4px;
+  position: relative;
+  margin-top: -85px;
+  text-align:center;
+  padding-top:90px;
+  padding-bottom:15px;
+  background:rgba(120,50,255,0.1);
+}
+.div_profile_pic{
+  height:170px;
+  width:170px;
+  border-radius:100%;
+  position:relative;
+  margin:auto;
+}
+.div_profile_pic img{
+  height:170px;
+  width:170px;
+  border-radius:100%;
+  border: 5px solid white;
+}
+.center{
+  text-align:center;
+}
+@@media only screen and (min-width:750px){
+  .gauche{
+    border-left:1px solid black;
+  }
+}
+.change_pp{
+  margin-top: -85px;
+  text-align:center;
+}
+</style>
+
+<div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10 col-md-offset-1 pheader">
+        <h2 class="acenter linkit">@Html(action.name)</h2>
+        <span class="acenter" style="display: block;">
+        @if(action.creatorType == 1){
+          @Messages("views.action_creator_group") <a href="@routes.Groups.getGroup(action.creatorID).url">@Html(action.creatorName)</a>
+        }else{
+          @Messages("views.action_creator_user") <a href="@routes.Application.memberDisplayString(action.creatorID + "").url">@Html(action.creatorName)</a>
+        }
+      </span>
+        @if(connected && (
+        (action.creatorType == 1 && Groups.canThisUserDeleteGroupContent(session.get("userID").get.toLong, action.creatorID))
+        ||
+        (action.creatorType == 0 && session.get("userID").get.toLong == action.creatorID))
+        ){
+          <a class="popDelete dcenter cp" data-toggle="popover" data-html="true" data-placement="bottom" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(4,@action.id,event);'>@Messages("views.forms.yes")</button>" data-title="@Messages("views.areyousure")"><span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+          <script>
+             $('.popDelete').popover();
+          </script>
+        }
+        <p style="word-wrap:break-word;" class="acenter linkit">@Html(action.definition)</p>
+        <p style="word-wrap:break-word;" class="acenter dateTimeBegin"></p>
+        <p style="word-wrap:break-word;" class="acenter dateTimeEnd"></p>
+        @if(connected){
+        <p class="acenter debat_time"><a data-toggle="modal" data-target="#mbinc" data-pid="@action.id" data-type="4" style='cursor:pointer;'><span id="spnbmbr">@action.numberJoined</span> @Messages("views.group_member")</a></p>
+         @if(Actions.isMemberInAction(Integer.parseInt(session.get("userID").get), action.id)){
+        <button  onclick='isjoin()' class="btn btn-primary nbtn" id="joinbtn" >@Messages("views.action.leavethisaction")</button>
+        } else {
+        <button  onclick='isjoin()' class="btn btn-success nbtn" id="joinbtn" >@Messages("views.action.jointhisaction")</button>
+        }
+        }else{
+          <a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2" class="btn btn-success nbtn" id="joinbtn" >@Messages("views.action.jointhisaction")</a>
+        }
+      </div>
+      <div class="col-xs-12 col-md-10 col-md-offset-1">
+        <p style="word-wrap:break-word;" class="acenter">@action.nameLocation <br>@action.addressLocation</p>
+        <a href="/action/@action.latitude/@action.longitude" target="_blank">
+          <img class="dbma" style="width:100%" src="http://maps.google.com/maps/api/staticmap?center=@action.latitude,@action.longitude&zoom=16&markers=@action.latitude,@action.longitude&size=640x320&sensor=true" alt="" />
+        </a>
+        <br/>
+        @message
+        <!--id : @action.id Type du créateur (0 : membre, 1 groupe): @action.creatorType <br /> ID du créateur (de groupe ou de membre) : @action.creatorID
+        Timestamp of start : @action.timeBegin <br />
+        Timestamp of end : @action.timeEnd <br />
+        Number of people that joined this event : @action.numberJoined <br />
+        Modifiation timestamp :! @action.modificationTimestamp <br />-->
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-10 col-md-offset-1">
+      <div id="tcom4@action.id"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function() {
+    comment5disp(4,@action.id,true,0);
+});
+
+$(document).ready(function() {
+  $('.dateTimeBegin').text("@Messages("views.action.startT"): "+moment.utc(@action.timeBegin).format('LLL'));
+if("@action.timeEnd" != -1){
+  console.log("@action.timeEnd");
+  $('.dateTimeEnd').text("@Messages("views.action.endT"): "+moment.utc(@action.timeEnd).format('LLL'));
+}
+});
+
+//$.ajax({url:'/action/json/membersInAction/@action.id/'+moment().valueOf()+'/10',success:function(data){debugit(data);}});
+var nbmbr = @action.numberJoined;
+upnbmbr();
+function upnbmbr(){
+  $("#spnbmbr").text(nbmbr);
+}
+function isjoin(){
+  if($("#joinbtn").text() == "@Messages("views.action.jointhisaction")")
+  {
+    $.post("/action/join",{actionID: @action.id}, function(data){
+      if(data == 1)
+      {
+        $("#joinbtn").text("@Messages("views.action.leavethisaction")").toggleClass('btn-success btn-primary');
+        nbmbr++;
+        upnbmbr();
+      }
+    });
+  }
+  else
+  {
+    $.post("/action/leave",{actionID: @action.id}, function(data){
+      if(data == 1)
+      {
+        $("#joinbtn").text("@Messages("views.action.jointhisaction")").toggleClass('btn-success btn-primary');
+        nbmbr--;
+        upnbmbr();
+      }
+    });
+  }
+}
+
+
+</script>
+
+}
+}

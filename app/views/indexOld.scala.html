@@ -1,0 +1,627 @@
+@(message: String, redirectURL: String = "/")(implicit messages: Messages)
+@import helper._
+
+<!DOCTYPE html>
+<html xmlns:og="http://ogp.me/ns#">
+<head>
+
+  <meta charset="utf-8">
+
+  <title>Democras - @Messages("views.subtitle")</title>
+<meta property="og:title" content="Democras - @Messages("views.subtitle")" />
+<meta property="og:image" content="https://democras.com/assets/images/democras-fb4.png" />
+<meta property="og:image" content="https://democras.com/assets/images/democras-fb5.png" />
+<meta property="og:url" content="https://democras.com" />
+<meta property="og:description" content="Réseau social de démocratie participative. A l'aide de débats, groupements, et actions de masse, il permet à tout citoyen ou mouvement de se concerter, de se regrouper et d'agir."/>
+
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+  <meta name="google-signin-scope" content="profile email">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/octicons/3.1.0/octicons.min.css" rel="stylesheet" type="text/css" />
+  <meta name="google-signin-client_id" content="483427273002-g9hcqk1f8j6p8t03di9f90lfr6kvg0jh.apps.googleusercontent.com.apps.googleusercontent.com">
+  <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
+  <!-- <script src="https://apis.google.com/js/api:client.js"></script> -->
+
+
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins)-->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqBootstrapValidation/1.3.7/jqBootstrapValidation.min.js"></script>
+  <link href="@routes.Assets.at("css/pictonic.css")" rel="stylesheet">
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-75476417-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  <!-- Bootstrap -->
+  <link href="@routes.Assets.at("css/bootstrap.min.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("css/index.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("css/login.css")" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Maven+Pro:500' rel='stylesheet' type='text/css'><!-- https://github.com/fengyuanchen/cropper -->
+  <style>
+  .DemoTitle{
+    font-size:5em;margin-bottom:0;
+  }
+  .DemoSubTitle{
+    margin:0;font-size:1.5em;
+  }
+  @@media (max-width:800px) {
+      .presentationPage2 h4{
+        font-size: 16px;
+      }
+      .h2{
+        font-size: .8em;
+      }
+      .presentationPage2 h2{
+        font-size: 25px;
+      }
+      .DemoTitle{
+        font-size:4em;margin-bottom:0;
+      }
+      .DemoSubTitle{
+        margin:0;font-size:1em;
+      }
+  }
+  @@media (max-height:500px) {
+      .content-wrapper .title{
+        margin-top: 0px;
+      }
+  }
+  </style>
+</head><body>
+
+
+  <!--page principale-->
+  <section class="background">
+    <div id="video-background"></div>
+    <canvas id="canvas"></canvas>
+    <div class="content-wrapper">
+
+      <div class="title" style="margin-top:7%;">
+        <h2 class="acenter DemoTitle">D<span class="text-success">emocras</span></h2>
+        <h2 class="acenter DemoSubTitle"><span class="text-success"></span>@Messages("views.subtitle")<span class="text-success"></span></h2>
+      </div>
+
+      <div class="wrap">
+        @message
+        @helper.form(action = routes.Connection.processConnectionForm(redirectURL), 'id->"sb_input") {
+          <div class="form-group">
+            <input type="text" class="form-control" name='username' id="username_input" placeholder='@Messages("views.forms.username")'>
+          </div>
+          <div class="form-group">
+            <input type="password" name="password" class="form-control" id="pass_input" placeholder="@Messages("views.forms.password")">
+          </div>
+          <div class="form-group" style="text-align:center">
+            <!-- <input type="checkbox"/> @Messages("views.stayconnect") -->
+
+          </div>
+
+          <input class="btn btn-success btn-lg btn-block" id='connect' value="@Messages("views.connect")" type="submit"/>
+        }
+        <a href="#" data-toggle="modal" data-target="#forgot">@Messages("views.forgotPass")</a>
+        <div class="or">
+          @Messages("views.or") <br/>
+          <button class="btn btn-primary btn-sm" onclick="nextItem();nextItem();">@Messages("views.forms.subscription")</button><br/>
+          <!-- <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#about" style="margin-top: 3px;">@Messages("views.about")</button> -->
+
+        </div>
+        <!--<button type="button" name="button" id="customBtn">SIGN IN</button>-->
+      </div>
+      <div class="policies">
+          <span class="cgufooter">
+             <a onclick="return !window.open(this.href, 'Terms', 'width=640,height=640')" href="/terms#row_policy">@Messages("views.policy")</a>  | <a onclick="return !window.open(this.href, 'Terms', 'width=640,height=640')" href="/terms">@Messages("views.cgu")</a>
+             <span style="float:right;">
+               <div id="fb-root"></div>
+             <script>(function(d, s, id) {
+               var js, fjs = d.getElementsByTagName(s)[0];
+               if (d.getElementById(id)) return;
+               js = d.createElement(s); js.id = id;
+               js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=724251474386860";
+               fjs.parentNode.insertBefore(js, fjs);
+             }(document, 'script', 'facebook-jssdk'));</script><a href="https://www.facebook.com/Democras-516339725217427/" target="_blank">Facebook</a>:
+             <div class="fb-like" data-href="https://www.facebook.com/Democras-516339725217427/" data-layout="button" data-action="like" data-show-faces="true" data-share="true"></div>
+
+             </span>
+            <!-- s| <a href="/#">@Messages("views.sponsor")</a> -->
+             <span style="float:right;">@Messages("views.forms.lang"): <img onclick="curLang('en')" src="@routes.Assets.at("images/en.jpg")" style="width:16px;cursor:pointer;" />
+              <img onclick="curLang('fr')" src="@routes.Assets.at("images/fr.jpg")" style="width:16px;cursor:pointer;" />&nbsp;
+            </span>
+           </span>
+
+    </div>
+    <div class="pathField learn-more nextFooter cp" onclick="nextItem()">
+    <span style="vertical-align: middle;">@Messages("views.whatisdemocras")</span>
+    </div>
+  </div>
+</section>
+
+<section class="background">
+  <div class="content-wrapper">
+    <div class="container ma" style="text-align:justify;">
+      <span class="presentationPage2">
+
+      @Html(Messages("views.democras_presentation"))
+    </span>
+
+    <div id="carousel-example-generic" class="carousel slide hidden-sm hidden-xs" data-ride="carousel" style="max-width: 700px;margin: auto;">
+      @if(messages.lang == Instantiations.languageFR.lang) {
+      	<div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/99dWkChYKsc" frameborder="0" allowfullscreen></iframe></div>
+      } else {
+      <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+      </ol>
+
+
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img src="/assets/images/debates.png" />
+          <div class="carousel-caption">
+
+          </div>
+        </div>
+        <div class="item">
+          <img src="/assets/images/concepts.png" alt="...">
+          <div class="carousel-caption">
+
+          </div>
+        </div>
+        <div class="item">
+          <img src="/assets/images/petitions.png" alt="...">
+          <div class="carousel-caption">
+
+          </div>
+        </div>
+        <div class="item">
+          <img src="/assets/images/actions.png" alt="...">
+          <div class="carousel-caption">
+
+          </div>
+        </div>
+
+      </div>
+
+      <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+      }
+    </div>
+  </div>
+  <div class="pathField nextFooter sinscrire cp" onclick="nextItem()">
+  <span style="vertical-align: middle;">@Messages("views.forms.subscription")</span>
+  </div>
+  </div>
+</section>
+
+<section class="background">
+  <div class="content-wrapper">
+    <div class="pathField previousHeader cp" onclick="previousItem();previousItem();">
+    <span style="vertical-align: middle;">@Messages("views.alreadymember")</span>
+    </div>
+    <div class="title title2">
+    <h2 class="acenter DemoTitle">D<span class="text-success">emocras</span></h2>
+    <h2 style="margin-top:0;margin-bottom:0;" class="DemoSubTitle">@Messages("views.forms.subscription")</h2>
+  </div>
+    <div class="wrap wrapsub">
+      <form id="cmuf" novalidate onsubmit="return false;">
+        <div class="control-group">
+      <div class="form-group">
+        <input type="email" data-validation-required-message="@Messages("views.forms.required")" data-validation-email-message="@Messages("views.forms.notvalidmail")" class="form-control" name='mail' id="smail_input" placeholder='@Messages("views.forms.mail")' required>
+        <p class="help-block" style="color:red;"></p>
+      </div>
+    </div>
+    <div class="control-group">
+    <div class="form-group">
+      <input type="text" style="display:inline-block;" class="form-control inputSub" name='username' data-validation-required-message="@Messages("views.forms.required")" id="susername_input" placeholder='@Messages("views.forms.username")' pattern="(?!\d)([0-9A-Za-z\.\-\_]){5,}" data-validation-pattern-message="@Messages("views.forms.notvalid")" required>
+      <a href="#" tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Messages("views.help.username")" class="textinfo"><span class="glyphicon glyphicon-info-sign"></span></a>
+      <p class="help-block" style="color:red;"></p>
+    </div>
+    </div>
+    <div class="control-group">
+    <div class="form-group">
+      <input type="password" style="display:inline-block;" name="password" data-validation-required-message="@Messages("views.forms.required")" class="form-control inputSub" id="spass_input" placeholder="@Messages("views.forms.password")"  minlength="5" required>
+      <a href="#" tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Messages("views.help.password")" class="textinfo"><span class="glyphicon glyphicon-info-sign"></span></a>
+      <p class="help-block" style="color:red;"></p>
+    </div>
+    </div>
+    <input type="hidden" value="@Messages("views.curLang")" name="lang"/>
+    <div class="form-group" style="text-align:center">
+      <span style="font-size:0.7em;">@Html(Messages("views.agreecgu"))</span>
+    </div>
+    <div class="alert alert-warning" role="alert" id="alertnosubscribe"></div>
+    <input class="btn btn-success btn-lg btn-block" id="firstsubscribe" value="@Messages("views.forms.subscription")" type="submit"/>
+
+  </form>
+  </div>
+  </div>
+</section>
+<div class="thedots">
+  <div class="dot active" onclick="gotoitem(0)"></div>
+  <div class="dot" onclick="gotoitem(1)"></div>
+  <div class="dot" onclick="gotoitem(2)"></div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js'></script>
+
+<script>
+var isIe = (/MSIE/i.test(navigator.userAgent)) || (/Trident.*rv\:11\./i.test(navigator.userAgent));
+function is_touch_device() {
+  return 'ontouchstart' in window
+      || navigator.maxTouchPoints;
+};
+if(window.innerWidth < 800 ||isIe){
+  location.href = "/mobile";
+}
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if(iOS){
+  //$('div.content-wrapper').addClass('ipadding');
+}
+$('.textinfo').popover();
+$('#username_input').focus();
+// ------------- VARIABLES ------------- //
+var ticking = false;
+var isFirefox = (/Firefox/i.test(navigator.userAgent));
+var scrollSensitivitySetting = 30; //Increase/decrease this number to change sensitivity to trackpad gestures (up = less sensitive; down = more sensitive)
+var currentSlideNumber = 0;
+var slideDurationSetting = 600; //Amount of time for which slide is "locked"
+var totalSlideNumber = $(".background").length;
+
+// ------------- DETERMINE DELTA/SCROLL DIRECTION ------------- //
+function parallaxScroll(evt) {
+  if (isFirefox) {
+    //Set delta for Firefox
+    delta = evt.detail * (-120);
+  } else if (isIe) {
+    //Set delta for IE
+    delta = -evt.deltaY;
+  } else {
+    //Set delta for all other browsers
+    delta = evt.wheelDelta;
+  }
+  if (ticking != true) {
+    if (delta <= -scrollSensitivitySetting) {
+      //Down scroll
+      ticking = true;
+      if (currentSlideNumber !== totalSlideNumber - 1) {
+        nextItem();
+      }
+
+      slideDurationTimeout(slideDurationSetting);
+    }
+    if (delta >= scrollSensitivitySetting) {
+      //Up scroll
+      ticking = true;
+      if (currentSlideNumber !== 0) {
+        previousItem();
+      }
+
+      slideDurationTimeout(slideDurationSetting);
+    }
+  }
+}
+function slideDurationTimeout(slideDuration) {
+  setTimeout(function() {
+    ticking = false;
+  }, slideDuration);
+}
+// ------------- ADD EVENT LISTENER ------------- //
+var mousewheelEvent = isFirefox ? "DOMMouseScroll" : "wheel";
+window.addEventListener(mousewheelEvent, _.throttle(parallaxScroll, 60), false);
+
+// ------------- SLIDE MOTION ------------- //
+function nextItem() {
+  currentSlideNumber++;
+  $(".background").eq(currentSlideNumber-1).removeClass("up-scroll").addClass("down-scroll");
+  activeDot(currentSlideNumber);
+}
+
+function previousItem() {
+  currentSlideNumber--;
+  $(".background").eq(currentSlideNumber).removeClass("down-scroll").addClass("up-scroll");
+  activeDot(currentSlideNumber);
+}
+function gotoitem(pitem){
+  if(currentSlideNumber != pitem){
+    activeDot(pitem);
+    if(currentSlideNumber == 0){
+      switch (pitem) {
+        case 1:
+          nextItem();
+          break;
+        case 2:
+          nextItem();nextItem();
+          break;
+      }
+    }
+    if(currentSlideNumber == 1){
+      switch (pitem) {
+        case 0:
+          previousItem();
+          break;
+        case 2:
+          nextItem();
+          break;
+      }
+    }
+      if(currentSlideNumber == 2){
+        switch (pitem) {
+          case 1:
+            previousItem();
+            break;
+          case 0:
+            previousItem();previousItem();
+            break;
+        }
+      }
+    }
+}
+function activeDot(pitem){
+  $('.thedots').children().removeClass('active');
+  $('.dot').eq(pitem).addClass('active');
+}
+function curLang(plang){
+  if(plang=="fr"){
+    $.get("/changelang/fr",function(data){
+      location.reload();
+    })
+  }else{
+    $.get("/changelang/en",function(data){
+      location.reload();
+    });
+  }
+}
+$('form#cmuf input').jqBootstrapValidation(
+  {
+    submitSuccess: function ($form, event) {
+      createmUser();
+    }
+  }
+);
+$('#alertnosubscribe').hide();
+function createmUser(){
+  $('#firstsubscribe').prop('disabled',true);
+  $.ajax({url:'/firstsubscribe',type:'post',data:$('#cmuf').serialize(),success:function(data){
+    if(data == 1){
+      $('#username_input').val($('#susername_input').val());
+      $('#pass_input').val($('#spass_input').val());
+      $('#connect').click();
+    }else if (data == 1) {
+      $('#alertnosubscribe').text('@Messages("views.nosubscribe.mail")').show('slideup');
+    }else if (data == 2) {
+      $('#alertnosubscribe').text('@Messages("views.nosubscribe.user")').show('slideup');
+    }else {
+      $('#alertnosubscribe').text('@Messages("views.nosubscribe.error")').show('slideup');
+    }
+    if(data != 1){$('#firstsubscribe').prop('disabled',false);}
+  }});
+}
+//   $('#signup').on('shown.bs.modal', function () {
+//     $image.cropper({
+//       minCropBoxWidth:300,
+//       aspectRatio: 1,
+//       preview: '.crpreview',
+//       autoCropArea: 0.8,
+//       scale:2,
+//       built: function () {
+//         // Strict mode: set crop box data first
+//         $image.cropper('setCropBoxData', cropBoxData);
+//         $image.cropper('setCanvasData', canvasData);
+//       }
+//     });
+//
+// });
+// $('#signup').on('hidden.bs.modal', function () {
+//   try{
+//     cropBoxData = $image.cropper('getCropBoxData');
+//     canvasData = $image.cropper('getCanvasData');
+//     $image.cropper('destroy');
+//   }catch(e){
+//     debugit('catch');
+//   }
+// });
+// var ppicselect;
+// var $image = $('#cropper-example-2 > img'),
+//     cropBoxData,
+//     canvasData;
+
+// $('#signup').on('hidden.bs.modal', function () {
+//   try{
+//     cropBoxData = $image.cropper('getCropBoxData');
+//     canvasData = $image.cropper('getCanvasData');
+//     $image.cropper('destroy');
+//   }catch(e){
+//     debugit('catch');
+//   }
+//
+// });
+// var spic = false;
+// $('#backpic').hide();
+// This is called with the results from from FB.getLoginStatus().
+//  function statusChangeCallback(response) {
+//    debugit('statusChangeCallback');
+//    debugit(response);
+//    if (response.status === 'connected') {
+//      // Logged into your app and Facebook.
+//      debugit(response.authResponse.userID);
+//      testAPI();
+//    } else if (response.status === 'not_authorized') {
+//      // The person is logged into Facebook, but not your app.
+//      document.getElementById('status').innerHTML = 'Please log into this Politevo.';
+//    } else {
+//      // The person is not logged into Facebook, so we're not sure if
+//      // they are logged into this app or not.
+//      document.getElementById('status').innerHTML = 'Please log into Facebook.';
+//    }
+//  }
+//  // This function is called when someone finishes with the Login
+//  // Button.  See the onlogin handler attached to it in the sample
+//  // code below.
+//  function checkLoginState() {
+//    FB.getLoginStatus(function(response) {
+//      statusChangeCallback(response);
+//    });
+//  }
+//  window.fbAsyncInit = function() {
+//  FB.init({
+//    appId      : '724251474386860',
+//    cookie     : true,  // enable cookies to allow the server to access the session
+//    xfbml      : true,  // parse social plugins on this page
+//    version    : 'v2.2' // use version 2.2
+//  });
+//  FB.getLoginStatus(function(response) {
+//    statusChangeCallback(response);
+//  });
+// }
+//  function loginfbbtn(){
+//  FB.login(function(response) {
+//     // handle the response
+//   statusChangeCallback(response);
+//   }, {scope: 'public_profile,email,user_friends,user_birthday,user_photos'});
+// }
+//  // Load the SDK asynchronously
+//  (function(d, s, id) {
+//    var js, fjs = d.getElementsByTagName(s)[0];
+//    if (d.getElementById(id)) return;
+//    js = d.createElement(s); js.id = id;
+//    js.src = "//connect.facebook.net/en_US/sdk.js";
+//    fjs.parentNode.insertBefore(js, fjs);
+//  }(document, 'script', 'facebook-jssdk'));
+//  var pics;
+//  // Here we run a very simple test of the Graph API after login is
+//  // successful.  See statusChangeCallback() for when this call is made.
+//  function testAPI() {
+//    FB.api('/me', function(response) {
+//      debugit(response);
+//      document.getElementById('status').innerHTML =
+//        'Thanks for logging in, ' + response.name + '!';
+//    });
+//    FB.api('/me?fields=email,gender,first_name,last_name,link,locale', function(response) {
+//      debugit(JSON.stringify(response));
+//  });
+//  FB.api('/me/albums', function(response) {response.data.forEach(function(entry){if(entry.name=="Profile Pictures"){fbpropic(entry.id);}});});
+// }
+// function fbpropic(pid){
+//   FB.api('/'+pid+'/photos', function(response) {
+//    pics = response;
+//    debugit(response);
+//    pics.data.forEach(function(entry) {
+//      FB.api('/'+entry.id+'?fields=images,width,icon,height,from&edges=likes,comments,tags', function(response) {
+//        var parsed = response;
+//        $('#output').append("<div class='col-xs-6 col-md-4 ppic pidpic"+entry.id+"' style='background-image:url(\""+parsed.images[1].source+"\");cursor:pointer;' onclick='testpic(event);'><div class='square-content'><div></div></div></div>");
+//        //<span style='position:absolute;z-index:2;font-weight:bold;font-size:1.1em;color:white;'></span><div class='dadpic'>
+//      });
+//    });
+//   });
+// }
+</script>
+<!-- <script src="@routes.Assets.at("javascripts/circle.js")"></script> -->
+<script src="@routes.Assets.at("javascripts/bubbles.js")"></script>
+<script>
+var dev =0;
+function debugit(ptar){
+  if(dev==1){
+    console.log(ptar);
+  }
+}
+////Google plus tard
+/*
+var googleUser = {};
+var startApp = function() {
+gapi.load('auth2', function(){
+// Retrieve the singleton for the GoogleAuth library and set up the client.
+auth2 = gapi.auth2.init({
+client_id: '534946822751-pv7ps8al63b04v6fueibri0b8741tail.apps.googleusercontent.com.apps.googleusercontent.com',
+cookiepolicy: 'single_host_origin',
+// Request scopes in addition to 'profile' and 'email'
+//scope: 'additional_scope'
+});
+attachSignin(document.getElementById('customBtn'));
+});
+};
+
+function attachSignin(element) {
+debugit(element.id);
+auth2.attachClickHandler(element, {},
+function(googleUser) {
+document.getElementById('name').innerText = "Signed in: " +
+googleUser.getBasicProfile().getName();
+}, function(error) {
+alert(JSON.stringify(error, undefined, 2));
+});
+}
+startApp();*/
+/*  function onSignIn(googleUser) {http://embedly.github.io/jquery-preview/demo/
+// Useful data for your client-side scripts:<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+var profile = googleUser.getBasicProfile();
+debugit("ID: " + profile.getId()); // Don't send this directly to your server!
+debugit("Name: " + profile.getName());
+debugit("Image URL: " + profile.getImageUrl());
+debugit("Email: " + profile.getEmail());
+
+// The ID token you need to pass to your backend:
+var id_token = googleUser.getAuthResponse().id_token;
+debugit("ID Token: " + id_token);
+};*/
+</script>
+<!--  <a href="#" onclick="signOut();">Sign out</a>-->
+<script>
+function forgotPass(event){
+  if($.trim($('#newPassUser'))!=''){
+    $(event.target).button('loading');
+    $.ajax({url:'/forget',type:'post',data:{username:$.trim($('#newPassUser').val())},success:function(data){
+      if(data==1){
+        $(event.target).parents('.modal-body').empty().append('<p class="acenter">@Messages("views.successForget")</p>');
+      }else {
+        $(event.target).button('reset');
+      }
+    }});
+  }
+}
+/*
+function signOut() {
+var auth2 = gapi.auth2.getAuthInstance();
+auth2.signOut().then(function () {
+debugit('User signed out.');
+});
+}*/
+function forgetPassEnter(e){
+  if (e.keyCode == 13) {
+    $('#forgetPassBtn').click();
+  }
+}
+</script>
+<div class="modal fade" id="forgot" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header pheadermdl">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="acenter">@Messages("views.forgotPass")</h2>
+      </div>
+      <div class="modal-body">
+        <p class="acenter">@Messages("views.forgotPassMess")</p>
+        <input type="text" class="form-control" id="newPassUser" value="" placeholder="@Messages("views.forms.username")" onkeypress="forgetPassEnter(event)"/>
+        <div class="mt5" style="height:40px">
+          <button type="button" name="button" class="btn btn-success btn-block pc" data-loading-text="@Messages("views.loading")" onclick="forgotPass(event)" id="forgetPassBtn">@Messages("views.send")</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

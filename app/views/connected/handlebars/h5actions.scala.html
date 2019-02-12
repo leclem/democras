@@ -1,0 +1,35 @@
+@()(implicit messages: Messages)
+<script id="actions-5template0" type="text/x-handlebars-template">
+    {{#each response}}
+    <div class="row" style="margin:3px;" >
+      <div class="col-xs-12 action" style="background-color:rgba(0,0,255,0.05);padding:0;border-radius:3px;">
+        <div class="col-xs-12 {{#if not5disp}}col-md-7{{/if}}">
+      <a class="author_name" href="/action/{{id}}">{{{name}}}</a>
+      <span class="debat_time" data-livestamp="{{mT}}"></span>
+      <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+      <br/>
+      <div class="lpdesigntriger" style="word-wrap:break-word;">{{{definition}}}</div><br/>
+      <a data-toggle="modal" data-target="#mbinc" data-pid="{{id}}" data-type="4" style='cursor:pointer;'>{{numberJoined}} @Messages("views.action.nm")</a><br/>
+      @Messages("views.action.startT"): {{timeBegin}}<br/>
+      {{#if timeEnd}}
+      @Messages("views.action.endT"): {{timeEnd}}
+      {{/if}}
+    </div>
+    {{#if not5disp}}
+      <div class="col-xs-12 col-md-5">
+        <span class=""><a href="/action/{{id}}"><table style="width:100;" align="center"><tr><td>
+                <span style="display:block;text-align:center;">{{nameLocation}}</span>
+              </td></tr><tr><td>
+                  <img class="dbma" src="http://maps.google.com/maps/api/staticmap?center={{latitude}},{{longitude}}&zoom=16&markers={{latitude}},{{longitude}}&size=300x100&sensor=true" alt="" />
+                </td></tr></table></a></span>
+      </div>
+      <div class="p010 mt5">
+        <a onclick="comment5disp(4,{{id}},true,1);" style="cursor:pointer">@Messages("views.seecomments") (<span class="nbCom4{{id}}"></span>)</a> ·
+        <a onclick="addcommentbtn('4{{id}}')" class="cp">@Messages("views.commentadd")</a>
+      </div>
+      <div class="p010" id="tcom4{{id}}"></div>
+        {{/if}}
+        </div>
+      </div>
+    {{/each}}
+  </script>

@@ -1,0 +1,528 @@
+@import helper._
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true) {
+
+<script>
+fbq('track', 'CompleteRegistration', {
+value: 1.00,
+currency: 'USD'
+});
+</script>
+
+  <link  href="https://cdn.rawgit.com/fengyuanchen/cropper/v0.11.0/dist/cropper.min.css" rel="stylesheet">
+<script src="https://cdn.rawgit.com/fengyuanchen/cropper/v0.11.0/dist/cropper.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+<script src="@routes.Assets.at("javascripts/jquery.flagstrap.min.js")"></script>
+<link href="@routes.Assets.at("stylesheets/flags.css")" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqBootstrapValidation/1.3.7/jqBootstrapValidation.min.js"></script>
+<!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.15.min.js"></script> -->
+<script src="@routes.Assets.at("javascripts/toblob.min.js")"></script>
+
+<!-- <script type="text/javascript">
+  AWS.config.update({accessKeyId: 'AKIAJRAOJ2B24LTBLHIA', secretAccessKey: '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'});
+  AWS.config.region = 'us-west-2';
+</script> -->
+<style>
+  .uminpic{
+    display: block;min-width: 0px !important; min-height: 0px !important; max-width: none !important; max-height: none !important;transform: none;
+  }
+  .ppic{
+    height:250px;background-size:cover;background-repeat:no-repeat;background-position: center center;-webkit-filter: brightness(100%);transition: 1s;
+  }
+  .ppic:hover{
+    -webkit-filter: brightness(50%);
+  }
+  /*#targetpic{
+    height:250px;background-size:cover;background-repeat:no-repeat;background-position: center center;-webkit-filter: brightness(100%);transition: 1s;
+  }*/
+  .square-content{
+    position:  absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+  .square-content div {
+     display: table;
+     width: 100%;
+     height: 100%;
+  }
+  .crpreview{
+    height: 170px!important;
+    width: 170px!important;
+    border: solid 2px black;
+    border-radius: 100%;
+    background-color: #f7f7f7;
+    overflow: hidden;
+    width: 100%;
+    margin: auto;
+  }
+  .img-preview {
+    background-color: #f7f7f7;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+  }
+  .cropper-example-2{
+    width: 100%;
+    min-height: 300px!important;
+  }
+  /*.cropper-example-2 > img{
+    width: 50%;
+  }*/
+  #targetpic{
+    width: 300px;
+  }
+  .ppsp{
+    height:250px;
+  }
+  .wrap{
+    display:block;
+    border-radius:4px;
+    width:350px;;
+    margin:auto auto;
+    margin-top:25px;
+    padding:20px;
+    #background-color:rgba(0,0,0,0.05);
+  }
+  .or{
+    padding-top:5px;
+    display:block;
+    margin:auto;
+    text-align:center;
+  }
+  #video-background
+  {
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: radial-gradient(circle, white 50%, steelblue 90%);  /* Safari 5.1-6.0 */
+    #background: -o-radial-gradient(white 50%, steelblue 60%); /* For Opera 11.6-12.0 */
+    #background: -moz-radial-gradient(white 50%, steelblue 60%); /* For Firefox 3.6-15 */
+    transition:0.1s;
+  }
+  h1{
+    font-size:70px;
+    text-align:center;
+    color:rgb(31, 31, 174);
+    font-family: 'Maven Pro', sans-serif;
+    text-shadow: 2px 2px 3px #006EFF;
+  }
+  #canvas{
+    z-index: -1;
+    position: fixed;
+  }
+.control-group.error > label, .control-group.error .help-block, .control-group.error .help-inline {
+  color: #b94a48;
+}
+.control-group.error input, .control-group.error select, .control-group.error textarea {
+    color: #b94a48;
+    border-color: #b94a48;
+}
+</style>
+
+<div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header pheadermdl">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="acenter">@Messages("views.about")</h2>
+      </div>
+      <div class="modal-body">
+        <p style="text-align: justify;">
+          @Messages("views.democras_presentation")
+        </p>
+        <p style="text-align:center">
+          <!--<b><a href="/tour">@Messages("views.tour")</a></b>-->
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="container" style="padding-top:20px;">
+  <br>
+<div class="part1">
+  <div class="progress">
+    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+      <span class="sr-only">40% Complete</span>
+    </div>
+  </div>
+  <hr>
+  <div class="acenter">
+    <!-- <img onclick="curLang('en')" src="@routes.Assets.at("images/en.jpg")" style="width:30px;cursor:pointer;" />
+      <img onclick="curLang('fr')" src="@routes.Assets.at("images/fr.jpg")" style="width:30px;cursor:pointer;" /> -->
+  </div>
+  <form id="cmuf" novalidate onsubmit="return false;">
+    <div class="control-group col-xs-12 col-md-4">
+      <label class="control-label">@Messages("views.forms.firstname") (@Messages("views.mandatory")) </label> 
+      <input type="text" id="mnufname" name="firstname" data-validation-required-message="@Messages("views.forms.required")" class="form-control" placeholder="@Messages("views.forms.firstname")" required/>
+      <p class="help-block"></p>
+    </div>
+    <div class="control-group col-xs-12 col-md-4">
+      <label class="control-label">@Messages("views.forms.name") (@Messages("views.mandatory")) </label> 
+      <input type="text" id="mnuname" name="name" data-validation-required-message="@Messages("views.forms.required")" class="form-control" placeholder="@Messages("views.forms.name")" required/>
+      <p class="help-block"></p>
+    </div>
+    <div class="control-group col-xs-12 col-md-4">
+      <label class="control-label">@Messages("views.forms.country") (@Messages("views.mandatory")) </label>
+      <!-- <input type="text" name="location" class="form-control" placeholder="@Messages("views.forms.description")" required/> -->
+      <div class="flagstrap" data-input-name="location" data-selected-country="FR"></div>
+      <p class="help-block"></p>
+    </div>
+  <hr/>
+
+    <div class="form-group col-xs-12 col-md-6" style="text-align:center">
+       @Messages("views.forms.hasURL") (@Messages("views.optional")) <input type="checkbox" onclick="$('#fLink').toggle();"/>
+    </div>
+
+    <div class="control-group col-xs-12" id="fLink" style="margin-bottom: 10px;">
+      <label class="control-label">@Messages("views.forms.link") (@Messages("views.optional"))</label>
+      <input type="text" name="link" class="form-control" placeholder="@Messages("views.forms.link")" />
+    </div>
+   <!-- <div class="memberLang" style="text-align: center;">
+      @Messages("views.spokenLanguages"):
+      <button class="btn btn-success btn-xs btnLangFr" onclick="addLang(event,'fr')">Français</button>
+      <button class="btn btn-success btn-xs btnLangEn" onclick="addLang(event,'es')">Español</button>
+      <button class="btn btn-success btn-xs btnLangEn" onclick="addLang(event,'en')">English</button>
+      <a href="#" data-toggle="popover" style="font-size: 1.3em;vertical-align: middle;" data-trigger="focus" data-placement="top" data-content="@Messages("views.help.spokenLanguages")" class="textinfo text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+    </div>-->
+    <div class="control-group col-xs-12">
+      <label class="control-label" style="font-weight:normal">@Messages("views.forms.presentation") (@Messages("views.optional")) </label>
+      <textarea type="text" name="presentation" class="form-control" placeholder="@Messages("views.forms.description")" rows="2"></textarea>
+      <p class="help-block"></p>
+    </div>
+    <br><br>
+    <div class="form-group col-xs-12 col-md-6">
+      <label class="control-label" style="font-weight:normal">@Messages("views.forms.gender") (@Messages("views.optional"))</label>
+      <select id="" name="gender" class="form-control">
+        <option value="-1">@Messages("views.forms.gender")</option>
+        <option value="1">@Messages("views.forms.f")</option>
+        <option value="0">@Messages("views.forms.h")</option>
+      </select>
+    </div>
+    <div class="form-group col-xs-12 col-md-6">
+      <label class="control-label" style="font-weight:normal">@Messages("views.forms.birthday")  (@Messages("views.forms.noshow")) (@Messages("views.optional"))</label>
+      <input type="date" id="birth" name="notouch" class="form-control" value="2016-01-31"/>
+      <input type="hidden" id="mailbirth" name="birthday" class="form-control" value="2016-01-31"/>
+    </div>
+    <div class="control-group col-xs-12 col-md-6">
+      <label class="control-label" style="font-weight:normal">@Messages("views.forms.city") (@Messages("views.optional"))</label>
+      <input type="text" name="city" class="form-control" placeholder="@Messages("views.forms.ville")"/>
+      <p class="help-block"></p>
+    </div>
+    <div class="control-group col-xs-12 col-md-6">
+      <label class="control-label" style="font-weight:normal">@Messages("views.forms.hometown") (@Messages("views.optional"))</label>
+      <input type="text" name="address" class="form-control" placeholder="@Messages("views.forms.hometown")"/>
+      <p class="help-block"></p>
+    </div>
+    <!-- <div class="col-xs-12 col-md-6">
+      <label class="control-label">@Messages("views.forms.lang")</label>
+      <select id="" name="lang" class="form-control">
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="en">English</option> 
+      </select>
+    </div> -->
+    <button class="btn btn-primary btn-block" type="submit" id="sbsub">@Messages("views.next")</button>
+    <div id="alertpopc">
+      <div class="alert alert-warning" role="alert">@Messages("views.nosubscribe.error")</div>
+    </div>
+    <div id="alertpopc2">
+      <div class="alert alert-warning" role="alert">@Messages("views.nosubscribe2")</div>
+    </div>
+    <br>
+  </form>
+
+  <!-- <button class="btn btn-primary btn-block" onclick="chooseImg()">@Messages("views.next")   (button juste la pour que tu test et que tu passe a la suite)</button> -->
+  </div>
+
+  <div class="chImg">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
+        <span class="sr-only">75% Complete</span>
+      </div>
+    </div>
+      <h4 class="acenter">@Messages("views.chooseprofilepicture") (@Messages("views.optional"))</h4>
+<button type="button" name="button" class="btn btn-primary acenter" onclick="getImgSz()" style="display:block;margin:auto" id="doneEditImg">@Messages("views.done")</button>
+    
+    <div class="col-xs-12">
+      <input type="file" class="filestyle" id="file-chooser" accept="image/*"/>
+    </div>
+    <!-- <div class="col-xs-12 col-md-6">
+      <button id="upload-button" class="btn btn-success">Upload</button>
+    </div> -->
+    <div id="results"></div><br/>
+     <div id="cropper-example-2">
+      <img src="@routes.Assets.at("images/user2.jpg")" id="targetpic">
+    </div><div class="btn" style="text-align:center;display: block;">
+      <button class="btn btn-primary" onclick="$image.cropper('rotate',90);"><span class="fa fa-rotate-right"></span></button>
+      <button class="btn btn-primary" onclick="$image.cropper('rotate',-90);"><span class="fa fa-rotate-left"></span></button>
+      <button class="btn btn-primary" onclick="$image.cropper('reset');"><span class="fa fa-refresh"></span></button>
+    </div><br/>
+    <div class="crpreview">
+    </div><br/>
+    
+  </div>
+  <div class="dcenter" id="tour1">
+  <h2>@Messages("views.tourpresentation")</h2>
+    <button class="btn nbtn btn-success btn-lg" onclick="begintour()">@Messages("views.tourbegin")</button>
+    <a href="/concept" id="tourconcept"><div class="entg"><div>
+      <span class="mega-octicon octicon-law fst"></span></div><div>
+    <span class="tcat"> @Messages("views.concepts") </span>
+    </div>
+  </div></a><a href="/debate" id="tourdebate"><div class="entg"><div>
+    <span class="mega-octicon octicon-megaphone fst"></span></div><div>
+    <span class="tcat">  @Messages("views.debates")  </span>
+    </div>
+  </div></a><a href="/group" id="tourgroup"><div class="entg"><div>
+    <span class="mega-octicon octicon-organization fst"></span></div><div>
+    <span class="tcat" style="font-size: 16px;">  @Messages("views.groups")  </span>
+    </div>
+  </div></a>
+  <a href="/action" id="touraction"><div class="entg"><div>
+    <span class="mega-octicon octicon-location fst"></span></div><div>
+    <span class="tcat">  @Messages("views.actions")  </span>
+    </div>
+  </div></a><br>
+    <a onclick="$('#tour1').hide();$('#tour2').show();" class="btn btn-primary">@Messages("views.enter")</a>
+  </div>
+  <div class="dcenter" id="tour2">
+  <h2>@Messages("views.share")</h2>
+  <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=724251474386860";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+function fbsend(){
+  FB.ui({
+  method: 'send',
+  link: 'https://democras.com',
+  app_id: '724251474386860',
+  display: 'popup'
+});
+}
+</script>
+Facebook:
+<div class="fb-like" data-href="https://www.facebook.com/Democras-516339725217427/" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+  <br/><a onclick="fbsend()">@Messages("views.sendwfb")</a><br/><br/><br/>
+  Twitter: <a class="twitter-share-button picon-twitter-3 shic" style="font-size: 2em;" onclick="return !window.open(this.href, 'Twitter', 'width=640,height=300')" href="https://twitter.com/intent/tweet?text=Check Democras! http://democras.com/" data-size="large"></a>
+  <br>E-mail: <a href='mailto:?body=Check this website: http://democras.com/'><span class='glyphicon glyphicon-envelope shic' style="font-size: 2em;"></span></a>
+
+<br/>
+    <a href="/" class="btn btn-primary">@Messages("views.enter")</a>
+  </div>
+</div>
+
+
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/bootstrap.filestyle/1.1.0/js/bootstrap-filestyle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.min.js"></script>
+<script>
+function curLang(plang){
+  if(plang=="fr"){
+    $.get("/changelang/fr",function(data){
+      location.reload();
+    })
+  }else{
+    $.get("/changelang/en",function(data){
+      location.reload();
+    });
+  }
+}
+$('.textinfo').popover();
+  ////////BOOTSTRAP TOUR
+  var tour = new Tour({
+  steps: [
+  {
+    element: "#tourconcept",
+    title: "@Messages("views.head.leconcept")",
+    content: "@Html(Messages("views.help.concepts"))"
+  },
+  {
+    element: "#tourdebate",
+    title: "@Messages("views.head.ledebat")",
+    content: "@Html(Messages("views.help.debates"))"
+  },
+  {
+    element: "#tourgroup",
+    title: "@Messages("views.head.legroup")",
+    content: "@Html(Messages("views.help.groups"))"
+  },
+  {
+    element: "#tourpetition",
+    title: "@Messages("views.head.lapetition")",
+    content: "@Html(Messages("views.help.petitions"))"
+  },
+  {
+    element: "#touraction",
+    title: "@Messages("views.head.laction")",
+    content: "@Html(Messages("views.help.actions"))"
+  }
+]});
+
+// Initialize the tour
+tour.init();
+
+function begintour(){
+  // Start the tour
+  tour.start(true);
+}
+</script>
+<script>
+if("@Messages("views.curLang")"=="fr"){
+  $('.btnLangFr').prop('disabled',true);
+}else if ("@Messages("views.curLang")"=="en") {
+  $('.btnLangEn').prop('disabled',true);
+}
+$.ajax({
+      url: '/member/json/languages',
+      type: 'get',
+      dataType: 'JSON',
+      success: function(data, status) {
+        if(data.languages.indexOf("fr") != -1){
+          $('.btnLangFr').addClass('active');
+        }
+        if(data.languages.indexOf("en") != -1){
+          $('.btnLangEn').addClass('active');
+        }
+      }});
+function addLang(event, plang){
+ $(event.target).prop('disabled',true);
+ if($(event.target).hasClass('active')){
+   var purl ="/member/removeLanguage";
+ }else {
+  var purl ="/member/addLanguage";
+ }
+ $.ajax({
+       url: purl,
+       type: 'post',
+       data: {language:plang},
+       success: function(data, status) {
+         $(event.target).toggleClass('active').prop('disabled',false);
+       }});
+}
+function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $image.cropper('replace', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#file-chooser").change(function(){
+        readURL(this);
+    });
+
+function chooseImg(){
+  $('.part1, .chImg').toggle();
+  try{
+    cropBoxData = $image.cropper('getCropBoxData');
+    canvasData = $image.cropper('getCanvasData');
+    $image.cropper('destroy');
+  }catch(e){
+    //debugit('catch');
+  }
+  $image.cropper({
+    minCropBoxWidth:300,
+    aspectRatio: 1,
+    preview: '.crpreview',
+    autoCropArea: 0.8,
+    scale:2,
+    built: function () {
+      // Strict mode: set crop box data first
+      $image.cropper('setCropBoxData', cropBoxData);
+      $image.cropper('setCanvasData', canvasData);
+    }
+  });
+  $image.cropper('replace', '@routes.Assets.at("images/user2.jpg")');
+}
+  var $image = $('#cropper-example-2 > img'),
+      cropBoxData,
+      canvasData;
+  // var bucket = new AWS.S3({params: {Bucket: 'idmcr'}});
+  var fileChooser = document.getElementById('file-chooser');
+  var button = document.getElementById('upload-button');
+  var results = document.getElementById('results');
+  function getImgSz(){
+      var formData = new FormData();
+      $image.cropper('getCroppedCanvas', {width: 170,height: 170}).toBlob(function(blob){
+        formData.append('picture', blob);
+        if (blob) {
+          $('#doneEditImg').prop('disabled',true);
+          results.innerHTML = '';
+          $.ajax('/member/edit/profilepicture',{method:'post',data:formData,processData: false,contentType: false,success:function(data){
+            if(data==1){$('#doneEditImg').prop('disabled',false);$('#tour1, .chImg').toggle();$('.xspicfl').attr('src', $('img').attr('src') + '?' + Math.random());}
+          }});
+        } else {
+          results.innerHTML = 'Nothing to upload.';
+        }
+      },"image/jpeg");
+  }
+
+
+
+$('.flagstrap').flagStrap();
+$('form#cmuf input').jqBootstrapValidation(
+  {
+    submitSuccess: function ($form, event) {
+      /* ... */
+      $('#mailbirth').val(moment.utc($.trim($("#birth").val()),'@Messages("views.curDateFormat")').valueOf());
+
+      createmUser();
+    }
+  }
+);
+
+$('.logother, .logFb, .logmail, .sup2, .sup3, .chImg, #alertpopc, #alertpopc2, #tour1, #fLink, #tour2').hide();
+  function logop(pop){
+    switch (pop) {
+      case 1:
+        $('.part1, .logFb').toggle();
+        break;
+      case 11:
+        $('.sup1, .sup2').toggle();
+        break;
+      case 12:
+          $('.sup3, .sup2').toggle();
+          break;
+      case 2:
+        $('.sup, .logother').toggle();
+        break;
+      case 3:
+        $('.logmail, .logother').toggle();
+        break;
+      default:
+        $('.logother, .logFb, .logmail').hide();
+        $('.sup').show();
+    }
+  }
+
+  function createmUser(){
+    $('#sbsub').prop('disabled',true);
+    $.ajax({url:'/subscribe',type:'post',data:$('#cmuf').serialize(),success:function(data){
+      if(data == 1){chooseImg();}else if (data == 2) {$('#alertpopc2').show();$('#sbsub').prop('disabled',false);}else{$('#sbsub').prop('disabled',false);$('#alertpopc').show();}
+    }});
+  }
+</script>
+</html>
+}

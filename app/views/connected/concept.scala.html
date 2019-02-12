@@ -1,0 +1,380 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, Messages("views.concepts"), Some("concept")) {
+
+
+
+  <link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+  @if(Messages("views.summernoteLang")=="fr-FR"){
+<script src="@routes.Assets.at("javascripts/lang/summernote-fr-FR.js")"></script>
+  }
+  @if(Messages("views.summernoteLang")=="es-ES"){
+<script src="@routes.Assets.at("javascripts/lang/summernote-es-ES.js")"></script>
+  }
+
+
+  <div class="modal fade" id="nv_concept" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header pheadermdl">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h2 class="acenter">@Messages("views.head.leconcept")(messages)</h2>
+          <p class="acenter">
+            @Messages("views.head.ladescription")
+          </p>
+        </div>
+        <div class="modal-body">
+          <span>
+            <input type="text" id="name" name="name" value="" class="form-control" placeholder="@Messages("views.forms.conceptnamehow")" onkeypress="remainingC(event, @Application.maxCharacternames)"/>
+          <!--  <h6 class="pull-right count_message">@Application.maxCharacternames @Messages("views.remainingc")</h6><br>-->
+          </span>
+          <span>
+            <!-- <textarea id="definition" name="definition" class="form-control comtxa" placeholder="@Messages("views.forms.conceptdefinition")" rows="5" onkeypress="remainingC(event, @Application.maxCharacterDefinitions)"></textarea> -->
+            <div id="definition"></div>
+           <!-- <h6 class="pull-right count_message">@Application.maxCharacterDefinitions @Messages("views.remainingc")</h6><br>-->
+          </span>
+          <div class="alert alert-warning" role="alert" id="alertpop">@Messages("views.concep_pop")</div>
+          <span class="selectLangParent"> @Messages("views.forms.lang"):
+          <span class="selectLang"></span></span>
+
+          <button class="btn btn-primary btn-block mt5" onclick="createConcept()" id="mdcrcbtn">@Messages("views.create")</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="listconcept">
+    <div class="container">
+      <div class="row" style="margin:3px;">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+          <div class="alert alert-info alert-dismissible atmess" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <span id="atmess">@message</span>
+        </div>
+        <ul class="nav nav-tabs">
+          <li role="presentation" id="li0" class="active" style="cursor:pointer;"><a style="color:black" onclick="modebtn(0)">@Messages("views.concep_latest")</a></li>
+          <li role="presentation" id="li1" style="cursor:pointer;" title="@Messages("views.concep_yourst")"><a style="color:black" onclick="modebtn(1);">@Messages("views.concep_yours")</a></li>
+          <li role="presentation" id="li2" style="cursor:pointer;"><a style="color:black" onclick="modebtn(2);">@Messages("views.concep_created")</a></li>
+        </ul>
+        <div class="nbtn" style="text-align:center;">
+          <button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#nv_concept">@Messages("views.concept_new")</button>
+          <a href="#" tabindex="0" style="font-size: 1.8em;vertical-align: middle;" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="@Messages("views.help.concepts")" data-title="@Messages("views.head.leconcept")" class="text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+        </div>
+      </div>
+    </div>
+      <div class="output-concepts"></div>
+    </div>
+  </div>
+
+
+
+  <script id="concept-template" type="text/x-handlebars-template">
+      {{#each response}}
+          <div class="row" style="margin:3px;">
+            <div class="col-xs-12 col-md-10 col-md-offset-1 debat">
+
+            <a class="author_name" href="/concept/{{id}}">{{{name}}}</a>
+            <!--<span class="debat_time adroite" data-livestamp="{{mT}}"></span>-->
+            <br/>
+            <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+            <div style="word-wrap:break-word;" class="lpdesigntriger">{{{definition}}}</div>
+            <span class="adroite">
+              <button class="btn btn-success btn-xs votex" data-id="{{id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bv">{{membersFor}}</span></button>
+              <button class="btn btn-danger btn-xs votex" data-id="{{id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bv">{{membersAgainst}}</span></button>
+            </span>
+            <div style="margin-top: 5px;">
+            <a onclick="comment5disp(2,{{id}},true,1);" style="cursor:pointer">@Messages("views.seecomments") (<span class="nbCom2{{id}}"></span>)</a><span class="smcom2{{id}}"> ·
+            <!-- //il faut hide dans un premier temps  -->
+            <a onclick="addcommentbtn('2{{id}}')" class="cp">@Messages("views.commentadd")</a></span>
+            <span class="adroite">
+              <span style="font-size: .9em;"></span>
+              <a class="picon-facebook shic" onclick="return !window.open(this.href, 'Facebook', 'width=640,height=300')"  href="http://www.facebook.com/sharer.php?u=http://democras.com/concept/{{id}}"
+  target="_blank"></a>
+              <!--<span class="picon-google__x2B_ shic"></span> style="background-color: white;padding-top: 1px;"-->
+              <a class="twitter-share-button picon-twitter-3 shic" onclick="return !window.open(this.href, 'Twitter', 'width=640,height=300')" href="https://twitter.com/intent/tweet?text=Check:http://democras.com/concept/{{id}}" data-size="large"></a>
+              <a class="glyphicon glyphicon-option-horizontal shic tshic cp" data-toggle="popover" data-html="true" data-placement="left" data-content="<a href='mailto:?body=http://democras.com/concept/{{id}}'><span class='glyphicon glyphicon-envelope'></span> Mail</a>"></a>
+            </span>
+          </div>
+            <div id="tcom2{{id}}"></div>
+            </div>
+          </div>
+      {{/each}}
+    </script>
+
+
+
+  <script>
+  $('#definition').summernote({lang:'@Messages("views.summernoteLang")',focus: true,minHeight: 100,placeholder: '@Messages("views.forms.conceptdefinition")',toolbar: [
+      // [groupName, [list of button]]
+      ['style', ['bold', 'italic', 'underline', 'clear']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['table', ['table']],
+      ['insert', ['link', 'picture', 'hr']],
+      ['view', ['fullscreen']]
+    ],callbacks: {
+        onPaste: function (e) {
+            var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+
+            e.preventDefault();
+
+            // Firefox fix
+            setTimeout(function () {
+                document.execCommand('insertText', false, bufferText);
+            }, 10);
+        }
+    }
+  });
+  if($.trim($('#atmess').text())==""){
+    $('.atmess').hide();
+  }
+  $('#nv_concept').on('shown.bs.modal', function(){
+    $('input#name').focus();
+    nvLang();
+  });
+
+  $("#alertpop").hide();
+
+  function createConcept(){
+    var pdef = $('#definition').summernote('code');
+    var pnam = $.trim($("#name").val());
+    //var plang = $('.selectLang').find(":selected").data('lang');
+    if (!$('#definition').summernote('isEmpty') && pnam != "") {
+        $('#mdcrcbtn').prop('disabled',true);
+      $.ajax({
+            url: '/concept',
+            type: 'POST',
+            data: {definition: pdef, name: pnam, language:langSelect},
+            success: function(data, status) {
+              if(typeof data === 'number'){
+              $('#nv_concept').modal("hide");
+              location.href = '/concept/'+data;}
+              else{alert(data);}
+            },
+            error: function(xhr, desc, err) {
+              debugit(xhr);
+              debugit("Details: " + desc + "\nError:" + err);
+            }
+          });
+    }
+    else {
+      $('#alertpop').show('slideup');
+    }
+  }
+  function didVote(pid){
+    $.get("/concept/getUserVote/"+pid, function(data){
+      if(data == 2){
+        $('#bva'+pid).addClass('active');
+      }
+      else if (data == 1) {
+        $('#bvf'+pid).addClass('active');
+      }
+
+    });
+  }
+  function voteconcept(){
+    // /debate/:id/yesorno/vote
+    $('.votex').each(function(){
+      if($(this).data('v') == 1){
+        $(this).attr('id', 'bvf'+$(this).data('id'));
+      }
+      else {
+        $(this).attr('id', 'bva'+$(this).data('id'));
+      }
+      $(this).click(function(){
+        var thisone = $(this);
+        $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',true);
+        if (thisone.data('v') == 1)
+        {
+          if ($('#bvf'+thisone.data('id')).hasClass('active'))
+          {
+            $.ajax({
+                  url: 'concept/'+thisone.data('id')+'/cancelvote',
+                  type: 'GET',
+                  success: function(dat, status) {
+                    $('#bvf'+thisone.data('id')).children(".bv").text(parseInt($('#bvf'+thisone.data('id')).children(".bv").text())-1);
+                    $('#bvf'+thisone.data('id')).removeClass('active');
+                    $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',false);
+                    colordisplay(thisone.data('id'));
+                  }});
+          }
+          else
+          {
+            $.ajax({
+                  url: 'concept/'+thisone.data('id')+'/votefor',
+                  type: 'GET',
+                  success: function(dat, status) {
+                    debugit(dat);
+                    if ($('#bva'+thisone.data('id')).hasClass('active')){
+                      $('#bva'+thisone.data('id')).removeClass('active');
+                      $('#bva'+thisone.data('id')).children(".bv").text(parseInt($('#bva'+thisone.data('id')).children(".bv").text())-1);
+                      $('#bvf'+thisone.data('id')).children(".bv").text(parseInt($('#bvf'+thisone.data('id')).children(".bv").text())+1);
+                      $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',false);
+                      $('#bvf'+thisone.data('id')).addClass('active');
+                    }
+                    else {
+                      $('#bvf'+thisone.data('id')).addClass('active');
+                      $('#bvf'+thisone.data('id')).children(".bv").text(parseInt($('#bvf'+thisone.data('id')).children(".bv").text())+1);
+                      $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',false);
+                    }
+                    colordisplay(thisone.data('id'));
+                  }});
+          }
+        }
+        else {
+          if ($('#bva'+thisone.data('id')).hasClass('active'))
+          {
+            $.ajax({
+                  url: 'concept/'+thisone.data('id')+'/cancelvote',
+                  type: 'GET',
+                  success: function(dat, status) {
+                    $('#bva'+thisone.data('id')).children(".bv").text(parseInt($('#bva'+thisone.data('id')).children(".bv").text())-1);
+                    $('#bva'+thisone.data('id')).removeClass('active');
+                    $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',false);
+                    colordisplay(thisone.data('id'));
+                  }});
+          }
+          else
+          {
+            $.ajax({
+                  url: 'concept/'+thisone.data('id')+'/voteagainst',
+                  type: 'GET',
+                  success: function(dat, status) {
+                    if ($('#bvf'+thisone.data('id')).hasClass('active')){
+                      $('#bva'+thisone.data('id')).addClass('active');
+                      $('#bvf'+thisone.data('id')).removeClass('active');
+                      $('#bva'+thisone.data('id')).children(".bv").text(parseInt($('#bva'+thisone.data('id')).children(".bv").text())+1);
+                      $('#bvf'+thisone.data('id')).children(".bv").text(parseInt($('#bvf'+thisone.data('id')).children(".bv").text())-1);
+                      $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',false);
+                    }
+                    else {
+                      $('#bva'+thisone.data('id')).addClass('active');
+                      $('#bva'+thisone.data('id')).children(".bv").text(parseInt($('#bva'+thisone.data('id')).children(".bv").text())+1);
+                      $('#bvf'+thisone.data('id')+','+'#bva'+thisone.data('id')).prop('disabled',false);
+                    }
+                    colordisplay(thisone.data('id'));
+                  }});
+          }
+        }
+      });
+      $(this).removeClass('votex')
+    });
+  }
+  function colordisplay(pidc){
+    if(parseInt($('#bvf'+pidc).children(".bv").text()) > parseInt($('#bva'+pidc).children(".bv").text())){
+      $('#bva'+pidc).parents('.debat').attr("style","background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;");
+    }
+    else if (parseInt($('#bvf'+pidc).children(".bv").text()) < parseInt($('#bva'+pidc).children(".bv").text())) {
+      $('#bva'+pidc).parents('.debat').attr("style","background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;");
+    }
+    else {
+      $('#bva'+pidc).parents('.debat').attr("style","background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;");
+    }
+  }
+  function modebtn(pop){
+    if(pop==0){refresh=1;mode=0;displayConcept();$('#li0').addClass('active');$('#li1, #li2').removeClass('active');}
+    else if(pop==1){refresh=1;mode=1;displayConcept();$('#li1').addClass('active');$('#li0, #li2').removeClass('active');}
+    else{refresh=1;mode=2;displayConcept();$('#li2').addClass('active');$('#li1, #li0').removeClass('active');}
+  }
+  var curdisp = -1;
+  var curloading = true;
+  var mode = 0;
+  var refresh= 1;
+  var plimit=10;
+  var axLoading2=false;
+  function lireplus(pvar){
+    return $($.parseHTML(pvar)).after('<button class="btn btn-primary btn-sm"></button>').wrap( "<div class='lpdesign'></div>" );
+
+  }
+
+  function displayConcept(){
+    if(refresh==1){$('.output-concepts').empty();curdisp = -1;refresh=0;}
+    if (mode==1) {var purl = '/concept/json/lastxConceptsParticipated/'+curdisp+'/'+plimit;}
+    else if (mode==2) {var purl= '/concept/json/lastxConceptsCreated/'+curdisp+'/'+plimit;}
+    else {var purl= '/concept/json/lastxConcepts/'+curdisp+'/'+plimit}
+    curloading =true;
+    $('.output-concepts').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+    if(axLoading2){return;}
+    axLoading2 = true;
+    $.ajax({
+          url: purl,
+          type: 'get',
+          //data: {limit: 25, offset: 0, linkid:plinkid, all:'all'},
+          dataType: 'JSON',
+          success: function(data, status) {
+            if(data.length == 0 && mode == 1){
+              $('.output-concepts').html('<p class="acenter">@Messages("views.yunojugeconcept") @Messages("views.concept_low")!</p>');
+            }
+            if(data.length == 0 && mode == 2){
+              $('.output-concepts').html('<p class="acenter">@Messages("views.yunocreatedebate") @Messages("views.concept_low")!</p>');
+            }
+            axLoading2 = false;
+            $('.loagif').hide();
+            data.forEach(function(entry){
+              //entry.definition = outputRestrict(entry.definition);
+            });
+            var item = {'response' : data};
+            var source   = $('#concept-template').html();
+            var template = Handlebars.compile(source);
+            $('.output-concepts').append(template(item));
+            lpdesigntriger();
+            voteconcept();
+            data.forEach(function(entry){
+              didVote(entry.id);
+              colordisplay(entry.id);
+              comment5disp(2,entry.id,true,2);
+            });
+            if(data.length == plimit){curloading =false;}
+            else{
+              curloading =true;
+            }
+            //thepop();
+          //   $(document).ready(function() {
+             $('.tshic').popover();
+          // });
+            //$('[data-toggle="popover"]').popover();, .popDelete
+            //$('.timeago').timeago();
+            //$('#outputcomment .post-container').linkify({target: "_blank"});
+          }});
+  }
+  /*
+  Handlebars.registerHelper("bgcolor", function() {
+    var lvalue = parseFloat(Handlebars.escapeExpression(this.membersFor));
+    var rvalue = parseFloat(Handlebars.escapeExpression(this.membersAgainst));
+    if(lvalue > rvalue){
+      return "background-color:rgba(0,255,0,0.1);";
+    }
+    else if (lvalue < rvalue) {
+      return "background-color:rgba(255,0,0,0.1);";
+    }
+    else {
+      return "background-color:rgba(255,255,0,0.1);";
+    }
+  });
+  */
+
+  /*
+  function scrollit(pop,pvar,pfct){
+    $(window).on('scroll', function(){
+      if($('.'+pop+':last()').offset().top <= $(window).scrollTop()+$(window).height() && !pvar){
+          curdispDeb= $('.'+pop+':last()').children('.pmT').val();
+          pfct();
+        }
+      });
+  }
+  scrollit('debat',curloading, displayConcept());
+  */
+  $(window).on('scroll', function(){
+    if ($('.debat').length > 0) {
+      if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloading){
+          curdisp= $('.debat:last()').children('.pmT').val();
+          displayConcept();
+        }
+      }
+  	});
+  displayConcept();
+
+  </script>
+  <script>//!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+}

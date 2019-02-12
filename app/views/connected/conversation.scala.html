@@ -1,0 +1,339 @@
+
+@(message: String)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true, Messages("views.messages")) {
+
+
+
+
+  <!--
+  @helper.form(action = routes.Conversations.processConversationCreationForm()) {
+  <dl class=" " id="receivers_field">
+  <dt><label for="receivers">receivers</label></dt>
+  <dd>
+  <input type="text" id="receivers" name="receivers[]" value="" class="form-control" placeholder="receivers"/>
+</dd>
+</dl>
+
+@helper.textarea(
+models.Forms.conceptCreationForm("message"),
+'_label -> "message",
+'class -> "form-control",
+'placeholder -> "message",
+'rows -> 5,
+'cols -> 60
+)
+
+
+<input type="submit" class="btn btn-primary" id="" name="envoi" id="submit" value="Send"/>} -->
+
+<div class="container">
+  <div class="row" style="margin:3px;">
+
+    <!-- <button type="button" name="button" class="btn btn-primary" onclick="togmconv()">TOGGLE</button> -->
+    <div>
+
+      <div class="col-xs-12 col-md-4 toglist" style="overflow:auto;">
+        <div class="fmbox" style="min-height: 76px;">
+          <img class="medpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/@(session.get("username")).jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+          <div class="fmboxin">
+            <div class="mboxh">
+              <!-- <a href='/member/{{lastSenderID}}' style="font-weight: bold;"> -->
+              <b onclick="shownewfconv(0)" class="cp"><a>@Messages("views.convers.new")</a></b>
+              <!-- </a> -->
+            </div>
+
+          </div>
+        </div>
+        <div id="convflist">
+          <img src="@routes.Assets.at("img/loa.gif")" class="flistloa dcenter" style="margin:auto"/>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-8 togconv">
+        <div class="thisconv0 respconv" data-id=0>
+          <div class="convfh fmbox">
+            <input type="text" id="freceivers" data-role="tagsinput" name="receivers[]" style="border:none;box-shadow:none;" placeholder="@Messages("views.convers.receivers")"/>
+          </div>
+          <div class="convf">
+          <p class="dcp">@Messages("views.convers.start")</p>
+          </div>
+          <div class="bottom-text">
+            <textarea class="form-control comtxa fboxtext" id="createftext" onkeypress="fboxheight();"></textarea>
+            <div class="bottom-bar">
+              <div class="pull-right">
+                <!-- <input type="checkbox" name="name" value=""> Enter key -->
+                <button class="btn btn-primary btn-sm cp" onclick="createfconv(event)">@Messages("views.send")</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- style="max-height: 80vh;overflow: scroll;overflow-x:hidden;padding: 0 5px;" style="max-height:90vh"-->
+        <!-- <div>
+
+        <div class="convf">
+        <p class="dcp">@Messages("views.convers.start")</p>
+      </div>
+      <div class="bottom-text">
+      <textarea class="form-control comtxa fboxtext" onkeypress="fboxheight();"></textarea>
+      <div class="bottom-bar">
+      <div class="pull-right">
+      <input type="checkbox" name="name" value=""> Enter key
+      <button class="btn btn-primary btn-sm cp" onclick="()">send</button>
+    </div>
+  </div>
+
+</div>
+
+</div> -->
+</div>
+</div>
+</div>
+</div>
+<style media="screen">
+.dcp{
+  text-align: center;
+  padding: 100px
+}
+.bottom-text{
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+}
+@@media (min-width: 992px){
+  .bottom-text {
+    width: 593px;
+  }
+}
+@@media (min-width: 1200px){
+  .bottom-text {
+    width: 727px;
+  }
+}
+.convf{
+  height:400px;
+  overflow-y: scroll;
+}
+.bottom-bar{
+  height: 40px;
+}
+.convfh{height: 47px;line-height: 47px;
+    padding: 0 10px;}
+</style>
+
+
+
+
+<!-- //mettre un cookie quand on ouvre une conversation + prevent default du keypress enter dans les boxs -->
+<script id="convright-template" type="text/x-handlebars-template">
+  <div class="thisconv{{id}} respconv" data-id={{id}}>
+    <div class="convfh fmbox">
+      {{{header}}}
+
+    </div>
+    <div class="convf">
+      {{{messages}}}
+    </div>
+    <div class="bottom-text">
+      <textarea class="form-control comtxa fboxtext" onkeypress="fboxheight();"></textarea>
+      <div class="bottom-bar">
+        <div class="pull-right">
+          <!-- <input type="checkbox" name="name" value=""> Enter key -->
+          <button class="btn btn-primary btn-sm cp" onclick="respondConv(event);">send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="conversationflist-template" type="text/x-handlebars-template">
+  {{#each response}}
+  <div class="fmbox tmbox{{conversationId}}" style="min-height: 76px;">
+    <img class="medpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{usertalk}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+    <div class="fmboxin">
+      <div class="mboxh">
+        <b>{{{nconversationString}}}</b>
+      </div>
+      <div class="mboxb"><a onclick="messagefinbox({{conversationId}},1);" style='cursor:pointer;'>{{{lastMessage}}}</a></div>
+      <div class="mboxf">
+        <span class="debat_time" data-livestamp="{{mT}}"></span>
+        <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+</script>
+
+
+<script>
+function togmconv(){
+  $('.toglist, .togconv').toggle();
+}
+var fullnames = new Bloodhound({
+  datumTokenizer: function (d) {
+    return Bloodhound.tokenizers.whitespace(d.value);
+  },
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  remote: {
+    url: '/member/json/search/%QUERY/10',
+    wildcard : '%QUERY',
+    filter: function(list) {
+      return $.map(list, function(data) {
+        return { value: data.username }; });
+      }
+    }
+  });
+  fullnames.initialize();
+
+var hashheaders = {};
+
+function convflistdisp(){
+  $.ajax({url:'/conversation/json/conversationsOrderedByTimestamp/-1/20',success: function(data){
+    $('.flistloa').remove();
+    //debugit(data);
+    data.forEach(function(entry){
+      entry.conversationString=convStg(entry.conversationString);
+      entry.usertalk = firstuser(entry.conversationString);
+      entry.nconversationString=commadisp(entry.conversationString);
+      hashheaders[entry.conversationId]= entry.nconversationString;
+      entry.lastMessage = outputRestrict(entry.lastMessage, 160);
+    });
+    var item = {'response' : data};
+    var source   = $('#conversationflist-template').html();
+    var template = Handlebars.compile(source);
+    $('#convflist').html(template(item));
+  }});
+}
+convflistdisp();
+function createfconv(event){
+  if($.trim($('#createftext').val())!=""){
+    $(event.target).button('loading');
+    $('#createftext').prop('disabled',true);
+    $.ajax({url:'/conversation/create',type:'post',
+    data:{'receivers[]': $('#freceivers').val(),message: $('#createftext').val()},
+    success: function(data){
+      $('#createftext').prop('disabled',false);
+      $(event.target).button('reset');
+      convflistdisp();
+      getMessages();
+      if((data == 2)||(data == 1)){$('#createftext').val("")}else {
+        alert('@Messages("views.convers.nomatch")');
+      }
+      $('#freceivers').tagsinput('removeAll');
+      //debugit(data);
+    }});
+  }
+}
+function respondConv(event){
+  var pid = $(event.target).parents('.respconv').data('id');
+  var ft = $(event.target).parents('.bottom-text').children('.fboxtext');
+  if($.trim(ft.val())!=""){
+    $(event.target).prop('disabled',true);
+    ft.prop('disabled',true);
+    $.ajax({url:'/conversation/send',type:'post',data:{id: pid,message: ft.val()}, success: function(data){
+      ft.val('').prop('disabled',false).focus();
+      //debugit(data);
+      $(event.target).prop('disabled',false);
+      wait =true;
+      messagefinbox(pid,1);
+      // setTimeout(function(){tnew=true;messagefinbox(pid,1);},1000);
+      // $('#convflist').empty();
+      // convflistdisp();
+    }});
+  }
+}
+  $(window).resize(function(){fboxheight()});
+  $( document ).ready(function() {
+    fboxheight();
+  });
+  $('#freceivers').tagsinput({
+    typeaheadjs: {
+      displayKey: 'value',
+      valueKey: 'value',
+      source: fullnames.ttAdapter()
+    }
+  });
+  function fboxheight(){
+    $('.convf').height(window.innerHeight - $('.bottom-text').not(':hidden').height() - 120);
+    $('.toglist').height(window.innerHeight - 70);
+  }
+  function leaveWrite(){
+    //check if all conv sent
+  }
+  function newfconv(pid){
+    var nconv="";
+    var nconvh = hashheaders[pid];
+    var item2 = {header: nconvh,messages: nconv, id: pid};
+    var source2   = $('#convright-template').html();
+    var template2 = Handlebars.compile(source2);
+    $('.togconv').children().hide();
+    $('.togconv').append(template2(item2));
+
+  }
+  function shownewfconv(pid){
+    $('.togconv').children().hide();
+    $('.togconv .thisconv'+pid).show()
+  }
+  var wait = false;
+  function messagefinbox(pid,prefresh){
+    if(prefresh!=0){tnew=true;}else{tnew=false;}
+    if($('.togconv .thisconv'+pid).length==1&&prefresh==1){
+      shownewfconv(pid);
+    }else if(prefresh == 1){newfconv(pid);}
+    var d = $('.thisconv'+pid+' .convf');
+    if(prefresh!=0){d.empty();}
+    d.prepend('<img src="@routes.Assets.at("img/loa.gif")" class="loagif tl'+pid+' loagif40"/>');
+    var tmom=-1;
+    if(!tnew){tmom=d.find('.activity:first() .pmT').val();}
+    $.ajax({url:'/conversation/json/conversationMessagesOrderedByTimestamp/'+pid+'/'+tmom+'/10',success: function(data){
+      //debugit(data);
+      if(tnew){d.empty();}
+      $('.tl'+pid).remove();
+      data.forEach(function(entry){
+        if(entry.senderUsername == "@session.get("username")"){
+          entry.isme=true;
+        }
+        else{
+          entry.isme=false;
+        }
+      });
+      data.reverse();
+      //debugit(data);
+      var item2 = {'response' : data};
+      var source2   = $('#conversationboxin-template').html();
+      var template2 = Handlebars.compile(source2);
+      d.prepend(template2(item2));
+      if(tnew){d.scrollTop(d.prop("scrollHeight"));}
+      tnew=false;
+      wait=false;
+      if(data.length == 10&&!wait){
+        d.on('scroll', function(){
+          if(d.scrollTop()<=30 && !wait){
+            //debugit('fbingo');
+            messagefinbox(pid,0);
+            wait=true;
+          }
+        });
+      }
+      else{
+        d.off('scroll');
+        //debugit(d.find('.activity:first() .message-date span'));
+        //debugit(d.find('.activity:first() .message-date span').text());
+        if(d.find('.activity:first()').hasClass('activity--subscriber')){
+          d.prepend('<div class="activity activity--notice activity--subscriber"><div class="activity__message activity__message--full"><p>@Messages("views.convers.startedconvers")</p></div></div>');
+        }
+        else{
+          d.prepend('<div class="activity activity--notice"><div class="activity__message activity__message--full"><p>@Messages("views.convers.startedconvers")</p></div></div>');
+        }
+
+      }
+      fboxheight();
+    }});
+  }
+
+  </script>
+
+
+
+
+
+
+}

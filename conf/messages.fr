@@ -1,0 +1,504 @@
+
+views.curLang=fr
+views.summernoteLang=fr-FR
+views.curDateFormat=DD-MM-YYYY HH:mm
+connection.user_doesnt_exist=Ce membre n''existe pas
+connection.successful=Vous vous êtes bien connecté(e)
+connection.unsuccessful=Le mot de passe est invalide
+connection.pleaseconnect=Vous devez vous connecter pour accéder à cette page
+disconnection.successful=Vous vous êtes bien déconnecté(e)
+password_link_invalid=Votre lien de récupération de mot de passe est invalide ou périmé
+
+page_not_found=La page que vous avez demandée n''existe pas
+page_not_found_link=Cliquez ici pour retourner sur la page d''accueil.
+clicHereToReturnIndex=Clique ici pour retourner sur la page d''accueil.
+
+subscription.successful=Inscription réussie
+subscription.username_already_exists=Il existe déjà quelqu''un avec ce pseudonyme
+
+views.subtitle=Réseau social de démocratie participative
+views.search=Rechercher
+views.notifications=Notifications
+views.user=Membre
+views.enter=Entrer
+views.signin=Se connecter
+views.signinfb=Se connecter avec facebook
+views.signupfb=S''inscrire avec facebook
+views.signinfberror=Une erreur s''est produite lors de la connexion Facebook, nous avons besoin des autorisations demandées pour pouvoir vous authentifier
+views.tour=Visite guidée
+views.help=Aide
+views.soon=Bientôt
+views.settings=Réglages
+views.messages=Messages
+views.home=Accueil
+views.groups=Mouvements
+views.concepts=Idées
+views.debates=Débats
+views.actions=Actions
+views.rejoin=Rejoindre
+views.petitions=Pétitions
+views.disconnect=Déconnexion
+views.connect=Connexion
+views.stayconnect=Rester connecté
+views.about=À propos
+views.or=ou
+views.next=Suivant
+views.contactus=Nous contacter
+views.edit=Editer
+views.done=Terminer
+views.back=Retour
+views.close=Fermer
+views.send=Envoyer
+views.create=Créer
+views.by=par
+views.bygroup=par le Mouvement
+views.me=Moi
+views.follow=Suivre
+views.munfollow=Suivi
+views.noload=Vous avez atteint la fin des résultats disponibles
+views.nonotif=Vous n''avez pas de notifications
+views.seeNotif=Voir toutes les notifications
+views.loadmore=Charger les résultats suivants
+views.share=Partager
+views.act=Carte des Actions
+views.manage=Manager
+views.sharetc=Venez donner votre avis sur Democras
+views.sharesc=Vous pouvez voter sur Democras avec seulement et proposer vos propres idées au regard du monde
+views.empfname=Renseignez votre prénom!
+views.empname=Renseignez votre nom de famille!
+views.empville=Renseignez votre ville!
+views.emppres=Indiquez ici votre présentation
+views.wait=En attente
+views.accept=Accepter
+views.reject=Rejeter
+views.member=Membre
+views.members=Les Membres
+views.activ=Dernières Activités
+views.loading=Chargement...
+views.remainingc=charactères restants.
+views.name=Nom
+views.description=Description
+views.location=Location
+views.address=Adresse
+views.position=Position
+views.tourbegin=Commencer le tour
+views.tourpresentation=Bienvenue sur Democras. Nous allons vous présenter les fonctionnalités du site.
+views.nosubscribe.error=Erreur, les informations ne sont pas bonnes
+views.nosubscribe.mail=Cette adresse Email existe déjà!
+views.nosubscribe.user=Ce nom d''utilisateur existe déjà!
+views.new_pic=Nouvelle photo de profil
+views.spokenLanguages=Langues parlées
+views.youhavetofollow=Votre fil d''actualité est vide, il vous faut suivre un(e) membre ou un <a href='/debate'>débat</a> pour voir s''afficher ici leur activité
+views.areyousure=Êtes-vous sûr?
+views.changepassword=Changer mon mot de passe
+views.forgotPass=Mot de passe oublié?
+views.successForget=Un email vous a été envoyé avec un lien pour avoir un nouveau mot de passe.
+views.forgotPassMess=Veuillez indiquer votre nom d''utilisateur, un email vous sera envoyé avec un lien pour changer votre mot de passe.
+views.forgetPageMess=Veuillez indiquer votre nouveau mot de passe, il doit faire plus de 4 charactères.
+views.forgetConfirmPassError=Les mots de passe ne correspondent pas ou ne sont pas asez long.
+views.readmore=Lire plus
+views.getNewsletter=Recevoir des mails de notification
+views.nbTotFollowers=Nombre d''abonnés
+views.nbTotlikes=Nombre total de mentions j''aime sur vos opinions et Idées
+views.nbTotlikes=Nombre total de mentions j''aime sur vos opinions et Idées
+views.nbTotranking=Votre classement par rapport aux autres membres de Democras
+views.nbTotFollowersandlikes=Nombre d''abonné(e)s et de mentions j''aime sur vos opinions et Idées ainsi que votre classement par rapport aux autres membres de Democras
+views.nbTotFollowersandlikesHis=Nombre d''abonné(e)s et de mentions j''aime sur ses opinions et Idées ainsi que son classement par rapport aux autres membres de Democras
+views.returnDebate=Retourner sur le débat
+views.sendwfb=Envoyer en message privé sur Facebook
+views.actpet=Actions
+views.zoomMap=Veuillez zoomer pour voir tous les résultats!
+views.likedMembers=Membres populaires
+views.likedMembersExpl=Classement des membres ayant reçu le plus <br>de pouces verts sur leurs idées et opinions
+views.likerMembersYourRanking=Vous y êtes
+views.followers=Abonnés
+views.following=Suivis
+views.followingYou=vous a suivi.
+views.isfollowing=suit
+views.whysubscribe=<b>Pourquoi j''ai besoin de m''inscrire?</b> <br>Democras est une plate-forme de démocratie en ligne devant permettre à chaque citoyen de s''exprimer
+views.nofollow=Il n''y a pas encore de membre dans cette session.
+views.optional=optionnel
+views.mandatory=obligatoire
+views.chooseprofilepicture=Choisissez votre photo de profil
+views.press=Presse
+views.founded=Création du projet
+views.founded2=Fin 2014
+views.launched=Mise en ligne
+views.launched2=31 Mars 2016
+views.findthem=Où sommes nous?
+views.findthem2=Paris
+views.findthem3=Londres
+views.latestInterview=Dernière Interview
+views.logos=Logos
+views.downloadPic=Télécharger le pack press.
+views.morePress=Plus d'informations <a href="/about">ici</a>.
+views.joinourxmembers=Rejoignez nos {0} membres !
+views.inviteYourFriends=Invite tes ami(e)s à rejoindre Democras!
+views.index.inviteYourFriends=Retrouve tes ami(e)s ou invite les à rejoindre Democras:
+views.index.inviteFriendsBtn=Trouve tes ami(e)s
+views.confirmInvite=Tu as bien invité tes ami(e)s, reviens sur cette page si tu veux en inviter d''autres :)
+views.invite=Inviter
+views.inviteText=Democras offre aux citoyens et citoyennes une nouvelle façon d’organiser la vie publique. Afin d''être le plus représentatif possible, il est nécessaire qu''il soit utilisé par le plus grand nombre.<br>C''est pour cela que nous vous proposons d''importer vos contacts pour que vous puissiez inviter ceux que vous penseriez intéressés à rejoindre le réseau, afin que vous puissiez débattre, mobiliser, ou agir avec eux et ainsi contribuer à l''émergence du premier réseau social de démocratie participative.
+views.inviteSkip=Ignorer cette étape
+
+views.forms.name=Votre nom
+views.forms.firstname=Votre prénom
+views.forms.username=Nom d''utilisateur
+views.forms.password=Mot de passe
+views.forms.newpassword=Nouveau mot de passe
+views.forms.confirmpassword=Confirmer le mot de passe
+views.forms.subscription=Inscription
+views.forms.mail=Adresse e-mail
+views.forms.description=Votre présentation
+views.forms.ville=La ville ou vous habitez
+views.forms.hometown=Vous venez d''où
+views.forms.miss=Veuillez renseigner ce champ
+views.forms.news=Débats & Idées
+
+views.convers.new=Nouveau message
+views.convers.access=Accéder
+views.convers.fullscreen=Plein écran
+views.convers.startedconvers=La conversation a commencé.
+views.convers.ystartedconvers= Vous avez commencé la conversation.
+views.convers.doesnt_exists= La conversation n''existe pas
+views.inbox=Inbox
+views.convers.start=Vous pouvez commencer un nouveau message.
+views.convers.receivers=Destinataires
+views.convers.toomany=Veuillez fermer une fenêtre de conversation!
+views.convers.nomatch=Nous n''avons pas trouvé le correspondant!
+
+views.comments=Commentaires
+views.posts=Discussion
+views.comment=Commenter
+views.send=Envoyer
+views.commentadd=Ajouter un commentaire
+views.expressyourself=Exprimez-vous
+views.commentload=Charger les commentaires suivants
+views.seecomments=Voir les commentaires
+
+views.login.fb=S''inscrire avec Facebook
+views.login.mail=S''inscrire avec votre E-mail
+views.login.other=S''inscrire sans Facebook
+
+views.head.ladescription=Une Idée est une concept général, une façon de catégoriser et de voir le monde. Par exemple, Democras croit à l''Idée de démocratie participative.
+views.head.lagdescription=Regroupez des personnes partageant les mêmes convictions dans un Mouvement !
+views.head.legroup=Le Mouvement
+views.head.ledebat=Débat
+views.head.ledebatdescription=Un Débat permet à chacun de d''échanger et de comparer ses idées
+views.head.laction=L''action
+views.head.actiondescription=Democras répertorie des <b>Actions</b>, c’est à dire les moments ou l''on a déjà débattu et ou l''on va <b>revendiquer quelque chose ou agir</b> dans le monde réel. <br>Il faut pour cela être un certain nombre et avoir la même conception du problème. <br> Chaque action a une <b>description</b>, une <b>date de début</b> et une <b>localisation</b>. Vous pouvez trouver les actions à proximité de chez vous sur la carte.<br><br>
+views.head.lapetition=La Pétition
+views.head.petitiondescription=Une Pétition, c''est proposer aux gens de soutenir une cause publiquement en ajoutant leur signature. Une fois que suffisament de signatures ont étées réunies, la Pétition peut être publiée.
+
+views.head.leconcept=Idées
+views.head.leconceptcontre=Tu as voté contre cette Idée.
+views.head.leconceptpour=Tu as voté en faveur de cette Idée
+views.head.leconceptnon=Tu n''as pas voté
+
+views.concept_low=idée
+views.forms.conceptnamehow=Comment nommeriez-vous votre Idée?
+views.forms.conceptname=Nom de l''Idée :
+views.forms.conceptdefinition=Décrivez-la un peu
+views.concept_created=Vous avez bien créé l''Idée {0}
+views.concept_already_exists=Il existe déjà une Idée avec ce nom
+views.concept_doesnt_exists=Cette Idée n''existe pas, ou bien elle a été supprimée
+views.concept_deleted=Vous avez bien supprimé cette Idée
+views.concep_yours=Idées jugées
+views.concep_latest=Les dernieres Idées
+views.concep_name=Nom
+views.concep_def=Description
+views.concep_mf=Vote(s) Positif(s)
+views.concep_ma=Vote(s) Négatif(s)
+views.concep_connectToVote=Il vous faut être inscrit(e) et connecté pour voter
+views.concep_mt=Nombre total de votes
+views.concep_yourst=Les Idées que vous avez jugées
+views.concep_invit=Inviter un membre à voter
+views.concep_idc=ID Creator
+views.concep_pop=Vous devez écrire un titre et une description.
+views.concep_created=Idées créées
+views.concep_deleted=Vous avez bien supprimé cette Idée
+
+views.group_low=Mouvement
+views.group_nm=Nombre de membre
+views.concept_new=Nouvelle Idée
+views.grp_new=Nouveau Mouvement
+views.grp_mbr=Membre(s) du Mouvement
+views.group_yours=Mes Mouvements
+views.group_latest=Les derniers Mouvements
+views.group_created=Le Mouvement {0} a bien été créé
+views.group_already_exists=Il existe déjà un Mouvement avec ce nom
+views.group_doesnt_exists=Ce Mouvement n''existe pas, ou bien il a été suprimmé
+views.group.jointhisgroup=Rejoindre ce Mouvement
+views.group.jointhisgroupifconnected=Se connecter ou s''inscrire pour pouvoir rejoindre ce Mouvement
+views.group.cancelgroupappliation=Annuler votre demande pour rejoindre ce Mouvement
+views.group.leavethisgroup=Quitter ce Mouvement
+views.group.notleavinghisgroupbecauseonlyadmin=Vous êtes le seul administrateur, vous ne pouvez quitter ce Mouvement
+views.group_privategroup=Mouvement privé
+views.group_publicgroup=Mouvement public
+views.group_rank1=Membre
+views.group_rank2=Leader
+views.group_rank1000=Administrateur
+views.group_member=Membre(s)
+views.group_changest=Changer le status
+views.group_appmbr=Accepter des nouveaux membres
+views.group_wait=En attente d''approbation
+views.group_isadmin=Mouvements managés
+views.group_deleted=Vous avez bien supprimé ce Mouvement
+
+views.debate_low=Débat
+views.debate_yours=Mes Débats
+views.debate_latest=Les derniers Débats
+views.debate_new=Nouveau Débat
+views.debate_def=Définition
+views.debate_typeofdebate=Choisissez si vous voulez un Débat Oui ou Non (ou les utilisateurs doivent prendre position) ou un débat Opinion (ou les utilisateurs doivent apporter une solution à un problème) puis indiquez votre question.
+views.debate_yesorno=Oui ou non
+views.debate_findasolution=Opinion
+views.debate_opinion=Avis
+views.debate_already=Avis déjà donné
+views.debate.connecttogiveopinion=Se connecter ou s''inscrire pour donner son avis
+views.debate.connecttogiveopinionimg=<img style="text-align:center" src="/assets/images/giveopinionfr.png">
+views.debate.connecttogiveyesornoopinionimg=<img style="text-align:center" src="/assets/images/giveyesornoopinionfr.png">
+views.debate_nbopinion=Nombre d''opinions
+views.debate_nbvote=Nombre de votes
+views.debate_question=Question
+views.debate_type=Type de Débat
+views.debate_already_exists=Il existe déjà un Débat avec cette question
+views.debate_notallowed=Vous n''avez pas l''autorisation de participer à ce Débat
+views.debate_debate = Débat
+views.debate_doesnt_exists=Ce Débat n''existe pas, a été supprimé, ou vous n''avez pas l''autorisation d''y participer
+views.debate_avis=Qu''en pensez vous ?
+views.debate_error=Il y a eu un problème avec votre message
+views.debate_what=Sur quelle question voulez-vous que les gens Débatent ?
+views.debate_pop=Vous devez cliquer sur le type de Débat que vous voulez voir et écrire une question.
+views.debateyn_pop=Vous devez préciser si vous avez un avis favorable ou défavorable et écrire un commentaire.
+views.debateo_pop=Vous devez écrire un commentaire.
+views.debate_addcomment=Ajouter un commentaire
+views.debate_created=Débats créés
+views.debate_follow=Débat suivis
+views.debate_participated=Débats participés
+views.debate_allyours=Tous mes Débats
+views.debate_deleted=Vous avez bien supprimé ce Débat
+
+views.action_low=action
+views.action_new=Nouvelle Action
+views.action_doesnt_exists=Cette Action n''existe pas
+views.action.jointhisaction=Je participe à cette Action
+views.action.connectTojointhisaction=Se connecter ou s''inscrire pour participer à cette Action
+views.action.leavethisaction=Je renonce à participer à cette Action
+views.action.actioncreated=Vous avez créé l''Action {0}
+views.action.alreadyexists=Il existe déjà une Action avec ce nom
+views.action.maps=Veuillez utiliser le plugin Google maps
+views.action.addEnd=Ajouter une date de fin
+views.action.remEnd=Enlever la date de fin
+views.action.reqmaps=Veuillez utiliser le plugin Google maps
+views.action.startT=Commence
+views.action.endT=Termine
+views.action.nm=Participant(e)s
+views.action_yours=Actions auxquelles je participe
+views.action_latest=Les dernières actions
+views.action_takeloc=Valider cette localisation
+views.action_created=Actions créées
+views.action.description=Décrivez comment se déroulera cette action
+views.action_creator_group=Action lancée par le Mouvement
+views.action_creator_user=Action lancée par
+views.action_deleted=Vous avez bien supprimé cette Action
+views.action_searchonmap=Rechercher un endroit
+
+views.petition_low=pétition
+views.petition_new=Nouvelle Pétition
+views.petition.name=Nom de la pétition
+views.petition.description=Description de la pétition
+views.forms.petitionname=Cause de la Pétition
+views.forms.petitiondefinition=Argumentez un petit peu
+views.petition_doesnt_exists=Cette pétition n''existe pas, a été supprimée, ou vous n''avez pas l''autorisation d''y participer
+views.petition.jointhispetition=Signer la Pétition
+views.action.connectTojointhispetition=Signer la Pétition
+views.petition.leavethispetition=Enlever sa signature
+views.petition_yours=Pétitions signées
+views.petition_latest=Les dernières pétitions
+views.petition_created=Pétitions créées
+views.petition_creator_group=Pétition lancée par le Mouvement
+views.petition_creator_user=Pétition lancée par
+views.petition_deleted=Vous avez bien supprimé cette Pétition
+
+views.unogroup=L''utilisateur n''a pas encore rejoint de Mouvement.
+views.unodebate=L''utilisateur n''a pas participé a un Débat.
+views.yunogroup=Vous n''avez pas encore rejoint de
+views.yunodebate=Vous n''avez pas encore suivi de
+views.yunopartdebate=Vous n''avez pas encore participé à un
+views.yunopartaction=Vous ne participez à aucune
+views.yunocreateaction=Vous n''avez pas encore créé d''
+views.yunocreatedebate=Vous n''avez pas encore créé de
+views.yunojugeconcept=Vous n''avez pas encore jugé de
+views.yunosignpetition=Vous n''avez pas encore signé de
+views.yunosectgroup1=Vous n''avez pas de
+views.yunosectgroup2=dans cette section
+views.nosearch=La recherche ne donne aucun résultat
+views.noDebGoup=Il n''y pas de débat dans ce Mouvement.
+views.noPetGoup=Il n''y pas de pétition dans ce Mouvement.
+views.noActGoup=Il n''y pas d''action dans ce Mouvement.
+
+views.forms.gender=Sexe
+views.forms.birthday=Date d''anniversaire
+views.forms.city=Ville
+views.forms.hometown=Ville d''origine
+views.forms.presentation=Presentation
+views.forms.country=Pays
+views.forms.lang=Langue
+views.forms.langwebsite=Langue du site
+views.forms.link=Url
+views.forms.h=Homme
+views.forms.f=Femme
+views.forms.noshow=Ne s''affichera pas
+views.forms.groupname=Comment nommeriez-vous votre Mouvement?
+views.forms.groupdefinition=Décrivez-le un peu
+views.forms.debatequestion=Sur quelle question voulez-vous que les gens Débatent ?
+views.forms.debatedefinition=Quelles instructions laisseriez-vous ?
+views.forms.argueyourposition=Expliquez votre position
+views.forms.yes=Oui
+views.forms.no=Non
+views.forms.actionname=Nom de cette action
+views.forms.actiondefinition=Décrivez comment se déroulera cette action
+views.forms.actionnamelocation=Nom du lieu ou se déroulera l''action
+views.forms.required=Veuillez renseigner ce champ.
+views.forms.terms=Vous devez accepter les conditions d'utilisation.
+views.forms.notvalid=Ce champ n'est pas valide car il y a des caractères spéciaux.
+views.forms.notvalidmail=Cet email n'est pas valide.
+views.forms.hasURL=Avez-vous un site internet?
+views.forms.genpb=Un problème est survenu. Vérifiez que le contenu est bon ou contactez nous!
+
+views.activ_CommentConcept=a commenté l''Idée:
+views.activ_CommentAction=a commenté l''Action:
+views.activ_CommentPetition=a commenté la Pétition:
+views.activ_CommentYesornoopinion=a commenté l''Opinion:
+views.activ_CommentYesornoopinion2=a commenté une
+views.activ_CommentYesornoopinion3=Opinion
+views.activ_CommentGroup=a publié sur le Mouvement:
+
+views.activ_ProfileCreation=a créé son compte.
+views.activ_ProfileModification=a modifié son profile.
+views.activ_ProfileFirstNameModification=a modifié son prénom.
+views.activ_ProfileNameModification=a modifié son nom.
+views.activ_ProfileVilleModification=a modifié sa ville.
+views.activ_ProfileMailModification=a modifié son E-mail.
+views.activ_ProfilPresentationModification=a modifié sa présentation.
+
+views.activ_GroupCreation=a créé le Mouvement:
+views.activ_GroupJoin=a rejoint le Mouvement:
+views.activ_GroupLeave=a quitté le Mouvement:
+views.activ_GroupAccept=a accepté
+views.activ_GroupAccept2=dans le Mouvement:
+views.activ_GroupAcceptAlt=a été accepté(e) dans le Mouvement:
+
+views.activ_ChangeRankMember=
+views.activ_ChangeRankLeader=
+views.activ_ChangeRankAdmin=
+
+views.activ_ConceptCreation=a créé l''Idée:
+views.activ_ConceptDescriptionModification=a modifié l''Idée:
+
+views.activ_VoteForConcept=a voté en faveur de l''Idée:
+views.activ_VoteAgainstConcept=a voté contre l''Idée:
+views.activ_CancelVoteConcept=a enlevé son vote pour l''Idée:
+views.activ_ModifVoteForToAgainstConcept=a changé son avis pour voter contre l''Idée:
+views.activ_ModifVoteAgainstToForConcept=a changé son avis pour voter en faveur de l''Idée:
+
+views.activ_DebateCreation=a créé le Débat:
+views.activ_DebateCreationForGroup=a créé pour le Mouvement:
+views.activ_DebateCreationForGroup2= le Débat:
+views.activ_VoteForYesOrNoOpinion=a voté en faveur de l''opinion:
+views.activ_VoteAgainstYesOrNoOpinion=a voté contre l''opinion:
+views.activ_ModifVoteForToAgainstYesOrNoOpinion=a changé son avis pour voter contre l''opinion:
+views.activ_ModifVoteAgainstToForYesOrNoOpinion=a changé son avis pour voter en faveur de l''opinion:
+views.activ_PostYesOrNoOpinionOnOpinion=a répondu à une opinion pour le débat:
+views.activ_DebateOpinionParticipation=a donné son opinion pour le débat:
+
+views.activ_ActionCreation=a créé l''action:
+views.activ_ActionCreationForGroup=a créé pour le Mouvement l''action:
+views.activ_ActionJoin=a rejoint l''action:
+
+views.activ_PetitionCreation=a créé la pétition:
+views.activ_PetitionCreationForGroup=a créé pour le Mouvement la pétition:
+views.activ_PetitionJoin=a signé la pétition:
+
+views.tour.opinion=Attention tu ne peut donner ton opinion qu''une fois!
+
+views.sponsor=Sponsor
+views.policy=Politique de confidentialité
+views.policy.cookie= Cookies. Nous utilisons des "cookies" (un petit fichier texte envoyé par votre ordinateur chaque fois que vous visitez notre site et qui est associé de façon exclusive à votre compte Democras ou à votre navigateur) ou des technologies similaires pour reconnaire votre machine. Lorsque nous utilisons des cookies, nous pouvons soit utiliser des cookies de "session" (qui durent jusqu''à ce que vous fermiez votre navigateur) ou des cookies "persistants" (qui restent actifs tant qu''ils ne sont pas supprimés par vous-même ou par votre navigateur). Nous pouvons par exemple utiliser des cookies pour stocker vos préférences de langue ou d''autres paramètres propres à Democras, de sorte que vous n''ayez pas à les configurer à chaque fois que vous accédez à Democras. Certains cookies sont associés à votre compte Democras et comprennent des informations personnelles vous concernant (l''adresse e-mail que vous nous avez indiquée), d’autres non.
+views.policy.dataq= Comment utilisons-nous les données que nous collectons ?
+views.policy.dataa=Nous utilisons les données que nous collectons pour mettre notre produit à votre disposition et l''améliorer, pour protéger Democras et nos utilisateurs. Par exemple, nous pouvons identifier à quelle fréquence le traffic utilise deux versions différentes d''un produit, ce qui peut nous aider à comprendre quelle version est la meilleure.(A/B testing).
+views.policy.pers= Democras garantit à l''Utilisateur un droit d''opposition, d''accès, de rectification et de suppression sur les données personnelles le concernant. Le mot de passe, choisi par l''utilisateur, est personnel et confidentiel. L''utilisateur s''engage à conserver secret son mot de passe et à ne pas le divulguer sous quelque forme que ce soit. L''utilisation de son Identifiant et de son Mot de passe à travers internet se fait aux risques et périls de l''Utilisateur. Il appartient à l''Utilisateur de prendre toutes les dispositions nécessaires permettant de protéger ses propres données contre toute atteinte.
+
+views.cgu=Conditions d''utilisation
+views.cgu.group=Si vous ouvrez un Mouvement au nom d''une entreprise, d''une organisation ou de toute autre entité, alors le terme « vous » désigne vous-même en tant que personne ainsi que cette entité, et vous déclarez et garantissez que vous êtes habilité à accorder toutes les autorisations et licences citées dans ces conditions et à engager l''entité dans le cadre de ces conditions et que vous acceptez ces conditions au nom de l''entité.
+views.cgu.1=Toute connexion au site est subordonnée au respect des présentes conditions. Vous pouvez utiliser notre service uniquement si vous acceptez d''être lié à Democras par un contrat, et de vous conformer aux présentes conditions et à toutes les lois applicables. Lors de la création de votre compte Democras, vous devez nous fournir des renseignements exacts et complets. L''utilisation ou l''accès est interdit à toute personne âgée de moins de 13 ans.
+views.cgu.access=Democras se réserve le droit de refuser l''accès au service, unilatéralement et sans notification préalable, à tout utilisateur ne respectant pas les présentes conditions d''utilisation.
+
+views.democras_presentation=<p style="font-size:medium;">Notre portail utilise les outils innovants offerts par les nouvelles technologies pour permettre à tout un chacun de penser, débattre, et finalement agir. <br> Le site se veut donc une plate-forme d''échange, nous ne sommes partisans ni affiliés à aucun parti politique, c''est donc à vous d''y changer la société.</p>
+
+views.democras_descriptionmeta=Portail web visant à révolutionner l''engagement démocratique. A l''aide de débats, groupements, et actions de masse, il permet à tout citoyen, citoyenne ou mouvement de se concerter, de se regrouper et d'agir.
+
+views.whatisdemocras=Qu''est-ce que Democras ?
+views.alreadymember=Déjà membre ?
+views.agreecgu=En créant un compte, vous confirmez que vous acceptez les <a onclick="return !window.open(this.href, ''Terms'', ''width=640,height=640'')" href="/terms" class="agreecgu">conditions d''utilisation</a> et la <a onclick="return !window.open(this.href, ''Terms'', ''width=640,height=640'')" href="/terms#row_policy" class="agreecgu">politique de confidentialité</a> de Democras.
+views.help.username=Utilisez un nom d''utilisateur sans caractères spéciaux
+views.help.password=Pour plus de sécurité, choisissez un mot de passe différent de celui des autres sites
+views.help.begin=Bienvenue sur la page d''aide de Démocras. Vous trouverez ici toutes les réponses à vos questions.
+
+views.help.concepts=<p>Les Idées sont des <b>concepts abstraits</b> que se font les hommes afin de représenter la réalité. Ils sont les outils à partir desquels l''on pourra <b>juger si des choses sont souhaitables ou non</b>. Par exemple, grâce à l''idée des <i>Droits de l''Homme</i>, qui stipule que les hommes naissent et demeurent libres et égaux en droits, a en son temps permis de juger que les privilèges de caste n''étaient pas souhaitables. <br></p> <p>Néanmoins, pour qu''une Idée puisse être utilisée il faut qu''elle soie <b>reconnue comme valide et légitime</b> par le plus de personnes possible. Par exemple, l''Idée du <i>droit inaliénable de vote aux élections départementales des caribous</i> est une idée possible, mais n''est reconnue par personne. </p><ul><li>Pour créer une Idée, cliquez sur <b>Nouvelle Idée</b>. Une fenêtre s''ouvrira en vous demandant de la nommer et de la décrire.</li><li>Vous pouvez choisir de reconnaitre une Idée, en votant pour elle, ou bien de montrer votre désacord en votant contre.</li></ul></p>
+
+views.help.debates=<p>Les Débats permettent la <b>confrontation d''idées</b> sur divers sujets, à travers l''échange d''opinions. C''est le moyen le plus efficace d''obtenir une réponse collective à un problème donné. Il en existe deux sortes.</p><p>1) Les Débats <i>Opinion</i> d''exprimer son point de vue et ainsi <b>d''argumenter en totale liberté</b> pour défendre son point de vue. Ces opinions pourront par la suite être évaluées, à l''aide des pouces verts ou rouges, ou bien en développant son avis le plus explicitement possible par une opinion positive ou négative.</p><p>2) Les Débats <i>Oui ou Non</i> invitent l''utilisateur à adopter une position claire : en plus de son argumentation, il précise clairement s''il est <b>pour ou contre</b> avant de donner son avis.</p>
+
+views.help.groups=<p>Les Mouvements permettent aux personnes partageant des buts communs de se regrouper entre eux. Il en existe de deux sortes : des Mouvements <b>publics</b>, dans lesquels tout le monde peut rentrer, et des Mouvements <b>privés</b>, dont chaque candidature doit être validée par un Leader ou un Administrateur. <br> Il est possible de créer des Débats, Pétitions et Actions au nom du Mouvement, ceux créés depuis un Mouvement public sont accessibles à tous les membres de Democras tandis que ceux créés par un Mouvement privé sont réservés aux membres du Mouvement. <br>Chaque membre du Mouvement à un <b>rang</b>, dont il en existe 3 sortes : </p><ul><li>Membre : peut voir et participer aux Débats, Pétitions et Actions du Mouvement s''il est privé</li><li>Leader : a tous les privilèges des membres, peut créer des Débats, Pétitions et Actions de Mouvement, changer la description, et approuver les candidatures pour les Mouvements privés</li><li>Administrateur : a tous les privilèges des leaders, peut modifier les rangs des utilisateurs et peut changer le nom du Mouvement</li></ul></p>
+
+views.help.actions=<p>Les <b>Actions</b> sont le moment qui suit le débat, soit le passage au mode réel où l''individu va agir et revendiquer. Pour se faire, il est nécessaire de rassembler un nombre significatif de participants autour d''une même conception du problème en question.<br> Chaque action possède une description, une date de début et de fin ainsi qu''une localisation. Vous pouvez repérer les actions proches de chez vous sur la carte ci-dessous.</p>
+
+views.help.petitions=<p>Les Petitions permettent de revendiquer collectivement une opinion ou un jugement. Elles consistent en un texte, que les utilisateurs de Democras sont invités à approuver. Elles pourront donc par la suite, quand un nombre suffisant de personnes l''auront approuvée, être envoyées à des preneurs de décision, ou bien affichées publiquement.</p>
+
+views.help.spokenLanguages=Democras vous demande d''indiquer les langues que vous parlez afin de vous permettre d''accéder à tous les éléments du site utilisant une langue que vous comprenez. Ainsi, les communautées linguistiques seront décloisonnées par les personnes parlant plusieurs langues.
+
+views.contact.text=<p>Pour nous contacter, utilisez notre addresse e-mail : <a href="malto:clement.moutet@hec.edu">clement.moutet@hec.edu</a> ou bien <a href="malto:pierre@democras.com">pierre@democras.com</a></p>
+
+views.error=Erreur
+views.error_connect=Un problème de connexion à été détecté. Veuillez réessayer.
+
+views.about.idea=Le projet s''est mis en place fin 2014, après avoir constaté l''absence de plate-formes de démocratie directe qui permettraient aux citoyens et citoyennes de s''exprimer et s''organiser. Afin de garantir l''impartialité et l''indépendance de la plate-forme, ainsi que la <b>liberté totale d''opinion</b> de ses utilisateurs (dans le cadre des limites fixées par la loi, bien évidemment), il a été choisi de ne <b>s''associer avec aucune organisation partisanne</b>. <br> Nous sommes en effet convaincus que, toute opinion étant contestable, l''unique entité pouvant juger la validité de l''opinion ou du mouvement concernés n''est autre que le peuple lui-même, et non une organisation, personnalité, charte ou autre régulateur.
+views.about.why=Pourquoi Democras?
+views.about.whoarewe=Les fondateurs
+views.about.contributed=A également contribué au projet
+views.about.clement=Depuis tout jeune, Clément s''est intéressé aux technologies de l''information et à leur impact sur la société. Diplomé en management à HEC Paris et en informatique à l''EPFL et remarquant très tôt que de très nombreuses personnes sont très actives sur la toile sans pour autant que l''on leur octroie une voix, il décide de combiner ses compétences en gestion et en nouvelles technologies pour remettre le pouvoir dans les mains des citoyens en montant une plate-forme web leur redonnant des moyens d''expression et de mobilisation.
+views.about.pap=Pierre-Armand a toujours aimé créer, et créer dans le sens large du terme, pour apporter le mouvement. Il pense qu''un problème est en train de se créer dans la plupart des pays démocratiques car les élus sont les seuls à pouvoir prendre des decisions concernant la vie publique. Convaincu que le libre echange des idees permettrait d''améliorer la démocratie, il décide de co-fonder Democras car il ne voit pas d''autre solution pour les futures generations. En effet, internet sera pour lui la clef de voute de la communication citoyenne de demain.
+views.about.careertitle=Recrutement
+views.about.career=Nous cherchons actuellement des <b>community managers</b> afin de nous aider à nous occuper de notre présence sur internet. Si vous êtes intéressés, contactez nous à <a href="mailto:contact@democras.com">contact@democras.com</a>
+views.about.donatetitle=Soutenez-nous !
+views.about.donate=Democras est un projet ambitieux, et afin de garantir notre indépendance, nous avons choisi de ne pas recevoir de subventions ou de financements. Nous avons donc absolument besoin de votre aide afin de pouvoir payer le fonctionnement du site. Si le concept vous séduit et que vous désirez y contribuer, vous pouvez <b>faire un bon</b>, qui servira à financer nos serveurs, notre promotion, ainsi que notre développement.
+views.about.thanks=Merci beaucoup
+views.about.thanksfordonation=Nous vous remercions chaleuresement pour votre don. Votre contribution ne sera pas oubliée, et nous aide grandement à établir une démocratie directe en ligne.
+
+mail.titlepasswordforget=Réinitialisation de votre mot de passe Democras
+mail.passwordforget.hello=Bonjour {0},
+mail.passwordforget.youaskedanewpassword=Vous avez demandé un nouveau mot de passe.
+mail.passwordforget.clickonthisbutton=Cliquez sur le bouton en dessous pour changer votre mot de passe (valide pendant 24 heures):
+mail.titlesubscription=Votre inscription sur Democras
+mail.subscription.welcomeondemocras=Bienvenue sur Democras, {0}.
+mail.subscription.text=Vous pouvez dès maintenant participer au débat public et agir véritablement. <br/>Pour celà, connectez-vous sur le site via la page principale et cherchez les sujets vous intéressant. Vous pourrez échanger et réellement changer les choses.
+mail.commentOnObject.title=Vous avez reçu une notification sur Democras
+mail.commentOnYesOrNoOpinion.title=Quelqu''un a commenté une Opinion
+mail.commentOnGroup.title=Quelqu''un a posté sur un Mouvement
+mail.commentOnPetition.title=Quelqu''un a commenté une Pétition
+mail.commentOnAction.title=Quelqu''un a commenté une Action
+mail.commentOnConcept.title=Quelqu''un a commenté une Idée
+mail.commentOnObject.someonecommented=Quelqu''un a commenté sur
+mail.yesornoopinionOnOpinion.title=Quelqu''un s''est positioné sur votre Opinion sur Democras
+mail.yesornoopinionOnOpinion.message=Quelqu''un a écrit un avis sur votre Opinion
+mail.postopinion.message=a écrit une Opinion sur le Débat
+mail.followMember.title=vous a suivi sur Democras !
+mail.followMember.message=Vous avez été suivi par
+mail.main.haveaproblem=Vous avez un problème? N''hésitez pas à nous contacter à contact@democras.com
+mail.titleInviteFriends=vous a invit&eacute; &agrave; rejoindre <b>Democras</b>.
+mail.titleInviteFriendsMail=vous a invité à rejoindre Democras.
+mail.inviteFriends.text=Democras est le <b>r&eacute;seau social de democratie participative</b>.<br><b>Neutre politiquement</b>, il permet à chaque citoyen et à chaque citoyenne, peu importe ses opinions ou son statut, de participer au débat public, de créer ou rejoindre des mouvements politiques, et d''organiser des actions concrêtes <b>sans passer par des représentants</b>.
+mail.inviteFriends.goOnDemocras=Accéder à Democras
+mail.inviteFriends.DoNotReceiveMoreMails=Pour ne plus recevoir de messages de notre part, 
+mail.clichere=cliquez ici

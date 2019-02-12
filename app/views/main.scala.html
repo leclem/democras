@@ -1,0 +1,1393 @@
+@(lang: Messages, connected: Boolean, title: String = "Democras", boldMenu: Option[String] = None)(content: Html)(implicit session: play.api.mvc.Session)
+@import helper._
+
+
+<!DOCTYPE html>
+<html lang="@lang.lang.language">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="language" content="@lang.lang.language" />
+
+    <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+    <!--il faut mettre tous ses meta en fonction de la page  -->
+
+    <meta property="og:title" content="@title - @Messages("views.subtitle")(lang)" />
+
+	<meta property="og:site_name" content="Democras"/>
+	<meta property="og:description" content="@Messages("views.democras_descriptionmeta")(lang)"/>
+	<meta property="debat:author" content="Democras"/>
+	<meta property="debat:publisher" content="http://www.democras.com/"/>
+	<meta property="og:image" content="https://democras.com/assets/images/democras-fb4.png" />
+	<meta property="og:locale:alternate" content="fr_FR"/>
+	<meta name="twitter:card" content="@Messages("views.democras_descriptionmeta")(lang)">
+	<meta name="twitter:url" content="https://democras.com">
+	<meta name="twitter:title" content="@Messages("views.subtitle")(lang)">
+	<meta name="twitter:description" content="@Messages("views.democras_descriptionmeta")(lang)">
+	<meta name="twitter:image" content="https://democras.com/assets/images/democras-fb4.png">
+
+    <title>Democras - @title</title>
+
+    <!-- Bootstrap -->
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://apis.google.com/js/client.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/octicons/3.1.0/octicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="@routes.Assets.at("css/bootstrap.min.css?v3")" rel="stylesheet">
+    <link href="@routes.Assets.at("css/index_v2.css?v3")" rel="stylesheet">
+    <link href="@routes.Assets.at("css/pictonic.css?v3")" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js"></script>
+  <link href="@routes.Assets.at("css/bootstrap-social.css")" rel="stylesheet" >
+  <link href="@routes.Assets.at("css/font-awesome.css")" rel="stylesheet">
+    <!-- Google Analytics -->
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-75476417-1', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+    <script>
+      moment.locale('@Messages("views.curLang")(lang)');
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.min.js"></script>
+    <link href='//fonts.googleapis.com/css?family=Maven+Pro:500' rel='stylesheet' type='text/css'>
+    <style>
+    /* CSS used here will be applied after bootstrap.css */
+      /* Create a medium height at 40px
+      .navbar-md {min-height:40px}
+      .navbar-md .navbar-brand,
+      .navbar-md .navbar-nav>li>a {padding-top:10px; padding-bottom:10px}
+      .navbar-md .navbar-brand {height: 40px}
+      .navbar-md .navbar-toggle {margin: 6px 12px 6px 0px; padding: 6px 7px 6px 7px;}
+      .navbar-md .navbar-toggle .icon-bar {width: 19px;}*/
+      /* Create a small height at 30px */
+      .navbar-sm {min-height:30px}
+      .navbar-sm .navbar-brand,
+      .navbar-sm .navbar-nav>li>a {padding-top:5px; padding-bottom:5px}
+      .navbar-sm .navbar-brand {height: 30px}
+      .navbar-sm .navbar-toggle {margin: 3px 9px 3px 0px; padding: 4px 4px 4px 4px;}
+      .navbar-sm .navbar-toggle .icon-bar {width: 16px;}
+      div{word-wrap: break-word;}
+    </style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- conversation -->
+    <link href="@routes.Assets.at("css/conversation.css")" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.5.0/bootstrap-tagsinput.min.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.5.0/bootstrap-tagsinput.min.js"></script>
+    <script src="@routes.Assets.at("javascripts/js.js")"></script>
+    <script type="text/javascript">
+    var dev =1;
+    function debugit(ptar){
+      if(dev==1){
+        console.log(ptar);
+      }
+    }
+    function openReadMore(event){
+      $(event.target).parents('.lpdesign').removeClass('lpdesign');
+      $(event.target).hide();
+    }
+    function lpdesigntriger(){
+      $('.lpdesigntriger').each(function(){
+        if($(this).height()>160){
+          $(this).addClass('lpdesign');
+      $(this).append('<button class="btn btn-primary btn-sm btn-lp" onclick="openReadMore(event)">@Messages("views.readmore")(lang)</button>');
+      }
+        $(this).removeClass('lpdesigntriger');
+    });
+    }
+    function outputRestrict(pinput, stglg, nread){
+      var cInput = pinput;
+      stglg = typeof stglg !== 'undefined' ? stglg : 250;
+      nread = typeof nread !== 'undefined' ? nread : false;
+      var posArr = [];
+      var nbBr = pinput.split("<br>").length -1;
+      if(nbBr>3){nbBr = 3;}
+      for(i=0;i<nbBr;i++){
+        if(posArr.length === 0){
+          posArr.push(pinput.indexOf("<br>",0));
+        }else{
+          posArr.push(pinput.indexOf("<br>",posArr[posArr.length-1]+1));
+        }
+      }
+      if(posArr.length !== 0 ){
+        var pinputarr = pinput.split("<br>");
+        if(nbBr == 3){
+            if(posArr[2]< stglg-4){
+              pinput =  pinputarr.splice(0, 4);
+              pinput = pinput.join("<br>");
+              return maxLenRestrict(pinput, stglg, true, cInput, nread);
+            }
+          }
+        if(nbBr >= 2){
+            if(posArr[1] < stglg-4){
+              pinput =  pinputarr.splice(0, 3);
+              pinput = pinput.join("<br>");
+              return maxLenRestrict(pinput, stglg, true, cInput, nread);
+            }
+          }
+          if(posArr[0] < stglg-4){
+            pinput =  pinputarr.splice(0, 2);
+            pinput = pinput.join("<br>");
+            return maxLenRestrict(pinput, stglg, true, cInput, nread);
+          }
+      }
+      return maxLenRestrict(pinput, stglg, false, cInput, nread);
+    }
+    function maxLenRestrict(pinput, stglg, mulBr, cInput, nread){
+      var ptoadd, dinput = pinput.substr(0,stglg);
+      if(nread){
+        ptoadd = '[...]';
+      }else{
+        ptoadd =   '<a class="cp" onclick="$(this).siblings(\'.readMore\').show();$(this).remove()"> @Messages("views.readmore")(lang) > </a><span class="readMore" style="display:none">' + cInput.substr(dinput.length)+'</span>';
+      }
+      if(pinput.length > stglg){
+        pinput = dinput+ptoadd;
+      }else if(mulBr){
+        pinput = dinput+ptoadd;
+      }
+      return pinput;
+    }
+    function tempmode(pverb){
+      if(pverb=="ProfileCreation"||pverb=="ProfileModification"||pverb=="ProfileFirstNameModification"||pverb=="ProfileNameModification"||pverb=="ProfileVilleModification"||pverb=="ProfileMailModification"||pverb=="ProfilePresentationModification"){return 0;}
+      else if(pverb=="FollowMember"){return 10;}
+      else if(pverb=="GroupCreation"||pverb=="GroupJoin"||pverb=="GroupLeave"||pverb=="ChangeRankMember"||pverb=="ChangeRankLeader"||pverb=="ChangeRankAdmin"||pverb=="GroupAccept"||pverb=="CommentGroup"){return 1;}
+      else if(pverb=="ConceptCreation"||pverb=="ConceptDescriptionModification"||pverb=="CommentConcept"||pverb=="VoteForConcept"||pverb=="VoteAgainstConcept"||pverb=="CancelVoteConcept"||pverb=="ModifVoteForToAgainstConcept"||pverb=="ModifVoteAgainstToForConcept"){return 2;}
+      else if(pverb=="DebateCreation"||pverb=="DebateOpinionParticipation"||pverb=="DebateYesOrNoParticipation"
+      ||pverb=="ModifVoteAgainstToForOpinion"||pverb=="ModifVoteForToAgainstOpinion"
+      ||pverb=="VoteAgainstOpinion"||pverb=="VoteAgainstYesOrNoOpinion"
+      ||pverb=="VoteForYesOrNoOpinion"||pverb=="ModifVoteForToAgainstYesOrNoOpinion"||pverb=="ModifVoteAgainstToForYesOrNoOpinion"||pverb=="VoteForOpinion"){return 3;}
+      else if(pverb=="DebateCreationForGroup"){return 31;}
+      else if (pverb =="PostYesOrNoOpinionOnOpinion"){return 32;}
+      else if (pverb=="CommentYesornoopinion"||pverb=="CommentYesOrNo"){return 33;}
+      else if(pverb=="ActionCreation"||pverb=="ActionCreationForGroup"||pverb=="CommentAction"||pverb=="ActionJoin"){return 4;}
+      else if(pverb=="PetitionCreation"||pverb=="PetitionCreationForGroup"||pverb=="CommentPetition"||pverb=="PetitionJoin"){return 5;}
+      else{return 7;}
+      //||pverb=="CommentYesornoopinion"||pverb=="CommentYesOrNo"
+    }
+    function verbActi(pverb){
+      switch (pverb) {
+        case "ProfileCreation":
+          return "@Messages("views.activ_ProfileCreation")(lang)";
+        case "ProfileModification":
+          return "@Messages("views.activ_ProfileModification")(lang)";
+        case "ProfileFirstNameModification":
+          return "@Messages("views.activ_ProfileFirstNameModification")(lang)";
+        case "ProfileNameModification":
+          return "@Messages("views.activ_ProfileNameModification")(lang)";
+        case "ProfileVilleModification":
+          return "@Messages("views.activ_ProfileVilleModification")(lang)";
+        case "ProfileMailModification":
+          return "@Messages("views.activ_ProfileMailModification")(lang)";
+        case "ProfilePresentationModification":
+          return "@Messages("views.activ_ProfilPresentationModification")(lang)";
+        case "GroupCreation":
+          return "@Messages("views.activ_GroupCreation")(lang)";
+        case "GroupJoin":
+          return "@Messages("views.activ_GroupJoin")(lang)";
+        case "GroupLeave":
+          return "@Messages("views.activ_GroupLeave")(lang)";
+        case "GroupAccept":
+          return "@Messages("views.activ_GroupAccept")(lang)";
+        case "ChangeRankMember":
+          return "@Messages("views.activ_ChangeRankMember")(lang)";
+        case "ChangeRankLeader":
+          return "@Messages("views.activ_ChangeRankLeader")(lang)";
+        case "ChangeRankAdmin":
+          return "@Messages("views.activ_ChangeRankAdmin")(lang)";
+        case "ConceptCreation":
+          return "@Messages("views.activ_ConceptCreation")(lang)";
+        case "ConceptDescriptionModification":
+          return "@Messages("views.activ_ConceptDescriptionModification")(lang)";
+        case "VoteForConcept":
+          return "@Messages("views.activ_VoteForConcept")(lang)";
+        case "VoteAgainstConcept":
+          return "@Messages("views.activ_VoteAgainstConcept")(lang)";
+        case "CancelVoteConcept":
+          return "@Messages("views.activ_CancelVoteConcept")(lang)";
+        case "ModifVoteForToAgainstConcept":
+          return "@Messages("views.activ_ModifVoteForToAgainstConcept")(lang)";
+        case "ModifVoteAgainstToForConcept":
+          return "@Messages("views.activ_ModifVoteAgainstToForConcept")(lang)";
+        case "DebateCreation":
+          return "@Messages("views.activ_DebateCreation")(lang)";
+        case "DebateCreationForGroup":
+          return "@Messages("views.activ_DebateCreationForGroup")(lang)";
+        case "DebateOpinionParticipation":
+          return "@Messages("views.activ_DebateOpinionParticipation")(lang)";
+        case "DebateYesOrNoParticipation":
+          return "@Messages("views.activ_DebateOpinionParticipation")(lang)";
+        case "VoteForYesOrNoOpinion":
+          return "@Messages("views.activ_VoteForYesOrNoOpinion")(lang)";
+        case "VoteAgainstYesOrNoOpinion":
+          return "@Messages("views.activ_VoteAgainstYesOrNoOpinion")(lang)";
+        case "ModifVoteForToAgainstYesOrNoOpinion":
+          return "@Messages("views.activ_ModifVoteForToAgainstYesOrNoOpinion")(lang)";
+        case "ModifVoteAgainstToForYesOrNoOpinion":
+          return "@Messages("views.activ_ModifVoteAgainstToForYesOrNoOpinion")(lang)";
+        case "VoteForOpinion":
+          return "@Messages("views.activ_VoteForYesOrNoOpinion")(lang)";
+        case "VoteAgainstOpinion":
+          return "@Messages("views.activ_VoteAgainstYesOrNoOpinion")(lang)";
+        case "ModifVoteForToAgainstOpinion":
+          return "@Messages("views.activ_ModifVoteForToAgainstYesOrNoOpinion")(lang)";
+        case "ModifVoteAgainstToForOpinion":
+          return "@Messages("views.activ_ModifVoteAgainstToForYesOrNoOpinion")(lang)";
+        case "PostYesOrNoOpinionOnOpinion":
+          return "@Messages("views.activ_PostYesOrNoOpinionOnOpinion")(lang)";
+        case "ActionCreation":
+          return "@Messages("views.activ_ActionCreation")(lang)";
+        case "ActionCreationForGroup":
+          return "@Messages("views.activ_ActionCreationForGroup")(lang)";
+        case "ActionJoin":
+          return "@Messages("views.activ_ActionJoin")(lang)";
+        case "PetitionCreation":
+          return "@Messages("views.activ_PetitionCreation")(lang)";
+        case "PetitionCreationForGroup":
+          return "@Messages("views.activ_PetitionCreationForGroup")(lang)";
+        case "PetitionJoin":
+          return "@Messages("views.activ_PetitionJoin")(lang)";
+        case "CommentConcept":
+          return "@Messages("views.activ_CommentConcept")(lang)";
+        case "CommentAction":
+          return "@Messages("views.activ_CommentAction")(lang)";
+        case "CommentPetition":
+          return "@Messages("views.activ_CommentPetition")(lang)";
+        case "CommentYesornoopinion":
+          return "@Messages("views.activ_CommentYesornoopinion")(lang)";
+        case "CommentYesOrNo":
+          return "@Messages("views.activ_CommentYesornoopinion")(lang)";
+        case "CommentGroup":
+          return "@Messages("views.activ_CommentGroup")(lang)";
+        case "FollowMember":
+          return "@Messages("views.isfollowing")(lang)";
+        default:
+          return "undef";
+      }
+    }
+    function daType(data){
+      switch (data) {
+        case "DebateCreation":
+          return "debate";
+        case "DebateCreationForGroup":
+          return "debate";
+        case "DebateOpinionParticipation":
+          return "debate/opinion";
+        case "DebateYesOrNoParticipation":
+          return "debate/yesornoopinion";
+        case "VoteForYesOrNoOpinion":
+          return "debate/yesornoopinion";
+        case "VoteAgainstYesOrNoOpinion":
+          return "debate/yesornoopinion";
+        case "ModifVoteForToAgainstYesOrNoOpinion":
+          return "debate/yesornoopinion";
+        case "ModifVoteAgainstToForYesOrNoOpinion":
+          return "debate/yesornoopinion";
+        case "VoteForOpinion":
+          return "debate/opinion";
+        case "VoteAgainstOpinion":
+          return "debate/opinion";
+        case "ModifVoteForToAgainstOpinion":
+          return "debate/opinion";
+        case "ModifVoteAgainstToForOpinion":
+          return "debate/opinion";
+        case "PostYesOrNoOpinionOnOpinion":
+          return "debate/opinion";
+        case "CommentYesornoopinion":
+          return "debate/yesornoopinion";
+        case "CommentYesOrNo":
+          return "debate/yesornoopinion";
+        case "CommentGroup":
+          return "group";
+        default:
+          return "debated";
+      }
+    }
+    function parseNotif(data){
+      console.log(data);
+      data.forEach(function(entry){
+        //console.log(entry.headers.verb);
+        //if(entry.headers.verb == "CommentYesornoopinion"||entry.headers.verb == "CommentYesOrNo"){return;}
+        entry.vaction=verbActi(entry.headers.verb);
+        switch (tempmode(entry.headers.verb)) {
+          case 1:
+            entry.atype = "group";
+            entry.what = outputRestrict(entry.object.name, 250, true);
+            break;
+          case 10:
+              entry.atype = "member";
+              entry.isFollowing=1;
+              entry.what = "@Messages("views.followingYou")(lang)";
+              break;
+          case 2:
+            entry.atype = "concept";
+            entry.what = outputRestrict(entry.object.name, 250, true);
+            break;
+          case 3:
+            if(entry.target.question == undefined){
+              entry.what= outputRestrict(entry.target.comment, 250, true);
+            }
+            else {
+              entry.what= outputRestrict(entry.target.question, 250, true);
+            }
+            //if(entry.object.idDebate != undefined){
+            if(entry.headers.verb == "ModifVoteForToAgainstYesOrNoOpinion"||entry.headers.verb == "ModifVoteAgainstToForYesOrNoOpinion"||entry.headers.verb == "VoteForYesOrNoOpinion"||entry.headers.verb == "VoteAgainstYesOrNoOpinion"||entry.headers.verb == "DebateYesOrNoParticipation"||entry.headers.verb == "CommentYesornoopinion"||entry.headers.verb == "DebateOpinionParticipation"){
+              entry.object.id = entry.target.id;
+            }
+            //}
+            entry.atype = daType(entry.headers.verb);
+
+            break;
+          case 32:
+            entry.what= outputRestrict(entry.object.debateQuestion, 250, true);
+            entry.object.id = entry.object.idDebate;
+            entry.atype = "debate";
+            break;
+          case 33:
+            entry.what= outputRestrict(entry.object.comment, 250, true);
+            entry.atype = "debate/yesornoopinion";
+            break;
+          case 4:
+            entry.atype = "action";
+            entry.what = outputRestrict(entry.object.name, 250, true);
+            break;
+          case 5:
+            entry.atype = "petition";
+            entry.what = outputRestrict(entry.object.name, 250, true);
+            break;
+          default:
+
+        }
+      });
+      return data;
+    }
+    </script>
+    <!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1863491300568377'); // Insert your pixel ID here.
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1863491300568377&ev=PageView&noscript=1"
+/></noscript>
+<!-- DO NOT MODIFY -->
+<!-- End Facebook Pixel Code -->
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1863491300568377'); // Insert your pixel ID here.
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1863491300568377&ev=PageView&noscript=1"
+/></noscript>
+<!-- DO NOT MODIFY -->
+<!-- End Facebook Pixel Code -->
+    
+  </head><body class="backgroundcolor">
+  <script>
+<!--FB init Stuff-->
+
+function fbauthentification() {
+ FB.login(
+  function(response) {
+  console.log(response);
+ },
+ {
+  scope: 'public_profile, email',
+  auth_type: 'rerequest'
+ }
+ );
+}
+
+window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    FB.init({
+      appId      : '514964885289852',                        // App ID from the app dashboard
+      status     : false,                                 // Check Facebook Login status
+      xfbml      : true                                  // Look for social plugins on the page
+    });
+
+    // *** here is my code ***
+    if (typeof facebookInit == 'function') {
+        facebookInit();
+    }
+
+  };
+(function(d){
+    var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+    js = d.createElement('script'); js.id = id; js.async = true;
+    js.src = "//connect.facebook.net/en_US/all.js";
+    d.getElementsByTagName('head')[0].appendChild(js);
+}(document));
+
+function connectFB(){
+  FB.getLoginStatus(function(response) {
+     console.log("/connectfb/" + response.authResponse.accessToken + "/" + encodeURIComponent(window.location.pathname));
+      window.location = "/connectfb/" + response.authResponse.accessToken + "/" + encodeURIComponent(window.location.pathname);
+    });
+}
+
+function facebookInit() {
+   // Initialisation of the listener
+   FB.Event.subscribe('auth.statusChange', function () {
+     connectFB();
+   });
+}
+</script>
+    <div class="container-fluid">
+    <nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/"><span class="text-success tevo">D</span>emocras </a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <!--<li><p class="navbar-text">The one and only!</p></li>-->
+        @if(connected) {
+
+        <li><a onclick="toogleSearch()" class="cp" style="padding-right: 9px;padding-left: 9px;"><span id='nav_search_btn' class="glyphicon glyphicon-search"></span><span class="visible-inline" id="search-text"> &nbsp; @Messages("views.search")(lang)</span></a></li>
+        <div class="navbar-form navbar-left" >
+          <div class="input-group" style="width:100%;">
+                <input type="text" class="form-control" name="search" id="input_searchNav" placeholder="@Messages("views.search")(lang)" onkeypress="searchNavEnter(event)">
+                <span class="input-group-btn">
+                  <button class="btn btn-success" type="button" onclick="searchNav();"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+          </div>
+        </div>
+        }
+      </ul>
+      @if(connected) {
+      <ul class="nav navbar-nav navbar-right">
+
+        <li id="lsco2"><a href="/member"><span style=" display: inline-block;height: 100%;vertical-align: middle;"><img class="xspicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/@(session.get("username")).jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/></span>
+
+          @if(boldMenu != None && boldMenu.get == "member"){
+          	<span class="xspseudofl" style=" display: inline-block;font-weight: bold;color:#18bc9c; " class="xs-inline" > @session.get("username") </span>
+          }else{
+            <span class="xspseudofl" style=" display: inline-block; " class="xs-inline" > @session.get("username") </span>
+          }
+          </a>
+          <span class="xsseparatorfl" style=" display: inline-block; " class="xs-inline" ><font color="black"> | </font></span>
+          </li>
+          <li id="lsco"> <a style="color:white;"><div style="font-size:15px;"><!--<span class="octicon octicon-organization" title="@Messages("views.nbTotFollowers")(lang)"></span> <span class="mStat1"></span> &nbsp--> <span class="glyphicon glyphicon-thumbs-up" title="@Messages("views.nbTotlikes")(lang)"></span> <span class="mStat2"></span>  &nbsp; <span title="@Messages("views.nbTotranking")(lang)"><span class="glyphicon glyphicon-glass"></span> &nbsp;<span class="mStat3"></span></div> </a><span class="xsseparatorfl" style=" display: inline-block; " class="xs-inline" ><font color="black"> | </font></span></span></li>
+
+        <li>
+
+
+        @if(boldMenu != None && boldMenu.get == "home"){
+          <a style="font-weight: bold;color:#18bc9c;">@Messages("views.home")(lang)</a>
+        }else{
+          <a href="/">@Messages("views.home")(lang)</a>
+        }
+        </li>
+        <li>
+        @if(boldMenu != None && boldMenu.get == "concept"){
+          <a style="font-weight: bold;color:#18bc9c;">@Messages("views.concepts")(lang)</a>
+        }else{
+          <a href="/concept">@Messages("views.concepts")(lang)</a>
+        }
+        </li>
+        <li>
+        @if(boldMenu != None && boldMenu.get == "debate"){
+          <a style="font-weight: bold;color:#18bc9c;">@Messages("views.debates")(lang)</a>
+        }else{
+          <a href="/debate">@Messages("views.debates")(lang)</a>
+        }
+        </li>
+        <li>
+        @if(boldMenu != None && boldMenu.get == "group"){
+          <a style="font-weight: bold;color:#18bc9c;">@Messages("views.groups")(lang)</a>
+        }else{
+          <a href="/group">@Messages("views.groups")(lang)</a>
+        }
+        </li>
+        <li>
+        @if(boldMenu != None && boldMenu.get == "action"){
+          <a style="font-weight: bold;color:#18bc9c;">@Messages("views.act")(lang)</a>
+        }else{
+          <a href="/action">@Messages("views.act")(lang)</a>
+        }
+        </li>
+
+        <li id="convDropdown" class="dropdown">
+          <a class="aGlyph" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="octicon octicon-comment-discussion notifit" style="font-size: 19px;"></span><div class="notifMessages notif" style="display:none;"></div><span class="visible-xs-inline"> @Messages("views.messages")(lang)</span></a>
+          <ul class="dropdown-menu"  role="menu" style="width:400px;max-height: 500px;overflow: auto;">
+            <a href="/conversation" class="mboxacc">@Messages("views.convers.access")(lang)</a><a data-toggle="modal" data-target="#nv_convers" class="mboxnew cp">@Messages("views.convers.new")(lang)</a>
+            <span id="messagebox"><img src="@routes.Assets.at("img/loa.gif")" class="disloa"/></span>
+          </ul>
+        </li>
+        <li id="notifDropdown" class="dropdown">
+          <a class="aGlyph" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" onclick="getNotifications()"><span class="glyphicon glyphicon-globe" style="font-size: 16px;"></span><div class="notifAct notif" style="display:none;"></div><span class="visible-xs-inline"> @Messages("views.notifications")(lang)</span></a>
+          <ul class="dropdown-menu"  role="menu" style="width:400px;max-height: 500px;overflow: auto;">
+            <span id="messagebox" class="output-notifMenu"><img src="@routes.Assets.at("img/loa.gif")" class="disloa"/></span>
+          </ul>
+        </li>
+
+        <li id="cogli" class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span><span class="visible-xs-inline"> @Messages("views.settings")(lang)</span> <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/help">@Messages("views.help")(lang)</a></li>
+            <!-- <li><a href="/tour">@Messages("views.tour")(lang)</a></li> -->
+            <!-- <li><a href="/contact">@Messages("views.contactus")(lang)</a></li> -->
+            <li><a href="/invite">@Messages("views.share")(lang)</a></li>
+            <li><a href="/about">@Messages("views.about")(lang)</a></li>
+            <li class="dropdown-header">@Messages("views.forms.langwebsite")(lang)</li>
+            <li style="text-align:center;">
+              <button class="btn btn-xs" onclick="curLang('en');$(this).prop('disabled',true)">
+                <img src="@routes.Assets.at("images/en.jpg")" style="width:16px;cursor:pointer;" />
+              </button>
+              <button class="btn btn-xs" onclick="curLang('es');$(this).prop('disabled',true)">
+                <img src="@routes.Assets.at("images/es.jpg")" style="width:16px;cursor:pointer;" />
+              </button>
+              <button class="btn btn-xs" onclick="curLang('fr');$(this).prop('disabled',true)">
+                <img src="@routes.Assets.at("images/fr.jpg")" style="width:16px;cursor:pointer;" />
+              </button>
+            </li>
+            <li class="divider"></li>
+            <li><a href="/disconnect">@Messages("views.disconnect")(lang)</a></li>
+
+          </ul>
+        </li>
+
+
+      </ul>
+    }else{
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/debate">@Messages("views.debates")(lang)</a></li>
+        <li><a href="/action">@Messages("views.actions")(lang)</a></li>
+        <li><a href="/about">@Messages("views.about")(lang)</a></li>
+        <li><a href="#" data-toggle="modal" data-target="#connectMdl" data-type="2">@Messages("views.forms.subscription")(lang)</a></li>
+        <li><a href="#" data-toggle="modal" data-target="#connectMdl" data-type="1">@Messages("views.signin")(lang)</a></li>
+        <!-- <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@Messages("views.signin")(lang)<span class="caret"></span></a>
+          <ul class="dropdown-menu" style="padding: 15px;min-width: 250px;" role="menu">
+
+          </ul>
+        </li> -->
+      </ul>
+    }
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</div>
+@if(connected){
+<div class="modal fade" id="nv_convers" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header pheadermdl">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="acenter">@Messages("views.convers.new")(lang)</h2>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="receivers" data-role="tagsinput" name="receivers[]" value="" placeholder="@Messages("views.convers.receivers")(lang)"/>
+        <textarea id="nvmess" name="message" class="form-control"></textarea>
+        <div class="mt5" style="height:40px">
+          <button type="button" name="button" class="btn btn-success adroite pc" data-loading-text="@Messages("views.loading")(lang)" onclick="newConvMdl()" id="newConvMdlId">@Messages("views.send")(lang)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}else{
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqBootstrapValidation/1.3.7/jqBootstrapValidation.min.js"></script>
+  <div class="modal fade" id="connectMdl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header pheadermdl">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h2 class="acenter comode2">@Messages("views.forms.subscription")(lang)</h2>
+          <h2 class="acenter comode1">@Messages("views.signin")(lang)</h2>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-tabs">
+            <li role="presentation" id="li0" class="active cp"><a onclick="comodebtn(2)">@Messages("views.forms.subscription")(lang)</a></li>
+            <li role="presentation" id="li1" class="cp"><a onclick="comodebtn(1);">@Messages("views.signin")(lang)</a></li>
+          </ul>
+          <div class="comode1">
+          <div style="text-align:center"><br>
+          <a class="btn btn-sm btn-social btn-facebook" onclick="fbauthentification()">
+    <span class="fa fa-facebook"></span> @Messages("views.signinfb")(lang)
+  </a>
+          <br><b>@Messages("views.or")(lang)</b><br><br>
+          </div>
+            @helper.form(action = routes.Connection.processConnectionForm("/"), 'id->"sb_input") {
+              <div class="form-group">
+                <input type="text" class="form-control" name='username' id="username_input" placeholder='@Messages("views.forms.username")(lang)'>
+              </div>
+              <div class="form-group">
+                <input type="password" name="password" class="form-control" id="pass_input" placeholder="@Messages("views.forms.password")(lang)">
+              </div>
+              <div class="form-group" style="text-align:center">
+                <!-- <input type="checkbox"/> @Messages("views.stayconnect")(lang) -->
+
+              </div>
+
+              <input class="btn btn-success btn-lg btn-block" id='connect' value="@Messages("views.connect")(lang)" type="submit"/>
+            }
+          </div>
+          <div class="comode2">
+
+            @Html(Messages("views.whysubscribe")(lang))<br>
+            <div style="text-align:center"><br>
+          <a class="btn btn-sm btn-social btn-facebook" onclick="fbauthentification()">
+    <span class="fa fa-facebook"></span> @Messages("views.signinfb")(lang)
+  </a>
+  <br><b>@Messages("views.or")(lang)</b><br><br>
+          </div>
+            <form id="cmuf" novalidate onsubmit="return false;">
+              <div class="control-group">
+            <div class="form-group">
+              <input type="email" data-validation-required-message="@Messages("views.forms.required")(lang)" data-validation-email-message="@Messages("views.forms.notvalidmail")(lang)" class="form-control" name='mail' id="smail_input" placeholder='@Messages("views.forms.mail")(lang)' required>
+              <p class="help-block" style="color:red;"></p>
+            </div>
+          </div>
+          <div class="control-group">
+          <div class="form-group">
+            <input type="text" style="display:inline-block;" class="form-control inputSub" name='username' data-validation-required-message="@Messages("views.forms.required")(lang)" id="susername_input" placeholder='@Messages("views.forms.username")(lang)' pattern="(?!\d)([0-9A-Za-z\.\-\_]){5,}" data-validation-pattern-message="@Messages("views.forms.notvalid")(lang)" required>
+            <a href="#" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Messages("views.help.username")(lang)" class="textinfo"><span class="glyphicon glyphicon-info-sign"></span></a>
+            <p class="help-block" style="color:red;"></p>
+          </div>
+          </div>
+          <div class="control-group">
+          <div class="form-group">
+            <input type="password" style="display:inline-block;" name="password" data-validation-required-message="@Messages("views.forms.required")(lang)" class="form-control inputSub" id="spass_input" placeholder="@Messages("views.forms.password")(lang)"  minlength="5" required>
+            <a href="#" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Messages("views.help.password")(lang)" class="textinfo"><span class="glyphicon glyphicon-info-sign"></span></a>
+            <p class="help-block" style="color:red;"></p>
+          </div>
+          </div>
+          <input type="hidden" value="@Messages("views.curLang")(lang)" name="lang"/>
+          <div class="form-group" style="text-align:center">
+            <span style="font-size:0.7em;">@Html(Messages("views.agreecgu")(lang))</span>
+          </div>
+          <div class="alert alert-warning" role="alert" id="alertnosubscribe"></div>
+          <input class="btn btn-success btn-lg btn-block" id="firstsubscribe" value="@Messages("views.forms.subscription")(lang)" type="submit"/>
+
+        </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+    .inputSub{
+      width: calc(100% - 20px);
+    }
+    .nav-tabs > li, .nav-pills > li {
+    float:none;
+    display:inline-block;
+    *display:inline; /* ie7 fix */
+     zoom:1; /* hasLayout ie7 trigger */
+    }
+    .nav-tabs, .nav-pills {
+        text-align:center;
+    }
+  </style>
+  <script>
+  $('form#sb_input').attr('action','/connect/'+encodeURIComponent(window.location.pathname));
+  $('#connectMdl').on('show.bs.modal', function(event){
+    $('#alertnosubscribe').hide();
+      var button= $(event.relatedTarget);
+      var id = button.data('pid');
+      var type = button.data('type');
+      $('.textinfo').popover();
+      if(type==1){
+          $('.comode2').hide();
+          $('.comode1').show();
+          $('#li1').addClass('active');
+          $('#li0').removeClass('active');
+      }else {
+        $('.comode1').hide();
+        $('.comode2').show();
+        $('#li0').addClass('active');
+        $('#li1').removeClass('active');
+      }
+  });
+  function comodebtn(ptype){
+    if(ptype == 1){
+      $('.comode2').hide();
+      $('.comode1').show();
+      $('#li1').addClass('active');
+      $('#li0').removeClass('active');
+    }else {
+      $('.comode1').hide();
+      $('.comode2').show();
+      $('#li0').addClass('active');
+      $('#li1').removeClass('active');
+    }
+  }
+  $('form#cmuf input').jqBootstrapValidation(
+    {
+      submitSuccess: function ($form, event) {
+        createmUser();
+      }
+    }
+  );
+  $('#alertnosubscribe').hide();
+  function createmUser(){
+    $('#firstsubscribe').prop('disabled',true);
+    $.ajax({url:'/firstsubscribe',type:'post',data:$('#cmuf').serialize(),success:function(data){
+      if(data == 1){
+        $('#username_input').val($('#susername_input').val());
+        $('#pass_input').val($('#spass_input').val());
+        $('#connect').click();
+      }else if (data == 1) {
+        $('#alertnosubscribe').text('@Messages("views.nosubscribe.mail")(lang)').show('slideup');
+      }else if (data == 2) {
+        $('#alertnosubscribe').text('@Messages("views.nosubscribe.user")(lang)').show('slideup');
+      }else {
+        $('#alertnosubscribe').text('@Messages("views.nosubscribe.error")(lang)').show('slideup');
+      }
+      if(data != 1){$('#firstsubscribe').prop('disabled',false);}
+    }});
+  }
+  // $( "body" ).click(function( event ) {
+  //   if(!($("#connectMdl").data('bs.modal') || {}).isShown){
+  //     event.stopImmediatePropagation();
+  // event.preventDefault();
+  //     $('#connectMdl').modal('show');
+  //   }else{
+  //     $('#connectMdl').modal('hide');
+  //   }
+  // });
+  var dispSub = 0;
+  jQuery(document).mouseleave(function(){if(dispSub==0){$('#connectMdl').modal('show');dispSub=1;}})
+  </script>
+}
+<!-- end connected -->
+<div class="modal fade" id="mbinc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title acenter" id="myModalLabel">@Messages("views.members")(lang)</h4>
+      </div>
+      <div class="modal-body">
+        <div class="tablembinc"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="error_co" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title acenter" id="myModalLabel">@Messages("views.error")(lang)</h4>
+      </div>
+      <div class="modal-body">
+        <p class="acenter">
+          @Messages("views.error_connect")(lang)
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="contenu">
+  <div class="content">
+         @content
+  </div>
+    <div id="containull">
+
+    </div>
+    </div><!-- /.container -->
+    <!-- Include all compiled plugins (below), or include individual files as needed
+//conversations -->
+<script>
+var thissession = "@session.get("username")";
+var messages_me= "@Messages("views.me")(lang)";
+var messages_sc= "@Messages("views.convers.startedconvers")(lang)";
+var messages_toomany ='@Messages("views.convers.toomany")(lang)';
+</script>
+@if(connected){
+@conv.conv()
+}
+<!-- Display les membres -->
+
+
+
+    <script id="mbinc-template" type="text/x-handlebars-template">
+        {{#each response}}
+        <div class="mbox fmbox" style="min-height: 60px;">
+          <img class="minpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+          <div class="mboxin">
+            <div class="mboxh"><a href='/member/{{id}}' class='done' style="font-weight: bold;">{{{firstname}}} {{{name}}}</a> <a class="author_name np" href="/member/{{id}}"> @@{{{username}}}</a></div>
+            <div class="mboxb"><span style="word-wrap:break-word;">{{{presentation}}}</span></div>
+            <div class="mboxf mbinctime">
+              <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      </script>
+      <script id="notificationMenu-template" type="text/x-handlebars-template">
+        <span class="dcenter"><a href="/notification">@Messages("views.seeNotif")(lang)</a></span>
+        {{#each response}}
+        <li class="limbox">
+          <div class="mbox" style="min-height:50px;">
+            <img class="minpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{actor.username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+            <div class="mboxin">
+              <div class="mboxh">
+                {{#if saw}} {{else}}<div class="nNotif"></div> {{/if}}
+                <a class="author_name done" href="/member/{{actor.id}}">{{{actor.username}}}</a>
+                {{#if isFollowing}}
+                @Messages("views.followingYou")(lang)
+                {{else}}
+                 {{{vaction}}}
+              </div>
+              <div class="mboxb"><a href="/{{atype}}/{{object.id}}" style='cursor:pointer;'>
+                {{{what}}}
+              </a>
+                {{/if}}
+                </div>
+              <div class="mboxf">
+                <span class="debat_time" data-livestamp="{{mT}}"></span>
+                <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+              </div>
+            </div>
+          </div></li>
+          {{/each}}
+        </script>
+      <script id="comments-template" type="text/x-handlebars-template">
+        <!-- <button class="btn btn-primary nbtn {{sm}}" onclick="addcommentbtn('{{pot}}{{poid}}')" >@Messages("views.commentadd")(lang)</button> -->
+        {{#if isPost}} <b class="dcenter">@Messages("views.posts")(lang) (<span class="nbCom{{pot}}{{poid}}"></span>)</b> {{/if}}
+          <div class="addacomment{{pot}}{{poid}}">
+            <br/>
+            @if(connected){
+            <form id="ncform{{pot}}{{poid}}">
+              <span>
+                {{#if isPost}}
+                <textarea class="form-control comtxa" name="message" id="ncdata{{pot}}{{poid}}" placeholder="@Messages("views.expressyourself")(lang)" onkeydown="comenter({{pot}}{{poid}},event)" style="height:45px;overflow:auto;" onkeypress="remainingC(event, @Application.maxCharactersOpinions)"></textarea>
+                {{else}}
+                <textarea class="form-control comtxa" name="message" id="ncdata{{pot}}{{poid}}" placeholder="@Messages("views.commentadd")(lang)" onkeydown="comenter({{pot}}{{poid}},event)" style="height:45px;overflow:auto;" onkeypress="remainingC(event, @Application.maxCharactersOpinions)"></textarea>
+                {{/if}}
+                <!--<h6 class="count_message" style="margin:0;">@Application.maxCharactersOpinions @Messages("views.remainingc")(lang)</h6>-->
+              </span>
+              <input id="objectType" type="hidden" name="objectType" value="{{pot}}"/>
+              <input id="objectID" type="hidden" name="objectID" value="{{poid}}"/>
+              <input id="format" type="hidden" name="format" value="{{sm}}"/>
+              <input id="ispost" type="hidden" name="ispost" value="{{isPost}}"/>
+            </form>
+            <div style="margin-top: 2px;height: 35px;">
+              {{#if isPost}}
+              <button class="btn btn-primary btn-sm text-right" id="crcom{{pot}}{{poid}}" onclick="ccreateComment('{{pot}}{{poid}}',event)" style="float:right;">@Messages("views.send")(lang)</button>
+              {{else}}
+              <button class="btn btn-primary btn-sm text-right" id="crcom{{pot}}{{poid}}" onclick="ccreateComment('{{pot}}{{poid}}',event)" style="float:right;">@Messages("views.comment")(lang)</button>
+              {{/if}}
+            </div>
+            }
+          </div>
+          <!-- <p class="acenter">@Messages("views.comments")(lang)</p> -->
+        </script>
+        <script id="commentsin-template" type="text/x-handlebars-template">
+        {{#each response}}
+        <div class="mbox fmbox combox{{id}}" style="border:none;">
+          <img class="min40picfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{senderName}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+          <div class="mboxin" style="margin-left: 50px">
+            <div class="comboxh"><a href='/member/{{senderId}}'>{{{senderName}}}</a> <span class="debat_time" data-livestamp="{{mT}}"></span>
+              {{#if isUser}}<span class="pull-right"><a class="cp" onclick="editComment({{id}},event)">@Messages("views.edit")(lang)</a>  ·
+                <a class="popDelete cp" data-toggle="popover" data-html="true" data-placement="left" data-content="<button class='btn btn-danger btn-block' onclick='deleteThis(6,{{id}},event);'>@Messages("views.forms.yes")(lang)</button>" data-title="@Messages("views.areyousure")(lang)"> <span class="glyphicon glyphicon-trash" style="font-size: .8em;" ></span></a>
+              </span>{{/if}}
+            </div>
+            <div class="mboxb linkit">{{{message}}}</div>
+            <div class="comboxf">
+              <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        </script>
+    <script>
+    //search
+    $('.navbar-form').hide();
+    function toogleSearch(){
+      if(window.innerWidth > 767){
+        $('.navbar-form').width(window.innerWidth -250);
+        $('.navbar-form, .navbar-right').toggle('slideup');
+        $('#nav_search_btn').toggleClass("glyphicon-search glyphicon-remove");
+        $('#search-text').toggle('slideup');
+        $('#input_searchNav').focus()
+      }
+      else{
+        location.href="/search";
+      }
+    }
+    function searchNavEnter(e){
+      if (e.keyCode == 13) {
+        searchNav();
+      }
+    }
+    function searchNav(){
+      location.href = "/search?#"+$('#input_searchNav').val();
+    }
+    $('.comtxa').autogrow();
+    $('.linkit').linkify({target: "_blank"});
+    $('#mbinc').on('show.bs.modal', function(event){
+        var button= $(event.relatedTarget);
+        var id = button.data('pid');
+        var type = button.data('type');
+        $('.tablembinc').empty();
+        displayMbinc(id,type,true);
+    });
+    function displayMbinc(pid,ptype,prefresh){
+      var purli, curdispi;
+      if(prefresh){curdispi = -1;}else{curdispi=$('.mbinctime:last()').find('.pmT').val();$('.lmbinc').hide();}
+      $('.tablembinc').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40 picmbinc"/>');
+      if(ptype == 4){purli= '/action/json/membersInAction/';}
+      else if (ptype ==5){purli= '/petition/json/membersInPetition/';}
+      else if (ptype == 1) {purli= '/group/json/membersInGroup/';}
+      $.ajax({
+            url: purli+pid+'/'+curdispi+'/20',
+            type: 'get',
+            dataType: 'JSON',
+            success: function(data, status) {
+              $('.picmbinc').hide();
+              data.forEach(function(entry){
+                entry.presentation = outputRestrict(entry.presentation);
+              });
+              var item = {'response' : data};
+              var source   = $('#mbinc-template').html();
+              var template = Handlebars.compile(source);
+              $('.tablembinc').append(template(item));
+              if(data.length == 20){$('.tablembinc').append('<a class="dcenter lmbinc" onclick="displayMbinc('+pid+','+ptype+',false);" style="cursor:pointer">@Messages("views.loadmore")(lang)</a>');}
+            }
+          });
+    }
+    function nbComment(pot,poid){
+      $.ajax({url:"/comment/number/"+pot+"/"+poid,success: function(data){$(".nbCom"+pot+poid).text(data);}});
+    }
+    var axLoading6 =[];
+    ///commentaires
+    function comment5disp(pot,poid,refresh,sm, ispost){
+      if (typeof ispost === 'undefined') { ispost = 0; }else{ispost=1;}
+      //var ispost = 0;
+      //if(sm == 10){sm=0;ispost=1;}
+      var plimit=5;
+      var tsm ="";
+      var tout=$('#tcom'+pot+poid);
+      if(sm != 0){
+        $('.smcom'+pot+poid).show();
+        tsm = "dn";
+      }
+      if(refresh){tout.empty();
+        var itemex = {'sm':tsm,'pot':pot,'poid':poid, 'isPost': ispost};
+        var sourceex   = $('#comments-template').html();
+        var templateex = Handlebars.compile(sourceex);
+        tout.append(templateex(itemex));
+        if(sm !=0){$('.addacomment'+pot+poid).hide();}
+        comdisp = -1;
+        if(sm == 0 && ispost == 0){tout.prepend('<b class="dcenter">@Messages("views.comments")(lang) (<span class="nbCom'+pot+poid+'"></span>)</b>');}
+        //if(ispost==1){tout.prepend('<b class="dcenter">@Messages("views.posts")(lang) (<span class="nbCom'+pot+poid+'"></span>)</b>');}
+      }
+      else {
+        comdisp = $('#tcom'+pot+''+poid+' .comboxf:last()').find('.pmT').val();
+        $('.acom'+pot+poid).remove();
+        plimit=15;
+      }
+      if(sm!=2){
+        tout.append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loa5 loagif40"/>');
+        purl="/comment/"+pot+"/"+poid+"/"+comdisp+"/"+plimit;
+        if(axLoading6.indexOf(pot+poid) > -1){ return;}
+        axLoading6.push(pot+poid);
+        $.ajax({
+              url: purl,
+              type: 'get',
+              dataType: 'JSON',
+              success: function(data, status) {
+                $('.loa5').hide();
+                data.forEach(function(entry){
+                var userId = -1
+                  @if(connected){
+                    if("@(session.get("userID"))" != ""){
+                        userId = "@(session.get("userID"))";
+                    }
+                      if(entry.senderId == userId){entry.isUser=1;}
+                  }
+                });
+                var indexloa =  axLoading6.indexOf(pot+poid);
+                axLoading6.splice(indexloa, 1);
+                debugit(data);
+                //remplacer les \n par des br/
+                //faire le onkeyup pour la touche entrée
+                var item = {'response' : data, 'sm':tsm,'pot':pot,'poid':poid};
+                var source   = $('#commentsin-template').html();
+                var template = Handlebars.compile(source);
+                debugit(item);
+                tout.append(template(item));
+                $('.popDelete').popover();
+                if(data.length == plimit){
+                  tout.append('<a class="dcenter acom'+pot+poid+'" onclick="comment5disp('+pot+','+poid+',false)" style="cursor:pointer;">@Messages("views.commentload")(lang)</a>');
+                }
+                $('.linkit').linkify({target: "_blank"});
+                //$('.timeago').timeago();
+                //$('#outputcomment .post-container').linkify({target: "_blank"});
+              }});
+      }
+      $.ajax({url:"/comment/number/"+pot+"/"+poid,success: function(data){$(".nbCom"+pot+poid).text(data);}});
+    }
+    @if(connected){
+      if("@(session.get("userID"))" != ""){
+          var puserId = "@(session.get("userID"))";
+          $.ajax({url: '/member/json/stats/'+puserId, type: 'get', success: function(data){
+            $('.mStat1').text(data.numberFollowers);//numberLikes
+            $('.mStat2').text(data.numberLikes);
+			var ordinal=getGetOrdinal(data.ranking)
+			$('.mStat3').html(ordinal);
+			$('.mStat5').html(ordinal);
+		    // $('.mStat4').text(data.totalNumberMembers);
+          }});
+      }
+      function followMbr(event){
+        var purl, ptext;
+        var pid = $(event.target).data('id');
+        $(event.target).prop('disabled',true);
+        if($(event.target).text()=="@Messages("views.munfollow")(lang)"){
+          purl = "/member/unfollow";
+          ptext = "@Messages("views.follow")(lang)";
+        }
+        else{
+          purl = "/member/follow";
+          ptext = "@Messages("views.munfollow")(lang)";
+        }
+            $.ajax({
+              url:purl,
+              type: "post",
+              data: {objectFollowed: 0, idObject: pid},
+              success: function(data,va,vb){
+                //debugit(data);
+                $(event.target).text(ptext).toggleClass('active');
+                $(event.target).prop('disabled',false);
+              }
+            });
+      }
+      function getGetOrdinal(n) {
+        if("@Messages("views.curLang")(lang)"=="en"){
+          var s=["th","st","nd","rd"],
+          v=n%100;
+          return n+"<sup>"+(s[(v-20)%10]||s[v]||s[0])+"</sup>";
+        }else if ("@Messages("views.curLang")(lang)"=="es") {
+          return n+"<sup>o</sup>";
+        }else {
+          if(n==1){
+            return "1<sup>er</sup>";
+          }else {
+            return n+"<sup>ème</sup>";
+          }
+        }
+
+     }
+      function getNotifications(){
+        $.ajax({url:'/member/json/notifications/-1/20',success: function(data){
+          data = parseNotif(data);
+          var item = {'response' : data};
+          var source   = $('#notificationMenu-template').html();
+          var template = Handlebars.compile(source);
+          $('.output-notifMenu').html(template(item));
+          if (data.length == 0) {
+            $('.output-notifMenu').html('<span class="dcenter">@Messages("views.nonotif")(lang)</span>');
+          }
+          //console.log(data);
+        }});
+      }
+      //getNotifications();
+    function addcommentbtn(px){
+      $('.addacomment'+px).toggle('slideup');
+      $('#ncdata'+px).focus();
+    }
+    function comenter(pcid, event){
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        $('#crcom'+pcid).click();
+      }
+    }
+    function deleteThis(ptype, pcid, event){
+      switch (ptype) {
+        case 1:
+          purl = '/group/delete';
+          break;
+        case 2:
+          purl = '/concept/delete';
+          break;
+        case 3:
+          purl = '/debate/delete';
+          break;
+        case 31:
+          purl = '/debate/yesorno/delete';
+          break;
+        case 32:
+          purl = '/debate/opinion/delete';
+          break;
+        case 4:
+          purl = '/action/delete';
+          break;
+        case 5:
+          purl = '/petition/delete';
+          break;
+        case 6:
+          purl = '/comment/delete';
+          break;
+        default:
+          console.log('error');
+      }
+      $(event.target).prop('disabled',true);
+      $.ajax({
+        url: purl,
+        type:'post',
+        data: {key:pcid},
+        success: function(data, status){
+          if(data==1){
+            if(ptype==6){
+              $('.combox'+pcid).empty();
+            }else if (ptype==31) {
+                $(event.target).parents('.cd-timeline-block').empty();
+            }else if (ptype==32) {
+                $(event.target).parents('.row').empty();
+                $('#cd-timeline'+pcid).empty();
+            }else {
+              location.reload();
+            }
+          }else {
+            $(event.target).prop('disabled',false);
+          }
+        }
+      });
+    }
+    function editComment(pcid,event){
+      var pthis = $(event.target).parents('.comboxh').siblings('.mboxb');
+      var ptext = pthis.text();
+      var pform ='<textarea name="message" class="form-control comtxa editCom" style="height:45px;overflow:auto;" onkeypress="remainingC(event, @Application.maxCharactersOpinions)">'+ptext+'</textarea><h6 class="count_message" style="margin:0;">@Application.maxCharactersOpinions @Messages("views.remainingc")(lang)</h6><div style="margin-top: 2px;height: 35px;">'
+      +'<button class="btn btn-primary btn-xs text-right pull-right" onclick="doneEditComment('+pcid+',event)">Done</button></div>';
+      pthis.empty().append(pform);
+    }
+    function doneEditComment(pcid, event){
+      var ptext = $.trim($(event.target).parent().siblings('.editCom').val());
+      if(ptext != ""){
+        $(event.target).prop('disabled', true);
+        $.ajax({url:'/comment/modif', type:'post', data:{id:pcid, message:ptext},success: function(data){
+          if(data == 1){
+            $(event.target).parents('.mboxb').text(ptext);
+          }else{$(event.target).prop('disabled', false);}
+        }});
+      }
+    }
+    function ccreateComment(pcid,event){
+      $(event.target).prop('disabled', true);
+      var tncf = $('#ncform'+pcid);
+      $.ajax({url:'/comment/post', type:'post', data:tncf.serialize(),success: function(data){
+      var tf = 0;
+      if(tncf.find("input[name='format']").val() == "dn"){
+        tf=1;
+      }
+      setTimeout(function(){
+        comment5disp(tncf.find("input[name='objectType']").val(),tncf.find("input[name='objectID']").val(),true,tf,tncf.find("input[name='ispost']").val());
+      },1000);
+      $('#ncdata'+pcid).val("");
+      $(event.target).prop('disabled', false);
+      }})
+    }
+  }
+    ///Handlebars Helpers
+    Handlebars.registerHelper("mT", function() {
+    var lavalue = parseInt(Handlebars.escapeExpression(this.modificationTimestamp));
+    if(!isNaN((lavalue/1000))){
+      return (lavalue/1000);
+    }});
+    ///Handlebars Helpers
+    Handlebars.registerHelper("cT", function() {
+    var lavalue = parseInt(Handlebars.escapeExpression(this.creationTimestamp));
+    if(!isNaN((lavalue/1000))){
+      return (lavalue/1000);
+    }});
+    Handlebars.registerHelper("hmT", function() {
+    var lavalue = parseInt(Handlebars.escapeExpression(this.headers.modificationTimestamp));
+    if(!isNaN((lavalue/1000))){
+      return (lavalue/1000);
+    }});
+    // $( document ).ajaxError(function() {
+    //   $('#error_co').modal('show');
+    // });
+    function remainingC(event, ptmax){
+      var tlength = $(event.target).val().length;
+      var tremaining = ptmax - tlength;
+      //$(event.target).siblings('.count_message').text("<!--" + tremaining+" @Messages("views.remainingc")(lang) -->")
+
+    }
+    $(document).ready(function() {
+        function checkWidth() {
+            var windowSize = $(window).width();
+            if (windowSize <= 768) {
+                $('#convDropdown, #notifDropdown').children('a').addClass("disabled");
+            } else if (windowSize > 768) {
+                $('#convDropdown, #notifDropdown').children('a').removeClass("disabled");
+            }
+        }
+        $('#convDropdown').on('click',function(){if($(window).width() <= 768){location.href="/conversation";}});
+        $('#notifDropdown').on('click',function(){if($(window).width() <= 768){location.href="/notification";}});
+        checkWidth();
+        $(window).resize(checkWidth);
+        $('.text-info').popover({html:true});
+    });
+    var userLangs, langSelect;
+    @if(connected){
+      langSelect='@Messages("views.curLang")(lang)';
+      $('.selectLangParent').hide();
+    function selectLang(event){
+      $('.selectLang').children().removeClass('active');
+      $(event.target).addClass('active');
+      langSelect = $(event.target).data('lang');
+    }
+    function nvLang(){
+      if($('.selectLang').children().length == 0){
+        $.ajax({
+              url: '/member/json/languages',
+              type: 'get',
+              dataType: 'JSON',
+              success: function(data, status) {
+                $('.selectLangParent').show();
+                userLangs = data;
+                $('.selectLang').empty();
+                if(data.languages.length > 1){
+                  if(data.languages.indexOf("fr") != -1){
+                    $('.selectLang').append('<button class="btn btn-success btn-xs ml5" data-lang="fr" onclick="selectLang(event)">Français</button>');
+                  }
+                  if(data.languages.indexOf("es") != -1){
+                    $('.selectLang').append('<button class="btn btn-success btn-xs ml5" data-lang="es" onclick="selectLang(event)">Español</button>');
+                  }
+                  if(data.languages.indexOf("en") != -1){
+                    $('.selectLang').append('<button class="btn btn-success btn-xs ml5" data-lang="en" onclick="selectLang(event)">English</button>');
+                  }
+                  $('.selectLang').children().first().addClass('active');
+                  langSelect = $('.selectLang').children().first().data('lang');
+                }else{$('.selectLangParent').empty();
+                  langSelect=data.languages[0];}
+              }});
+        }
+      }
+      var tableMemberDetails= [];
+      function showMemberDetails(){
+        var timeoutId;
+        // rajouter a parameter au a tel que l'on puisse faire a[href^="/member/"]:not('.done')
+        $('a[href^="/member/"]').not('.done').hover(function() {
+                var thisone = this;
+                if (!timeoutId) {
+                    timeoutId = window.setTimeout(function() {
+                        timeoutId = null;
+                      var topMemberDetails=$(thisone).offset ().top+15;
+                      var leftMemberDetails=$(thisone).offset().left+($(thisone).width()/2);
+                      var idOfMember = $(thisone).attr('href').substring(8);
+                      var insideMemberDetails = '<img src="@routes.Assets.at("img/loa.gif")"/>';
+                      var imageMemberDetails='<img class="memberDetailsImage" src="https://idmcr.s3-us-west-2.amazonaws.com/'+$(thisone).text()+'.jpg" onError="this.onerror=null;this.src=\"@routes.Assets.at("images/user.jpg")\";"/>';
+                      if($('.memberDetails').length==0){
+                        var memberDetails='<div class="memberDetails">'+insideMemberDetails+'</div>';
+                        $('body').append(memberDetails);
+                      }
+                      $('.memberDetails').css({'top':topMemberDetails,'left':leftMemberDetails}).show();
+                      var thisMemberDetailsObject=tableMemberDetailsContainsObject(idOfMember);
+                      console.log(thisMemberDetailsObject);
+                      if(thisMemberDetailsObject==false){
+                        $('.memberDetails').html(insideMemberDetails);
+                        $.ajax({
+                          url: '/member/json/stats/'+idOfMember,
+                          type: 'get',
+                          dataType: 'JSON',
+                          success: function(data, status) {
+                            console.log(data);
+                            tableMemberDetails.push(data);
+                            var statsMemberDetails='<span class="octicon octicon-organization"></span> '+data.numberFollowers+'<br><span class="glyphicon glyphicon-thumbs-up"></span> '+data.numberLikes + '<br><b>' + getGetOrdinal(data.ranking) + '</b>';
+                            $('.memberDetails').html('<table><tr><td>'+imageMemberDetails+'</td><td style="padding:3px">'+statsMemberDetails+'</td></tr></table>');
+                          }
+                        });
+                      }else{
+                        var statsMemberDetails='<span class="octicon octicon-organization"></span> '+thisMemberDetailsObject.numberFollowers+'<br><span class="glyphicon glyphicon-thumbs-up"></span> '+thisMemberDetailsObject.numberLikes + '<br><b>' + getGetOrdinal(thisMemberDetailsObject.ranking) + '</b>';
+                        $('.memberDetails').html('<table><tr><td>'+imageMemberDetails+'</td><td style="padding:3px">'+statsMemberDetails+'</td></tr></table>');
+                      }
+                   }, 200);
+                }
+            },
+            function () {
+                if (timeoutId) {
+                    window.clearTimeout(timeoutId);
+                    timeoutId = null;
+                }
+                else {
+                   $(".memberDetails").hide();
+                }
+            });
+
+            //$('a[href^="/member/"]').addClass('done');
+          }
+          function tableMemberDetailsContainsObject(pid) {
+            var i;
+            for (i = 0; i < tableMemberDetails.length; i++) {
+                if (tableMemberDetails[i].id == pid) {
+                    return tableMemberDetails[i];
+                }
+            }
+            return false;
+          }
+          showMemberDetails();
+          $( document ).ajaxSuccess(function() {
+             showMemberDetails();
+          });
+
+          function curLang(plang){
+            if(plang=="fr"){
+              $.get("/changelang/fr",function(data){
+                location.reload();
+              })
+            }else if(plang=="es"){
+              $.get("/changelang/es",function(data){
+                location.reload();
+              });
+            }else{
+              $.get("/changelang/en",function(data){
+                location.reload();
+              });
+            }
+          }
+          if("@Messages("views.curLang")(lang)"=="fr"){
+            $('.btnLangFr').prop('disabled',true);
+          }else if ("@Messages("views.curLang")(lang)"=="en") {
+            $('.btnLangEn').prop('disabled',true);
+          }else if ("@Messages("views.curLang")(lang)"=="es") {
+            $('.btnLangEs').prop('disabled',true);
+          }
+    }//end connected
+
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,213 @@
+
+@(message: String, connected: Boolean = true)(implicit session: play.api.mvc.Session, messages: play.api.i18n.Messages)
+@main(messages, connected, Messages("views.debates"), Some("debate")) {
+  <style>
+
+  </style>
+<!-- Il manque les débats créés -->
+
+
+  @create.hcdebate(-1)
+
+
+
+<div class="listgroupe">
+  <div class="container">
+    <div class="row" style="margin:3px;">
+      <div class="col-xs-12 col-md-10 col-md-offset-1">
+        @if(!connected) {
+			<h1>@Messages("views.debates")</h1>
+			@Html(Messages("views.help.debates"))
+		}
+        <div class="alert alert-info alert-dismissible atmess" id="atalert" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <span id="atmess">@message</span>
+        </div>
+    <ul class="nav nav-tabs">
+    @if(connected){
+      <li role="presentation" id="li0" class="active" style="cursor:pointer;"><a style="color:black" onclick="modebtn(0)">@Messages("views.debate_latest")</a></li>
+      <li role="presentation" id="li1" style="cursor:pointer;" title="@Messages("views.debate_yours")"><a style="color:black" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Messages("views.debate_yours") <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <!-- <li><a>@Messages("views.debate_allyours")</a></li> -->
+          <li><a style="color:black" onclick="modebtn(3)">@Messages("views.debate_follow")</a></li>
+          <li><a style="color:black" onclick="modebtn(1);">@Messages("views.debate_participated")</a></li>
+        </ul>
+      </li>
+      <li  role="presentation" id="li2" style="cursor:pointer;"><a style="color:black" onclick="modebtn(2);">@Messages("views.debate_created")</a></li>
+      }
+    </ul>
+    @if(connected){
+    	
+    <div class="nbtn" style="text-align:center;">
+    <button data-toggle="modal" data-target="#nv_debat" class="btn btn-primary">@Messages("views.debate_new")</button>
+    <a href="#" tabindex="0" style="font-size: 1.8em;vertical-align: middle;" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="@Messages("views.help.debates")" data-title="@Messages("views.head.ledebat")" class="text-info"><span class="glyphicon glyphicon-info-sign"></span></a>
+</div>
+}
+</div>
+</div>
+<div class="output-debats">
+
+</div>
+</div>
+</div>
+
+<script id="debats-template0" type="text/x-handlebars-template">
+    {{#each response}}
+        <div class="row" style="margin:3px;">
+          <div class="col-xs-12 col-md-10 col-md-offset-1 debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+            {{#if typeOfDebate}}
+            <span class="label label-primary">@Messages("views.debate_findasolution")</span>&nbsp;&nbsp;
+            {{else}}
+            <span class="label label-primary">@Messages("views.debate_yesorno")</span>&nbsp;&nbsp;
+              {{/if}}
+          <a class="author_name" href="/debate/{{id}}">{{{question}}} </a>
+         <!-- <span class="debat_time" data-livestamp="{{mT}}"></span>-->
+          <input type="hidden" class="pmT" value="{{modificationTimestamp}}"/>
+          <span class="debat_right">
+          <span class="nbtpl">
+            {{#if typeOfDebate}}
+            <!-- <span class="glyphicon glyphicon-comment" title="@Messages("views.debate_nbopinion")(messages)"></span> 1 -->
+              {{/if}}
+            <span class="glyphicon glyphicon-envelope" title="@Messages("views.debate_nbvote")"></span> {{numberOfParticipations}}
+          </span> &nbsp;
+          {{#if isUserFollowing}}
+          <button class="btn btn-primary active btn-xs jd jdbtn{{id}}" data-id="{{id}}">@Messages("views.munfollow")</button>
+          {{else}}
+          <button class="btn btn-primary btn-xs jd jdbtn{{id}}" data-id="{{id}}">@Messages("views.follow")</button>
+          {{/if}}
+        </span>
+          <p style="margin:0;">{{data}}</p>
+          </div>
+
+        </div>
+
+    {{/each}}
+  </script>
+
+<script>
+if($.trim($('#atmess').text())==""){
+  $('.atmess').hide();
+}
+function followDebat(){
+  $('.jd').each(function(){
+    $(this).click(function(){
+        var thisone = $(this);
+        $('.jdbtn'+thisone.data('id')).prop('disabled',true);
+        if(thisone.text() == "@Messages("views.follow")"){
+          purl = "/member/follow";
+          ptext = "@Messages("views.munfollow")";
+        }
+        else{
+          purl = "/member/unfollow";
+          ptext = "@Messages("views.follow")";
+        }
+            $.ajax({
+              url:purl,
+              type: "post",
+              data: {objectFollowed: 3, idObject: thisone.data('id')},
+              success: function(data,va,vb){
+                debugit(data);
+                $('.jdbtn'+thisone.data('id')).text(ptext).prop('disabled',false).toggleClass('active');
+              }
+            });
+      });
+      $(this).removeClass('jd');
+    });
+}
+
+function modebtn(pop){
+  if(pop==0){refresh=1;mode=0;displayDebate();$('#li0').addClass('active');$('#li1, #li2').removeClass('active');}
+  else if(pop==1){refresh=1;mode=1;displayDebate();$('#li1').addClass('active');$('#li0, #li2').removeClass('active');}
+  else if(pop==3){refresh=1;mode=3;displayDebate();$('#li1').addClass('active');$('#li0, #li2').removeClass('active');}
+  else{refresh=1;mode=2;displayDebate();$('#li2').addClass('active');$('#li1, #li0').removeClass('active');}
+}
+var curdispDeb = -1;
+var curloadDeb = true;
+var mode = 0;
+var refresh= 1;
+var plimit=25;
+var axLoading3 = false;
+function displayDebate(){
+  if(refresh==1){$('.output-debats').empty();curdispDeb = -1;refresh=0;}
+  if (mode==1) {var purl = '/debate/json/lastxDebatesParticipated/'+curdispDeb+'/'+plimit;}
+  else if (mode==2) {var purl= '/action/json/lastxDebatesCreated/'+curdispDeb+'/'+plimit;}
+  else if (mode==3) {var purl= '/member/json/objectsFollowed/3/'+curdispDeb+'/'+plimit;}
+  else {var purl= '/debate/json/lastxDebates/-1/'+curdispDeb+'/'+plimit}
+  curloadDeb =true;
+  $('.output-debats').append('<img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40"/>');
+  if(axLoading3){return;}
+  axLoading3 = true;
+  $.ajax({
+        url: purl,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data.length == 0 && mode == 1){
+            $('#debats-template0').html('<p class="acenter">@Messages("views.yunopartdebate") @Messages("views.debate_low") !</p>');
+          }
+          if(data.length == 0 && mode == 3){
+            $('#debats-template0').html('<p class="acenter">@Messages("views.yunodebate") @Messages("views.debate_low") !</p>');
+          }
+          if(data.length == 0 && mode == 2){
+            $('#debats-template0').html('<p class="acenter">@Messages("views.yunocreatedebate") @Messages("views.debate_low") !</p>');
+          }
+        axLoading3 = false;
+          debugit(data);
+        var item = {'response' : data};
+        var source   = $('#debats-template0').html();
+        var template = Handlebars.compile(source);
+        $('.loagif').hide();
+        // data.forEach(function(entry){
+        //   isFollowingDebate(entry.id);
+        // });
+        if($('.output-debats').children().length == 0){
+          $('.output-debats').html(template(item));
+        }
+        else{
+          $('.output-debats').append(template(item));
+        }
+        if(data.length== plimit){
+          curloadDeb =false;
+        }
+        else{
+          curloadDeb=true;
+        }
+        followDebat();
+        }});
+
+}
+function isFollowingDebate(pdid){
+  $.ajax({url:'/member/json/isFollowing/3/'+pdid,type:'get',success: function(data){if(data==1){$('.jdbtn'+pdid).text("@Messages("views.munfollow")").addClass('active');}}});
+}
+Handlebars.registerHelper("mT", function() {
+var lavalue = parseInt(Handlebars.escapeExpression(this.modificationTimestamp));
+if(!isNaN((lavalue/1000))){
+  return (lavalue/1000);
+}});
+$(window).on('scroll', function(){
+  if ($('.debat').length > 0) {
+    if($('.debat:last()').offset().top <= $(window).scrollTop()+$(window).height() && !curloadDeb){
+        curdispDeb= $('.debat:last()').children('.pmT').val();
+        displayDebate();
+    }
+  }
+	});
+displayDebate();
+/*
+function newcept()
+{
+  if($("#addbtn").text()=="@Messages("views.close")")
+    {
+      $("#nouveauconcept").hide();
+      $("#addbtn").text("@Messages("views.debate_new")");
+    }
+    else
+      {
+  $("#nouveauconcept").show();
+  $("#addbtn").text("@Messages("views.close")");
+}
+}
+*/
+
+</script>
+}

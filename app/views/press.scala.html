@@ -1,0 +1,108 @@
+@import helper._
+@(message: String)(implicit messages: Messages)
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<!-- <script src="https://code.jquery.com/jquery.min.js"></script> -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+  <meta charset="utf-8">
+  <title>@Messages("views.about")</title>
+  <style>
+    .tc{text-align:center;}
+    .pressImg{max-height: 200px;width: 100%;}
+    .DemoTitle{
+      font-size:4.5em;margin-bottom:0;
+    }
+    .madb{
+      display: block;
+      margin: auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+  <h2 class="tc DemoTitle">D<span class="text-success">emocras</span></h2>
+    <h2 class="tc">@Messages("views.press")</h2>
+    <h4>@Messages("views.about.why")</h4>
+    <p>@Html(Messages("views.about.idea"))</p>
+    <table class="table table-striped">
+      <tr>
+        <td>
+          @Messages("views.founded")
+        </td>
+        <td>
+          @Messages("views.founded2")
+        </td>
+      </tr>
+      <tr>
+        <td>
+          @Messages("views.launched")
+        </td>
+        <td>
+          @Messages("views.launched2")
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="https://www.facebook.com/Democras-516339725217427/">Facebook</a>
+        </td>
+        <td>
+          <a href="https://twitter.com/democrascom">Twitter</a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          @Messages("views.by") <a href="mailto:pierre@@democras.com">Pierre-Armand POMMIER</a> & <a href="mailto:clement.moutet@@hec.edu">Clément MOUTET</a><br>
+
+        </td>
+      </tr>
+      <tr>
+        <td>
+          @Messages("views.findthem")
+        </td>
+        <td>
+          @Messages("views.findthem2")
+        </td>
+      </tr>
+      <tr>
+        <td>
+
+        </td>
+        <td>
+          @Messages("views.findthem3")
+        </td>
+      </tr>
+    </table>
+
+    <strong><a href="https://scruteur.com/2016/05/16/se-reapproprier-les-outils-de-representativite/" target="_blank" class="madb">@Messages("views.latestInterview")</a></strong><br>
+    <strong><a href="https://nevousmeprenezpas.com/2017/02/24/neoliberalisme-affairisme-politique-devenu-religion-de-letat/" target="_blank" class="madb">@Messages("views.latestInterview")</a></strong><br>
+    @Messages("views.logos"):<br><br>
+      <img src="https://s3-us-west-2.amazonaws.com/idmcr/static/icon.jpg" style="max-height:150px;" />
+
+    <table style="max-width:100%">
+      <tr>
+        <td>
+          <img src="https://s3-us-west-2.amazonaws.com/idmcr/static/logotitle.jpg" class="pressImg" />
+        </td>
+        <td>
+          <img src="https://s3-us-west-2.amazonaws.com/idmcr/static/logolarge.jpg" class="pressImg" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="https://s3-us-west-2.amazonaws.com/idmcr/static/logolarge3.jpg" class="pressImg" />
+        </td>
+      </tr>
+    </table><br><br>
+    <a href="https://s3-us-west-2.amazonaws.com/idmcr/static/logos.zip" class="btn btn-block btn-primary">@Messages("views.downloadPic")</a>
+    <br>
+    <a href="mailto:contact@@democras.com" class="btn btn-primary madb">@Messages("views.contactus"): contact@@democras.com</a><br>
+    <br><h3 class="madb">@Html(Messages("views.morePress"))</h3><br>
+  </div>
+</body>
+</html>

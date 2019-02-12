@@ -1,0 +1,113 @@
+@(memberInfo: models.MemberInfo)(implicit messages: Messages)
+<div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title acenter" id="followersModalLabel">@Messages("views.followers")</h4>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs">
+          <li role="presentation" id="flwli0" class="active" style="cursor:pointer;"><a onclick="displayFollowers(0)">@Messages("views.followers")</a></li>
+          <li role="presentation" id="flwli1" style="cursor:pointer;"><a onclick="displayFollowers(1);">@Messages("views.following")</a></li>
+        </ul>
+        <div class="output-followers0"><img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40 avoidFlw"/></div><div class="output-followers1"><img src="@routes.Assets.at("img/loa.gif")" class="loagif loagif40 avoidFlw"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('#followersModal').on('show.bs.modal', function(event){
+    var button= $(event.relatedTarget);
+    var id = button.data('pid');
+    displayFollowers(id);
+});
+var flwdisp = "-1";
+var curFlwDisp = 2;
+function displayFollowers(pid){
+  if(pid==1){$('.output-followers0').hide();}else{$('.output-followers1').hide();}
+  if(curFlwDisp == 0 && pid==1){$('.output-followers1').show();}
+  if(curFlwDisp == 1 && pid==0){$('.output-followers0').show();}
+  curFlwDisp=pid;
+  var purl ="/member/json/membersFollowing/@memberInfo.id/";
+  var poutput = '.output-followers1';
+  if(pid==1){purl="/member/json/membersFollowed/@memberInfo.id/";$('#flwli0').removeClass('active');$('#flwli1').addClass('active');$('#followersModalLabel').text('@Messages("views.following")');
+    if($(poutput).children().not('img').length >= 1){flwdisp= $('.output-followers1 .mbox:last()').find('.pmT').val();}else{flwdisp = "-1";}
+  }
+  else {$('#flwli1').removeClass('active');$('#flwli0').addClass('active');$('#followersModalLabel').text('@Messages("views.followers")');poutput = '.output-followers0';
+    if($(poutput).children().not('.avoidFlw').length >= 1){flwdisp= $('.output-followers0 .mbox:last()').find('.pmT').val();}else{flwdisp = "-1";}
+  }
+  if($(poutput).find('.doneFlw').length>=1){return;}
+  $.ajax({url:purl+flwdisp+"/25",
+          type:"get",success:function(data){
+            console.log(data);
+            data.forEach(function(item){
+              if(item.id == gSessionId){
+                item.isSameUser=1;
+              }
+              item.presentation=outputRestrict(item.presentation);
+            });
+        var item = {'response' : data};
+        var source   = $('#followMembers-template').html();
+        var template = Handlebars.compile(source);
+        // data.forEach(function(entry){
+        //   entry.presentation = entry.presentation.split("<br>").join(' ').substr(0,30);
+        // });
+        $(poutput).find('img').hide();
+          $(poutput).append(template(item));
+        if(data.length == 0 && $(poutput).children().not('.avoidFlw').length == 1){
+            $(poutput).append('<span class="avoidFlw">@Messages("views.nofollow")</span>');
+        }
+        if(data.length == 25){
+          $(poutput).append('<a href="#" onclick="displayFollowers('+pid+')" class="dcenter">@Messages("views.loadmore")</a>');
+        }else{
+          $(poutput).append('<span class="doneFlw"></span>');
+        }
+  }});
+}
+function followtMbr(event){
+  var purl, ptext;
+  $(event.target).prop('disabled',true);
+  if($(event.target).text()=="@Messages("views.munfollow")"){
+    purl = "/member/unfollow";
+    ptext = "@Messages("views.follow")";
+  }
+  else{
+    purl = "/member/follow";
+    ptext = "@Messages("views.munfollow")";
+  }
+      $.ajax({
+        url:purl,
+        type: "post",
+        data: {objectFollowed: 0, idObject: $(event.target).data("id")},
+        success: function(data,va,vb){
+          //debugit(data);
+          $(event.target).text(ptext).toggleClass('active');
+          $(event.target).prop('disabled',false);
+
+        }
+      });
+
+}
+///member/json/membersFollowed/@memberInfo.id/-1/15
+</script>
+<script id="followMembers-template" type="text/x-handlebars-template">
+  {{#each response}}
+  <div class="mbox fmbox" style="min-height: 60px;">
+    <img class="minpicfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+    <div class="mboxin">
+      <div class="mboxh"><a href='/member/{{id}}' class='done' style="font-weight: bold;">{{{firstname}}} {{{name}}}</a> <a class="author_name np" href="/member/{{id}}"> @@{{{username}}}</a></div>
+      <div class="mboxb"><span style="word-wrap:break-word;">{{{presentation}}}</span><br/>
+        {{#if isSameUser}}{{else}}
+        {{#if isUserFollowing}}<button class="btn btn-primary btn-xs active" data-id="{{id}}" onclick="followtMbr(event)">@Messages("views.munfollow")</button>
+      {{else}}
+      <button class="btn btn-primary btn-xs" data-id="{{id}}" onclick="followtMbr(event)">@Messages("views.follow")</button>
+      {{/if}}{{/if}}
+    </div>
+      <div class="mboxf mbinctime">
+        <input type="hidden" class="pmT" value="{{updatedTimestamp}}"/>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+</script>

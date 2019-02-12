@@ -1,0 +1,8 @@
+
+@(message: String, conversation: models.Conversation)(implicit session: play.api.mvc.Session, messages: Messages)
+@main(messages, true) {
+@conversation.id: Long
+@conversation.conversationString
+@conversation.modificationTimestamp
+
+}

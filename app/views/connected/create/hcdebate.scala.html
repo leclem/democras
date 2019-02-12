@@ -1,0 +1,88 @@
+@(iddebate: Long)(implicit messages: Messages)
+<div class="modal fade" id="nv_debat" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header pheadermdl">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="modal-title acenter">@Messages("views.head.ledebat")</h2>
+        <p class="acenter">@Messages("views.head.ledebatdescription")</p>
+      </div>
+      <div class="modal-body">
+      <span class="acenter" style="font-size:12px">@Messages("views.debate_typeofdebate")</span>
+        <table width="100%"><tr><td style="width:50%;">
+          <button class="btn btn-primary btn-block btn-sm nohoverbtnp" onclick="ybtn()" id="ybtn">@Messages("views.debate_findasolution")</button>
+        </td><td style="width:50%;">
+        <button class="btn btn-info btn-block btn-sm nohoverbtni" onclick="nbtn()" id="nbtn">@Messages("views.debate_yesorno")</button>
+        </td></tr></table>
+        <textarea type="text" id="question" name="question" class="form-control comtxa" placeholder="@Messages("views.debate_what")" row="2" onkeypress="remainingC(event, @Application.maxCharacterDefinitions)"></textarea>
+       <!-- <h6 class="pull-right count_message">@Application.maxCharacterDefinitions @Messages("views.remainingc")</h6> -->
+        <br>
+        <div class="alert alert-warning" role="alert" id="alertpopd">@Messages("views.debate_pop")</div>
+        <span class="selectLangParent"> @Messages("views.forms.lang"):
+        <span class="selectLang"></span></span>
+        <button class="btn btn-primary btn-block" data-loading-text="@Messages("views.loading")" onclick="createDebate(event)">@Messages("views.create")</button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.nohoverbtnp:hover {
+  color: #ffffff;
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+}
+.nohoverbtnp.active:hover {
+  color: #ffffff;
+    background-color: #1a242f;
+    border-color: #161f29;
+}
+.nohoverbtni:hover {
+  color: #ffffff;
+    background-color: #3498db;
+    border-color: #3498db;
+}
+.nohoverbtni.active:hover {
+    color: #ffffff;
+    background-color: #217dbb;
+    border-color: #2077b2
+}
+</style>
+<script type="text/javascript">
+$('#nv_debat').on('shown.bs.modal', function(){
+  $('textarea#question').focus();
+  nvLang();
+});
+$("#alertpopd").hide();
+var pop= 3;
+function ybtn(){
+  $("#ybtn").toggleClass('active');
+  $("#nbtn").removeClass('active');
+  if($("#ybtn").hasClass('active')){pop=1}else{pop=3};
+}
+function nbtn(){
+  $("#nbtn").toggleClass('active');
+  $("#ybtn").removeClass('active');
+  if($("#nbtn").hasClass('active')){pop=0}else{pop=3};
+}
+function createDebate(e)
+{
+  if (pop!=3 && $.trim($("#question").val()) != "") {
+    $(e.target).button('loading');
+    var pcom = $.trim($("#question").val());
+    $.ajax({
+          url: '/debate',
+          type: 'POST',
+          data: {debateType: pop, question: pcom, reservedToGroup: @iddebate, language:langSelect},
+          success: function(data, status) {
+            if(typeof data === 'number'){
+            $('#nv_debat').modal("hide");
+            location.href = '/debate/'+data;}
+            else{alert(data);}
+          }
+        });
+  }
+  else {
+    $('#alertpopd').show('slideup');
+  }
+}
+</script>

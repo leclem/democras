@@ -1,0 +1,22 @@
+@(comment: String, opinionPosted: models.DebateOpinion)(implicit messages: play.api.i18n.Messages)
+@mails.main(messages) {
+
+     <table>
+                            <tr>
+                                <td valign="top" style="padding:0 10px 10px 0">
+                                </td>
+                                <td valign="middle" style="padding:0 10px 10px 0;color:#000;font-size:14px;">@Messages("mail.postOpinion.message")<br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="padding:10px 10px 10px 0">
+                                </td>
+                                <td valign="middle" style="padding:10px; color:#000;font-size:14px;background-color:#FFE6E6;width:100%;">
+                                    <span style="background-color: #2c3e50;display: inline;padding: .2em .6em .3em;font-size: 75%;font-weight: bold;line-height: 1;color: #ffffff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;"> @Messages("views.debate_findasolution") </span>
+                                    <a style="color: #18bc9c;text-decoration: none;" href="https://democras.com/debate/@opinionPosted.idDebate" > @opinionAnswered.comment.slice(0, 50) </a>
+                                </td>
+                            </tr>
+                            
+                        </table>
+			
+}

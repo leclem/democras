@@ -1,0 +1,681 @@
+@()(implicit messages: Messages)
+<script id="member-template" type="text/x-handlebars-template">
+        <div class="row activt" style="margin:3px;">
+          <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+              <div class="acenter">
+                <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{vaction}}
+              </div>
+        </div>
+  </script>
+  <script id="memberFollows-template" type="text/x-handlebars-template">
+          <div class="row activt" style="margin:3px;">
+            <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+                <div class="acenter">
+                  <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                  <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{vaction}} <a class="author_name" href="/member/{{target.id}}">{{{target.username}}}</a> ({{{target.username}}} {{{target.name}}})
+                </div>
+          </div>
+    </script>
+  <script id="conceptactiv-template" type="text/x-handlebars-template">
+      <div class="row activt" style="margin:3px;">
+        <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+            <div class="col-xs-12  debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+              <div class="mbractiv acenter">
+                <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{{vaction}}}
+              </div>
+              <!-- <div class="cbul"></div> -->
+                <a class="btn btn-primary btn-xs" href="/concept">@Messages("views.concepts")</a>&nbsp;
+                <a class="author_name" href="/concept/{{object.id}}">{{{object.name}}}</a><span class="debat_time adroite" data-livestamp="{{mT}}"></span>
+                <br/>
+                <div class="lpdesigntriger" style="word-wrap:break-word;">{{{object.definition}}}</div>
+                <input type="hidden" class="pmT" value="{{object.modificationTimestamp}}"/>
+                {{#if iscomment}} {{else}}<span class="adroite">{{/if}}
+                  <!-- <span style="font-size: .9em;">@Messages("views.share"):</span> -->
+                  <a class="picon-facebook shic" onclick="return !window.open(this.href, 'Facebook', 'width=640,height=300')"  href="http://www.facebook.com/sharer.php?u=http://democras.com/concept/{{object.id}}" target="_blank"></a>
+                  <!--<span class="picon-google__x2B_ shic"></span>-->
+                  <a class="twitter-share-button picon-twitter-3 shic" href="https://twitter.com/intent/tweet?text=http://democras.com/concept/{{object.id}}" data-size="large"></a>
+                  <a class="glyphicon glyphicon-option-horizontal shic"></a>
+                  <button class="btn btn-success btn-xs votex bvf{{object.id}}" data-id="{{object.id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bv">{{object.membersFor}}</span></button>
+                  <button class="btn btn-danger btn-xs votex bva{{object.id}}" data-id="{{object.id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bv">{{object.membersAgainst}}</span></button>
+                {{#if iscomment}} {{else}}</span>{{/if}}
+                  {{#if iscomment}}
+                <!-- <div class="target" style="background-color:#fff">
+                {{{target.message}}}
+              </div> -->
+              <div class="mbox fmbox" style="border:none;">
+                <img class="min40picfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{actor.username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+                <div class="mboxin" style="margin-left: 50px">
+                  <div class="comboxh"><a href='/member/{{actor.id}}'>{{{actor.username}}}</a> <span class="debat_time" data-livestamp="{{mT}}"></span>
+                  </div>
+                  <div class="mboxb linkit">{{{target.message}}}</div>
+                </div>
+              </div>
+              {{/if}}
+          </div>
+        </div>
+    </script>
+    <script id="groupact-template" type="text/x-handlebars-template">
+            <div class="row activt" style="margin:3px;">
+              <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+
+              <div class="col-xs-12  debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+                <div class="mbractiv acenter">
+                  <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                  {{#if hasGroupAccept}}
+                  <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> @Messages("views.activ_GroupAccept") <a class="author_name" href="/member/{{target.id}}">{{{target.username}}}</a> @Messages("views.activ_GroupAccept2")
+                  {{else}}
+                  <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{vaction}}
+                  {{/if}}
+                </div>
+                <a class="btn btn-primary btn-xs" href="/group">@Messages("views.groups")</a>&nbsp;
+              <a class="author_name np" href="/group/{{object.id}}">{{{object.name}}}</a><span class="np"><span class="debat_time adroite" data-livestamp="{{mT}}"></span></span>
+              <input type="hidden" class="pmT" value="{{object.modificationTimestamp}}"/>
+              <br/>
+              <div class="lpdesigntriger" style="word-wrap:break-word;">{{{object.definition}}}</div>
+              {{#if object.privacy}}
+              <span class="label label-primary adroite">@Messages("views.group_privategroup")</span> &nbsp;
+              {{/if}}
+              <br/>
+              <a  data-toggle="modal" data-target="#mbinc" data-pid="{{object.id}}" data-type="1" style='cursor:pointer;'> <span class="spnbmbr-{{object.id}}">{{object.numberMembers}}</span> @Messages("views.group_member")</a>
+              <span class="adroite">
+              <button class="btn btn-xs joinbtn jbtn{{object.id}}" data-id="{{object.id}}"></button>
+            </span>
+              </div>
+            </div>
+      </script>
+  <script id="debatsactiv-template0" type="text/x-handlebars-template">
+          <div class="row activt" style="margin:3px;">
+            <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+
+            <div class="col-xs-12  debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+              <div class="mbractiv acenter">
+                <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                {{#if hasgroupe}}
+                <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{{vaction}}} <a href="/group/{{object.id}}">{{object.name}}</a> @Messages("views.activ_DebateCreationForGroup2")
+                {{else}}
+                <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{{vaction}}}
+                {{/if}}
+              </div>
+
+              <div class="dobject"><a class="btn btn-primary btn-xs" href="/debate">@Messages("views.debates")</a>&nbsp;
+                  {{#if hasgroupe}}
+                    {{#if target.typeOfDebate}}
+                    <span class="label label-primary">@Messages("views.debate_findasolution")</span>
+                    {{else}}
+                    <span class="label label-primary">@Messages("views.debate_yesorno")</span>
+                      {{/if}}
+                    <a class="author_name" href="/debate/{{target.id}}">{{{target.question}}} </a>
+                  {{else}}
+                    {{#if object.typeOfDebate}}
+                    <span class="label label-primary">@Messages("views.debate_findasolution")</span>
+                    {{else}}
+                    <span class="label label-primary">@Messages("views.debate_yesorno")</span>
+                      {{/if}}
+                    <a class="author_name" href="/debate/{{object.id}}">{{{object.question}}} </a>
+                  {{/if}}
+
+                <span class="debat_time" data-livestamp="{{mT}}"></span>
+                <input type="hidden" class="pmT" value="{{object.modificationTimestamp}}"/>
+                <span class="debat_right">
+                  {{#if hasgroupe}}
+                  <span class="nbtpl">
+                    <span class="glyphicon glyphicon-envelope" title="@Messages("views.debate_nbvote")"></span> {{target.numberOfParticipations}}
+                  </span> &nbsp;
+                  <button class="btn btn-primary btn-xs jd jdbtn{{target.id}}" data-id="{{target.id}}">@Messages("views.follow")</button></span>
+                  <p style="margin:0;">{{target.data}}</p>
+                  {{else}}
+                <span class="nbtpl">
+                  <span class="glyphicon glyphicon-envelope" title="@Messages("views.debate_nbvote")"></span> {{object.numberOfParticipations}}
+                </span> &nbsp;
+                <button class="btn btn-primary btn-xs jd jdbtn{{object.id}}" data-id="{{object.id}}">@Messages("views.follow")</button></span>
+                <p style="margin:0;">{{object.data}}</p>
+                {{/if}}
+              </div>
+              {{#if hastarget}}
+              <div class="target">
+              <!-- <div class="cbul" style="
+              {{#if target.opinion}}
+              background-color:#e74c3c;
+              {{else}}
+              background-color:#18bc9c;
+              {{/if}}"></div> -->
+                <div class="lpdesigntriger">
+                  {{#if iscomment}}<a href="/debate/{{target.idDebate}}">{{/if}}
+                  {{{target.comment}}}
+                {{#if iscomment}}</a>{{/if}}
+              </div><br/>
+                <span class="debat_time">  @Messages("views.by") <a href='/member/{{target.idMember}}' class="name">{{{target.username}}}</a></span>
+                <span class="debat_time" data-livestamp="{{mT2}}"></span>
+                <input type="hidden" class="pmT" value="{{target.modificationTimestamp}}"/>
+                 <br/>
+                 {{math}}
+                 {{#if mainOpinion}}
+                 <button class="btn btn-success btn-xs voteopx" data-id="{{target.id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="bvf">{{target.votefor}}</span></button>
+                 <button class="btn btn-danger btn-xs voteopx" data-id="{{target.id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="bva">{{target.voteagainst}}</span></button>
+                 {{else}}
+                 <button class="btn btn-success btn-xs votevx" data-id="{{target.id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="dbvf">{{target.votefor}}</span></button>
+                 <button class="btn btn-danger btn-xs votevx" data-id="{{target.id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="dbva">{{target.voteagainst}}</span></button>
+                 {{/if}}
+
+              </div>
+              {{/if}}
+            </div>
+          </div>
+    </script>
+    <script id="CommentYesOrNoActiv-template0" type="text/x-handlebars-template">
+            <div class="row activt" style="margin:3px;">
+              <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+
+              <div class="col-xs-12 debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+                  <div class="mbractiv acenter">
+                <div class="acenter">
+                  <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                </div>
+                <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> @Messages("views.activ_CommentYesornoopinion2") <a href="/debate/yesornoopinion/{{object.id}}">@Messages("views.activ_CommentYesornoopinion3")</a>: <br/>
+
+                </div>
+
+                <div class="target">
+                  <!-- <div class="cbul" style="
+                  {{#if target.opinion}}
+                  background-color:#e74c3c;
+                  {{else}}
+                  background-color:#18bc9c;
+                  {{/if}}"></div> -->
+                  <div class="lpdesigntriger">
+                {{{object.comment}}}</div>
+                <span class="debat_time" data-livestamp="{{mT2}}"></span>
+                   {{math}}
+                   <button class="btn btn-success btn-xs votevx" data-id="{{object.id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="dbvf">{{object.votefor}}</span></button>
+                   <button class="btn btn-danger btn-xs votevx" data-id="{{object.id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="dbva">{{object.voteagainst}}</span></button>
+                 </div>
+                <!-- <div class="target" style="background-color:#fff">
+                {{{target.message}}}
+              </div> -->
+              <div class="mbox fmbox" style="border:none;">
+                <img class="min40picfl" src="https://idmcr.s3-us-west-2.amazonaws.com/{{actor.username}}.jpg" onError="this.onerror=null;this.src='@routes.Assets.at("images/user.jpg")';"/>
+                <div class="mboxin" style="margin-left: 50px">
+                  <div class="comboxh"><a href='/member/{{actor.id}}'>{{{actor.username}}}</a> <span class="debat_time" data-livestamp="{{mT}}"></span>
+                  </div>
+                  <div class="mboxb linkit lpdesigntriger">{{{target.message}}}</div>
+                </div>
+              </div>
+              </div>
+            </div>
+      </script>
+    <script id="debatsactivRepOp-template0" type="text/x-handlebars-template">
+            <div class="row activt" style="margin:3px;">
+              <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+
+              <div class="col-xs-12  debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+                <div class="mbractiv acenter">
+
+                  <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                  <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{{vaction}}}
+                  <a class="author_name" href="/debate/{{object.idDebate}}">{{{object.debateQuestion}}}</a>
+                </div>
+                <div class="dobject">
+                  <a class="btn btn-primary btn-xs" href="/debate">@Messages("views.debates")</a>&nbsp;
+                  <span class="label label-primary">@Messages("views.debate_findasolution")</span>
+                  <div class="lpdesigntriger"> {{{object.comment}}} </div> @Messages("views.by")&nbsp;<a class="author_name" href="/member/{{object.idMember}}">{{{object.username}}}</a>
+                  <span class="debat_time" data-livestamp="{{mT}}"></span>
+                  <span class="debat_right">
+                  <span class="nbtpl">
+                    <span class="glyphicon glyphicon-envelope" title="@Messages("views.debate_nbvote")"></span> {{object.numberofyesornoopinions}}
+                  </span> &nbsp;
+                  <button class="btn btn-primary btn-xs jd jdbtn{{object.id}}" data-id="{{object.id}}">@Messages("views.follow")</button></span>
+                  <p style="margin:0;">{{object.data}}</p>
+                </div>
+                <div class="target">
+                  <!-- <div class="cbul"></div> -->
+                  <div class="lpdesigntriger">{{{target.comment}}}</div>
+                  <span class="debat_time">  @Messages("views.by") <a href='/member/{{target.id}}' class="name">{{{target.username}}}</a></span>
+                  <span class="debat_time" data-livestamp="{{mT2}}"></span>
+                   <br/>
+                   {{math}}
+                   <button class="btn btn-success btn-xs votevx" data-id="{{target.id}}" data-v="1"><span class="glyphicon glyphicon-thumbs-up"></span> | <span class="dbvf">{{target.votefor}}</span></button>
+                   <button class="btn btn-danger btn-xs votevx" data-id="{{target.id}}" data-v="0"><span class="glyphicon glyphicon-thumbs-down"></span> | <span class="dbva">{{target.voteagainst}}</span></button>
+                </div>
+              </div>
+            </div>
+      </script>
+    <script id="actionactiv-template" type="text/x-handlebars-template">
+            <div class="row activt" style="margin:3px;">
+              <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+
+              <div class="col-xs-12  debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;padding:0;">
+                <div class="mbractiv acenter">
+                  <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                  <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{{vaction}}}
+                </div>
+                <div class="col-xs-12 col-md-7">
+                  <a class="btn btn-primary btn-xs" href="/action">@Messages("views.actions")</a>&nbsp;
+              <a class="author_name" href="/action/{{target.id}}">{{{target.name}}}</a> <span class="debat_time" data-livestamp="{{mT}}"></span>
+              <input type="hidden" class="pmT" value="{{target.modificationTimestamp}}"/>
+              <br/>
+              <div class="lpdesigntriger" style="word-wrap:break-word;">{{{target.definition}}}</div><br/>
+              <a data-toggle="modal" data-target="#mbinc" data-pid="{{target.id}}" data-type="4" style='cursor:pointer;'>{{target.numberJoined}} @Messages("views.action.nm")</a><br/>
+              <!--@Messages("views.action.startT"): {{object.timeBegin}}<br/>-->
+              {{#if target.timeEnd}}
+               <!--@Messages("views.action.endT"):{{object.timeEnd}}-->
+              {{/if}}
+            </div>
+              <div class="col-xs-12 col-md-5">
+                <a href="/action/{{target.id}}"><table style="width:100;" align="center"><tr><td>
+                        <span style="display:block;text-align:center;">{{target.nameLocation}}</span>
+                      </td></tr><tr><td>
+                          <img style="width:100%;" src="http://maps.google.com/maps/api/staticmap?center={{target.latitude}},{{target.longitude}}&zoom=16&markers={{target.latitude}},{{target.longitude}}&size=300x100&sensor=true" alt="" />
+                        </td></tr></table></a>
+              </div>
+                </div>
+              </div>
+            </div>
+      </script>
+      <script id="petitionactiv-template" type="text/x-handlebars-template">
+              <div class="row activt" style="margin:3px;">
+                <input type="hidden" class="activmt" value="{{headers.modificationTimestamp}}"/>
+
+                <div class="col-xs-12  debat" style="background-color:#EBEFF2;box-shadow: 1px 1px 0px #aaa;">
+                  <div class="mbractiv acenter">
+                    <span class="debat_time pull-right" data-livestamp="{{hmT}}"></span>
+                    <a class="author_name" href="/member/{{actor.id}}">{{{actor.username}}}</a> {{vaction}}
+                  </div>
+                  <a class="btn btn-primary btn-xs pull-left" href="/petition">@Messages("views.petitions")</a>&nbsp;
+                <a class="author_name col-xs-12 col-sm-10 np" href="/petition/{{object.id}}">{{{object.name}}}</a><span class="col-xs-12 col-sm-2 np">
+                  <span class="debat_time adroite" data-livestamp="{{mT}}"></span></span>
+                <input type="hidden" class="pmT" value="{{object.modificationTimestamp}}"/>
+                <br/>
+                <div class="lpdesigntriger" style="word-wrap:break-word;">{{{object.definition}}}</div>
+                <br/>
+                <a data-toggle="modal" data-target="#mbinc" data-pid="{{object.id}}" data-type="5" style='cursor:pointer;'>
+                  <span id="spnbmbr-{{object.id}}">{{object.numberJoined}}</span> @Messages("views.group_member")</a>
+                <span class="adroite">
+                <!--<button class="btn btn-xs joinbtn" id="jbtn{{id}}" data-id="{{id}}"></button>-->
+              </span>
+                </div>
+              </div>
+
+        </script>
+
+<script type="text/javascript">
+
+
+///CONCEPT
+function didVote(pid){
+  $.get("/concept/getUserVote/"+pid, function(data){
+    if(data == 2){
+      $('.bva'+pid).addClass('active');
+    }
+    else if (data == 1) {
+      $('.bvf'+pid).addClass('active');
+    }
+  });
+}
+function voteconcept(){
+  // /debate/:id/yesorno/vote
+  $('.votex').each(function(){
+    $(this).click(function(){
+      var thisone = $(this);
+      $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',true);
+      if (thisone.data('v') == 1)
+      {
+        if ($('.bvf'+thisone.data('id')).hasClass('active'))
+        {
+          $.ajax({
+                url: '/concept/'+thisone.data('id')+'/cancelvote',
+                type: 'GET',
+                success: function(dat, status) {
+                  $('.bvf'+thisone.data('id')).children(".bv").text(parseInt($('.bvf'+thisone.data('id')+':last()').children(".bv").text())-1);
+                  $('.bvf'+thisone.data('id')).removeClass('active');
+                  $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',false);
+                  colordisplay(thisone.data('id'));
+                }});
+        }
+        else
+        {
+          $.ajax({
+                url: '/concept/'+thisone.data('id')+'/votefor',
+                type: 'GET',
+                success: function(dat, status) {
+                  debugit(dat);
+                  if ($('.bva'+thisone.data('id')).hasClass('active')){
+                    $('.bva'+thisone.data('id')).removeClass('active');
+                    $('.bva'+thisone.data('id')).children(".bv").text(parseInt($('.bva'+thisone.data('id')+':last()').children(".bv").text())-1);
+                    $('.bvf'+thisone.data('id')).children(".bv").text(parseInt($('.bvf'+thisone.data('id')+':last()').children(".bv").text())+1);
+                    $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',false);
+                    $('.bvf'+thisone.data('id')).addClass('active');
+                  }
+                  else {
+                    $('.bvf'+thisone.data('id')).addClass('active');
+                    $('.bvf'+thisone.data('id')).children(".bv").text(parseInt($('.bvf'+thisone.data('id')+':last()').children(".bv").text())+1);
+                    $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',false);
+                  }
+                  colordisplay(thisone.data('id'));
+                }});
+        }
+      }
+      else {
+        if ($('.bva'+thisone.data('id')).hasClass('active'))
+        {
+          $.ajax({
+                url: '/concept/'+thisone.data('id')+'/cancelvote',
+                type: 'GET',
+                success: function(dat, status) {
+                  $('.bva'+thisone.data('id')).children(".bv").text(parseInt($('.bva'+thisone.data('id')+':last()').children(".bv").text())-1);
+                  $('.bva'+thisone.data('id')).removeClass('active');
+                  $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',false);
+                  colordisplay(thisone.data('id'));
+                }});
+        }
+        else
+        {
+          $.ajax({
+                url: '/concept/'+thisone.data('id')+'/voteagainst',
+                type: 'GET',
+                success: function(dat, status) {
+                  if ($('.bvf'+thisone.data('id')).hasClass('active')){
+                    $('.bva'+thisone.data('id')).addClass('active');
+                    $('.bvf'+thisone.data('id')).removeClass('active');
+                    $('.bva'+thisone.data('id')).children(".bv").text(parseInt($('.bva'+thisone.data('id')+':last()').children(".bv").text())+1);
+                    $('.bvf'+thisone.data('id')).children(".bv").text(parseInt($('.bvf'+thisone.data('id')+':last()').children(".bv").text())-1);
+                    $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',false);
+                  }
+                  else {
+                    $('.bva'+thisone.data('id')).addClass('active');
+                    $('.bva'+thisone.data('id')).children(".bv").text(parseInt($('.bva'+thisone.data('id')+':last()').children(".bv").text())+1);
+                    $('.bvf'+thisone.data('id')+','+'.bva'+thisone.data('id')).prop('disabled',false);
+                  }
+                  colordisplay(thisone.data('id'));
+                }});
+        }
+      }
+    });
+    $(this).removeClass('votex');
+  });
+}
+function colordisplay(pidc){
+/*  if(parseInt($('.bvf'+pidc).children(".bv").text()) > parseInt($('.bva'+pidc).children(".bv").text())){
+    $('.bva'+pidc).parents('.debat').find('.cbul').attr("style","background-color:#18bc9c;");
+  }
+  else if (parseInt($('.bvf'+pidc).children(".bv").text()) < parseInt($('.bva'+pidc).children(".bv").text())) {
+    $('.bva'+pidc).parents('.debat').find('.cbul').attr("style","background-color:#e74c3c;");
+  }
+  else {
+    $('.bva'+pidc).parents('.debat').find('.cbul').attr("style","background-color:#f39c12;");
+  }*/
+}
+
+
+////GROUPE
+function checkStatus(pop){
+  $.ajax({
+        url: '/group/json/userStatusInGroup/'+pop,
+        type: 'get',
+        dataType: 'JSON',
+        success: function(data, status) {
+          if(data == 1){$('.jbtn'+pop).addClass('btn-primary').text('@Messages("views.member")').attr('title','');}
+          else if (data == 2) {
+            $('.jbtn'+pop).addClass('btn-primary').text('@Messages("views.wait")').attr('title','@Messages("views.group.leavethisgroup")?');
+          }
+          else {
+            $('.jbtn'+pop).addClass('btn-success').text('@Messages("views.group.jointhisgroup")').attr('title','');
+          }
+        }
+      });
+}
+function isjoin(){
+    $('.joinbtn').each(function(){
+      $(this).click(function(){
+          var thisone = $(this);
+          $('.jbtn'+thisone.data('id')).prop('disabled',true);
+          if(thisone.text() == "@Messages("views.group.jointhisgroup")")
+          {
+            $.post("/group/join",{groupID: thisone.data('id')}, function(data){
+              if(data == 1)
+              {
+                $('.jbtn'+thisone.data('id')).toggleClass('btn-primary btn-success').text('@Messages("views.member")').attr('title','@Messages("views.group.leavethisgroup")?');
+                $('.spnbmbr-'+thisone.data('id')).text(parseInt($('.spnbmbr-'+thisone.data('id')+':last()').text())+1);
+              }
+              if (data == 2)
+              {
+                $('.jbtn'+thisone.data('id')).text("@Messages("views.wait")").toggleClass('btn-primary btn-success');
+              }
+              $('.jbtn'+thisone.data('id')).prop('disabled',false);
+            });
+          }
+          else
+          {
+            $.post("/group/leave",{groupID: thisone.data('id')}, function(data){
+              if(data == 1)
+              {
+                $('.jbtn'+thisone.data('id')).text("@Messages("views.group.jointhisgroup")").toggleClass('btn-success btn-primary').attr('title','');
+                $('.spnbmbr-'+thisone.data('id')).text(parseInt($('.spnbmbr-'+thisone.data('id')+':last()').text())-1);
+              }
+              if(data == 2)
+              {
+                $('.jbtn'+thisone.data('id')).text("@Messages("views.group.jointhisgroup")").toggleClass('btn-success btn-primary').attr('title','');
+              }
+              if(data == 3)
+              {
+                $('.jbtn'+thisone.data('id')).text("@Messages("views.group.notleavinghisgroupbecauseonlyadmin")");
+              }
+              $('.jbtn'+thisone.data('id')).prop('disabled',false);
+            });
+          }
+      });
+      $(this).removeClass('joinbtn');
+    });
+}
+
+///debates
+function followDebat(){
+  $('.jd').each(function(){
+    $(this).click(function(){
+        var thisone = $(this);
+        $('.jdbtn'+thisone.data('id')).prop('disabled',true);
+        if(thisone.text() == "@Messages("views.follow")"){
+          purl = "/member/follow";
+          ptext = "@Messages("views.munfollow")";
+        }
+        else{
+          purl = "/member/unfollow";
+          ptext = "@Messages("views.follow")";
+        }
+            $.ajax({
+              url:purl,
+              type: "post",
+              data: {objectFollowed: 3, idObject: thisone.data('id')},
+              success: function(data,va,vb){
+                debugit(data);
+                $('.jdbtn'+thisone.data('id')).text(ptext).prop('disabled',false).toggleClass('active');
+              }
+            });
+      });
+      $(this).removeClass('jd');
+    });
+}
+function isFollowingDebate(pdid){
+  $.ajax({url:'/member/json/isFollowing/3/'+pdid,type:'get',success: function(data){if(data==1){$('.jdbtn'+pdid).text("@Messages("views.munfollow")").addClass('active');}}});
+}
+  //mainOpinion
+function voteopYN(pdid){
+  // /debate/:id/yesorno/vote
+  $('.voteopx').each(function(){
+    if($(this).data('v') == 1){
+      $(this).addClass('bvopf'+$(this).data('id'));
+    }
+    else {
+      $(this).addClass('bvopa'+$(this).data('id'));
+    }
+    $(this).click(function(){
+      debugit($(this));
+      var thisone = $(this);
+      thisone.prop('disabled',true);
+      $.ajax({
+            url: '/debate/'+pdid+'/opinion/vote',
+            type: 'POST',
+            data: {vote: thisone.data('v'), idOpinion: thisone.data('id')},
+            success: function(dat, status) {
+              if(thisone.data('v') == 0){
+                if ($('.bvopf'+thisone.data('id')).is(':disabled')) {
+                  $('.bvopf'+thisone.data('id')).children(".bvf").text(parseInt($('.bvopf'+thisone.data('id')).children(".bvf:first()").text())-1);
+                  $('.bvopf'+thisone.data('id')).prop('disabled',false);
+                }
+                $('.bvopa'+thisone.data('id')).children(".bva").text(parseInt($('.bvopa'+thisone.data('id')).children(".bva:first()").text())+1);
+                $('.bvopa'+thisone.data('id')).prop('disabled',true);//peut enlever
+              }
+              else {
+                if ($('.bvopa'+thisone.data('id')).is(':disabled')) {
+                  $('.bvopa'+thisone.data('id')).children(".bva").text(parseInt($('.bvopa'+thisone.data('id')).children(".bva:first()").text())-1);
+                  $('.bvopa'+thisone.data('id')).prop('disabled',false);
+                }
+                $('.bvopf'+thisone.data('id')).prop('disabled',true);//peut enlever
+                $('.bvopf'+thisone.data('id')).children(".bvf").text(parseInt($('.bvopf'+thisone.data('id')).children(".bvf:first()").text())+1);
+              }
+              colordisplay2(thisone.data('id'));
+            }});
+    });
+    $(this).removeClass('voteopx');
+  });
+}
+function voteYN(pdid){
+  // /debate/:id/yesorno/vote
+  $('.votevx').each(function(){
+    if($(this).data('v') == 1){
+      $(this).addClass('dbvf'+$(this).data('id'));
+    }
+    else {
+      $(this).addClass('dbva'+$(this).data('id'));
+    }
+    $(this).click(function(){
+      debugit($(this));
+      var thisone = $(this);
+      thisone.prop('disabled',true);
+      $.ajax({
+            url: '/debate/'+pdid+'/yesorno/vote',
+            type: 'POST',
+            data: {vote: thisone.data('v'), idOpinion: thisone.data('id')},
+            success: function(dat, status) {
+              if(thisone.data('v') == 0){
+                if ($('.dbvf'+thisone.data('id')).is(':disabled')) {
+                  $('.dbvf'+thisone.data('id')).children(".dbvf").text(parseInt($('.dbvf'+thisone.data('id')).children(".dbvf:first()").text())-1);
+                  $('.dbvf'+thisone.data('id')).prop('disabled',false);
+                }
+                $('.dbva'+thisone.data('id')).children(".dbva").text(parseInt($('.dbva'+thisone.data('id')).children(".dbva:first()").text())+1);
+                $('.dbva'+thisone.data('id')).prop('disabled',true);//peut enlever
+              }
+              else {
+                if ($('.dbva'+thisone.data('id')).is(':disabled')) {
+                  $('.dbva'+thisone.data('id')).children(".dbva").text(parseInt($('.dbva'+thisone.data('id')).children(".dbva:first()").text())-1);
+                  $('.dbva'+thisone.data('id')).prop('disabled',false);
+                }
+                $('.dbvf'+thisone.data('id')).prop('disabled',true);//peut enlever
+                $('.dbvf'+thisone.data('id')).children(".dbvf").text(parseInt($('.dbvf'+thisone.data('id')).children(".dbvf:first()").text())+1);
+              }
+              colordisplay3(thisone.data('id'))
+            }});
+    });
+    colordisplay3($(this).data('id'));
+    $(this).removeClass('votevx');
+  });
+}
+function colordisplay3(pidc){
+/*  if(parseInt($('.dbvf'+pidc).children(".dbvf").text()) > parseInt($('.dbva'+pidc).children(".dbva").text())){
+    $('.dbva'+pidc).parents('.target').find('cbul').attr("style","background-color:#18bc9c;");
+  }
+  else if (parseInt($('.dbvf'+pidc).children(".dbvf").text()) < parseInt($('.dbva'+pidc).children(".dbva").text())) {
+    $('.dbva'+pidc).parents('.target').find('cbul').attr("style","background-color:#e74c3c;");
+  }
+  else {
+    $('.dbva'+pidc).parents('.target').find('cbul').attr("style","background-color:#f39c12;");
+  }*/
+}
+function didVoteOp(pid,pdid){
+  $.get("/debate/json/opinion/voteForThisYesOrNoOpinion/"+pdid+"/"+pid, function(data){
+    if(data == 0){
+      $('.dbva'+pid).prop('disabled',true);
+    }
+    else if (data == 1) {
+      console.log(pid);
+      $('.dbvf'+pid).prop('disabled',true);
+    }
+  });
+}
+function dejavote(pid,pdid){
+  ///debate/json/opinion/voteForThisOpinion/:debateID/:opinionID
+  colordisplay2(pid);
+  $.get("/debate/json/opinion/voteForThisOpinion/"+pdid+"/"+pid, function(data){
+    if(data == 0){
+      $('.bvopa'+pid).prop('disabled',true);
+    }
+    else if (data == 1) {
+      $('.bvopf'+pid).prop('disabled',true);
+    }
+  });
+}
+function colordisplay2(pidc){
+/*  if(parseInt($('.bvopf'+pidc).children(".bvf").text()) > parseInt($('.bvopa'+pidc).children(".bva").text())){
+    $('.bvopa'+pidc).parents('.target').find('cbul').attr("style","background-color:#18bc9c;");
+  }
+  else if (parseInt($('.bvopf'+pidc).children(".bvf").text()) < parseInt($('.bvopa'+pidc).children(".bva").text())) {
+    $('.bvopa'+pidc).parents('.target').find('cbul').attr("style","background-color:#e74c3c;");
+  }
+  else {
+    $('.bvopa'+pidc).parents('.target').find('cbul').attr("style","background-color:#f39c12;");
+  }*/
+}
+function exeFunc(pobj){
+  if(!$.isEmptyObject(pobj.checkStatus)){
+    pobj.checkStatus.forEach(function(entry){
+      checkStatus(entry);
+    });
+  }
+  if(!$.isEmptyObject(pobj.voteYN)){
+    pobj.voteYN.forEach(function(entry){
+      voteYN(entry);
+    });
+  }
+  if(!$.isEmptyObject(pobj.voteopYN)){
+    pobj.voteopYN.forEach(function(entry){
+      voteopYN(entry);
+    });
+  }
+  if(!$.isEmptyObject(pobj.colordisplay)){
+    pobj.colordisplay.forEach(function(entry){
+      colordisplay(entry);
+    });
+  }
+  if(!$.isEmptyObject(pobj.didVote)){
+    pobj.didVote.forEach(function(entry){
+      didVote(entry);
+    });
+  }
+  if(!$.isEmptyObject(pobj.dejavote)){
+    pobj.dejavote.forEach(function(entry){
+      dejavote(entry[0],entry[1]);
+    });
+  }
+  if(!$.isEmptyObject(pobj.didVoteOp)){
+    pobj.didVoteOp.forEach(function(entry){
+      //console.log(entry);
+      didVoteOp(entry[0],entry[1]);
+    });
+  }
+  if(!$.isEmptyObject(pobj.isFollowingDebate)){
+    pobj.isFollowingDebate.forEach(function(entry){
+      isFollowingDebate(entry);
+    });
+  }
+}
+function oHasTable(pinp, parr){
+  var res = -1;
+  parr.forEach(function(entry){
+    if(entry.toString()==pinp.toString()){
+     res = 1;
+    }
+  });
+  return res;
+}
+</script>
