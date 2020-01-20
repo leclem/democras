@@ -1,4 +1,4 @@
-`* linguist-vendored
+`* linguist-vendored=false
 *.js linguist-detectable=false
 *.c linguist-detectable=false
 *.h linguist-detectable=false
