@@ -1,2 +1,3 @@
 *.js linguist-detectable=false
+*.c linguist-detectable=true
 *.scala linguist-detectable=true
