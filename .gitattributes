@@ -2,5 +2,5 @@
 *.js linguist-detectable=false
 *.c linguist-detectable=false
 *.h linguist-detectable=false
-* linguist-detectable=false
+*.html linguist-detectable=false
 *.scala linguist-detectable=true
